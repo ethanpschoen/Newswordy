@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Game-related fields
+  totalGames    Int @default(0)
+  totalScore    Int @default(0)
+  averageScore  Float @default(0)
+  bestScore     Int @default(0)
+  
+  // Relationships
+  games Game[]
+  guesses Guess[]
+
+  @@map("users")
+}
+
+model Game {
+  id          String   @id @default(cuid())
+  userId      String
+  timePeriod  String   // past_day, past_week, past_month, past_year, etc.
+  score       Int      @default(0)
+  maxGuesses  Int      @default(3)
+  scoreboardSize Int   @default(10)
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  // Relationships
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guesses Guess[]
+  
+  @@map("games")
+}
+
+model Guess {
+  id        String   @id @default(cuid())
+  gameId    String
+  userId    String
+  word      String
+  frequency Int      @default(0)
+  score     Int      @default(0)
+  rank      Int?     // Position in the scoreboard
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("guesses")
+}
+
+model WordFrequency {
+  id          String   @id @default(cuid())
+  word        String
+  frequency   Int
+  timePeriod  String
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  
+  @@unique([word, timePeriod])
+  @@map("word_frequencies")
+}
+
+model Article {
+  id            String    @id @default(cuid())
+  source        String
+  headline      String
+  url           String
+  publishedDate DateTime?
+  scrapedDate   DateTime  @default(now())
+  content       String?
+  
+  @@map("articles")
+}
+
+model ScrapingLog {
+  id              String    @id @default(cuid())
+  source          String
+  status          String    // success, error, partial
+  articlesScraped Int       @default(0)
+  errorMessage    String?
+  startTime       DateTime  @default(now())
+  endTime         DateTime?
+  durationSeconds Float?
+  
+  @@map("scraping_logs")
+}
