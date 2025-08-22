@@ -11,7 +11,7 @@ export const validateTimePeriod = (req: Request, res: Response, next: NextFuncti
     });
   }
   
-  next();
+  return next();
 };
 
 export const validateGameSettings = (req: Request, res: Response, next: NextFunction) => {
@@ -37,7 +37,7 @@ export const validateGameSettings = (req: Request, res: Response, next: NextFunc
     }
   }
   
-  next();
+  return next();
 };
 
 export const validateGuess = (req: Request, res: Response, next: NextFunction) => {
@@ -68,7 +68,7 @@ export const validateGuess = (req: Request, res: Response, next: NextFunction) =
   
   // Update the request body with the cleaned word
   req.body.word = cleanWord;
-  next();
+  return next();
 };
 
 export const validateUserRegistration = (req: Request, res: Response, next: NextFunction) => {
@@ -113,5 +113,5 @@ export const validateUserRegistration = (req: Request, res: Response, next: Next
     });
   }
   
-  next();
+  return next();
 };

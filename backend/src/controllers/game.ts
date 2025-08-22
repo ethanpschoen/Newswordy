@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { prisma } from '../utils/database';
-import { AuthenticatedRequest, CreateGameRequest, SubmitGuessRequest, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types';
+import { CreateGameRequest, SubmitGuessRequest, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types';
 
-export const createGame = async (req: AuthenticatedRequest, res: Response) => {
+export const createGame = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -23,14 +23,14 @@ export const createGame = async (req: AuthenticatedRequest, res: Response) => {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: { game },
       message: 'Game created successfully'
     });
   } catch (error) {
     console.error('Create game error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to create game'
     });
@@ -66,7 +66,7 @@ export const getGameState = async (req: Request, res: Response) => {
     const remainingGuesses = game.maxGuesses - game.guesses.length;
     const isCompleted = game.completedAt !== null || remainingGuesses === 0;
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         gameId: game.id,
@@ -82,14 +82,14 @@ export const getGameState = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Get game state error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to get game state'
     });
   }
 };
 
-export const submitGuess = async (req: AuthenticatedRequest, res: Response) => {
+export const submitGuess = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -188,7 +188,7 @@ export const submitGuess = async (req: AuthenticatedRequest, res: Response) => {
       data: { score: newScore }
     });
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         guess,
@@ -199,7 +199,7 @@ export const submitGuess = async (req: AuthenticatedRequest, res: Response) => {
     });
   } catch (error) {
     console.error('Submit guess error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to submit guess'
     });
@@ -234,20 +234,20 @@ export const getScoreboard = async (req: Request, res: Response) => {
       rank: index + 1
     }));
 
-    res.json({
+    return res.json({
       success: true,
       data: { scoreboard: scoreboardData }
     });
   } catch (error) {
     console.error('Get scoreboard error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to get scoreboard'
     });
   }
 };
 
-export const endGame = async (req: AuthenticatedRequest, res: Response) => {
+export const endGame = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -285,14 +285,14 @@ export const endGame = async (req: AuthenticatedRequest, res: Response) => {
     // Update user stats
     await updateUserStats(req.user.userId, game.score);
 
-    res.json({
+    return res.json({
       success: true,
       data: { game: updatedGame },
       message: 'Game ended successfully'
     });
   } catch (error) {
     console.error('End game error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to end game'
     });

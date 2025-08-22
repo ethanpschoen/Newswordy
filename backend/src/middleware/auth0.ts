@@ -22,7 +22,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
         error: 'Invalid or expired token'
       });
     }
-    next();
+    return next();
   });
 };
 

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { prisma } from '../utils/database';
-import { AuthenticatedRequest, TIME_PERIODS } from '../types';
+import { TIME_PERIODS } from '../types';
 
-export const getGlobalLeaderboard = async (req: AuthenticatedRequest, res: Response) => {
+export const getGlobalLeaderboard = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 50;
     const offset = parseInt(req.query.offset as string) || 0;
@@ -47,7 +47,8 @@ export const getGlobalLeaderboard = async (req: AuthenticatedRequest, res: Respo
         select: {
           id: true,
           username: true,
-          bestScore: true
+          bestScore: true,
+          averageScore: true
         },
         orderBy: [
           { bestScore: 'desc' },
@@ -73,7 +74,7 @@ export const getGlobalLeaderboard = async (req: AuthenticatedRequest, res: Respo
       }
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         leaderboard: leaderboardWithRanks,
@@ -85,21 +86,21 @@ export const getGlobalLeaderboard = async (req: AuthenticatedRequest, res: Respo
     });
   } catch (error) {
     console.error('Get global leaderboard error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to get global leaderboard'
     });
   }
 };
 
-export const getTimePeriodLeaderboard = async (req: AuthenticatedRequest, res: Response) => {
+export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
   try {
     const { timePeriod } = req.params;
     const limit = parseInt(req.query.limit as string) || 50;
     const offset = parseInt(req.query.offset as string) || 0;
 
     // Validate time period
-    if (!Object.values(TIME_PERIODS).includes(timePeriod)) {
+    if (!Object.values(TIME_PERIODS).includes(timePeriod as any)) {
       return res.status(400).json({
         success: false,
         error: `Invalid time period. Must be one of: ${Object.values(TIME_PERIODS).join(', ')}`
@@ -178,7 +179,7 @@ export const getTimePeriodLeaderboard = async (req: AuthenticatedRequest, res: R
       }
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         timePeriod,
@@ -196,7 +197,7 @@ export const getTimePeriodLeaderboard = async (req: AuthenticatedRequest, res: R
     });
   } catch (error) {
     console.error('Get time period leaderboard error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to get time period leaderboard'
     });

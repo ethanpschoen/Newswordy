@@ -9,15 +9,20 @@ declare global {
         email?: string;
         [key: string]: any;
       };
+      user?: {
+        userId: string;
+        email: string;
+        username: string;
+      };
     }
   }
 }
 
 export interface User {
   id: string;
+  auth0Id?: string;
   email: string;
   username: string;
-  password: string;
   createdAt: Date;
   updatedAt: Date;
   totalGames: number;
