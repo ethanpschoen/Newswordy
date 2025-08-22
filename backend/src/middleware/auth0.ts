@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { auth } from 'express-jwt';
+import { expressjwt as auth } from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 
 const checkJwt = auth({

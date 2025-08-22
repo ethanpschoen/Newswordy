@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getUserStats, updateProfile } from '../controllers/user';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth0'; // Use Auth0 middleware
 
 const router = Router();
 

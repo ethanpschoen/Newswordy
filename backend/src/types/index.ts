@@ -1,5 +1,18 @@
 // Type definitions for the Newswordy backend
 
+// Extend Express Request interface globally
+declare global {
+  namespace Express {
+    interface Request {
+      auth?: {
+        sub: string;
+        email?: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
+
 export interface User {
   id: string;
   email: string;
@@ -107,10 +120,6 @@ export interface JwtPayload {
   userId: string;
   email: string;
   username: string;
-}
-
-export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
 }
 
 // Time periods

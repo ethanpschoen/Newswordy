@@ -1,10 +1,22 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { prisma } from '../utils/database';
-import { AuthenticatedRequest } from '../types';
 
-export const getUserStats = async (req: AuthenticatedRequest, res: Response) => {
+// Extend Express Request interface globally
+declare global {
+  namespace Express {
+    interface Request {
+      auth?: {
+        sub: string;
+        email?: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
+
+export const getUserStats = async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
+    if (!req.auth) {
       return res.status(401).json({
         success: false,
         error: 'User not authenticated'
@@ -12,7 +24,7 @@ export const getUserStats = async (req: AuthenticatedRequest, res: Response) => 
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
+      where: { id: req.auth.sub },
       select: {
         totalGames: true,
         totalScore: true,
@@ -30,7 +42,7 @@ export const getUserStats = async (req: AuthenticatedRequest, res: Response) => 
 
     // Get recent games
     const recentGames = await prisma.game.findMany({
-      where: { userId: req.user.userId },
+      where: { userId: req.auth.sub },
       orderBy: { createdAt: 'desc' },
       take: 10,
       select: {
@@ -58,9 +70,9 @@ export const getUserStats = async (req: AuthenticatedRequest, res: Response) => 
   }
 };
 
-export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
+export const updateProfile = async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
+    if (!req.auth) {
       return res.status(401).json({
         success: false,
         error: 'User not authenticated'
@@ -81,7 +93,7 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
       where: {
         username,
         NOT: {
-          id: req.user.userId
+          id: req.auth.sub
         }
       }
     });
@@ -95,7 +107,7 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
 
     // Update user
     const updatedUser = await prisma.user.update({
-      where: { id: req.user.userId },
+      where: { id: req.auth.sub },
       data: { username },
       select: {
         id: true,
