@@ -11,7 +11,7 @@ import {
   validateGameSettings, 
   validateGuess 
 } from '../middleware/validation'
-import { authenticateToken, optionalAuth } from '../middleware/auth'
+import { authenticateToken, optionalAuth } from '../middleware/auth0'
 
 const router = Router()
 

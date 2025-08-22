@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { getGlobalLeaderboard, getTimePeriodLeaderboard } from '../controllers/leaderboard'
-import { optionalAuth } from '../middleware/auth'
+import { optionalAuth } from '../middleware/auth0'
 
 const router = Router()
 
