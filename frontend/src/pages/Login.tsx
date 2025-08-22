@@ -1,45 +1,39 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import LoadingSpinner from '../components/LoadingSpinner';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: ''
-  });
-  const [error, setError] = useState('');
+  })
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
     try {
-      const success = await login(formData.email, formData.password);
-      if (success) {
-        navigate('/');
-      } else {
-        setError('Invalid email or password');
-      }
+      login()
     } catch (error) {
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
+      setError('An error occurred. Please try again.')
+      setLoading(false)
     }
-  };
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
-    });
-  };
+    })
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -137,7 +131,7 @@ const Login: React.FC = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

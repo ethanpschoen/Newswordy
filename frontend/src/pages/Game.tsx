@@ -1,123 +1,123 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { gameAPI } from '../services/api';
-import { GameState, ScoreboardEntry, TIME_PERIOD_NAMES } from '../types';
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { gameAPI } from '../services/api'
+import { GameState, ScoreboardEntry, TIME_PERIOD_NAMES } from '../types'
 import { 
   TrophyIcon,
   ArrowLeftIcon,
   PlayIcon
-} from '@heroicons/react/24/outline';
-import LoadingSpinner from '../components/LoadingSpinner';
+} from '@heroicons/react/24/outline'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Game: React.FC = () => {
-  const { gameId } = useParams<{ gameId: string }>();
+  const { gameId } = useParams<{ gameId: string }>()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   
-  const [gameState, setGameState] = useState<GameState | null>(null);
-  const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [currentGuess, setCurrentGuess] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [showScoreboard, setShowScoreboard] = useState(false);
+  const [gameState, setGameState] = useState<GameState | null>(null)
+  const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [currentGuess, setCurrentGuess] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [showScoreboard, setShowScoreboard] = useState(false)
 
   useEffect(() => {
     if (gameId) {
-      loadGame();
+      loadGame()
     }
-  }, [gameId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [gameId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadGame = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
       const [gameResponse, scoreboardResponse] = await Promise.all([
         gameAPI.getGameState(gameId!),
         gameAPI.getScoreboard(gameId!)
-      ]);
+      ])
 
       if (gameResponse.success && gameResponse.data) {
-        setGameState(gameResponse.data);
+        setGameState(gameResponse.data)
       }
 
       if (scoreboardResponse.success && scoreboardResponse.data) {
-        setScoreboard(scoreboardResponse.data.scoreboard);
+        setScoreboard(scoreboardResponse.data.scoreboard)
       }
     } catch (error) {
-      console.error('Failed to load game:', error);
-      setError('Failed to load game');
+      console.error('Failed to load game:', error)
+      setError('Failed to load game')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleSubmitGuess = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentGuess.trim() || !gameId) return;
+    e.preventDefault()
+    if (!currentGuess.trim() || !gameId) return
 
-    setSubmitting(true);
-    setError('');
-    setSuccess('');
+    setSubmitting(true)
+    setError('')
+    setSuccess('')
 
     try {
-      const response = await gameAPI.submitGuess(gameId, { word: currentGuess.trim() });
+      const response = await gameAPI.submitGuess(gameId, { word: currentGuess.trim() })
       
       if (response.success && response.data) {
-        setSuccess(`"${currentGuess}" found! +${response.data.guess.score} points`);
-        setCurrentGuess('');
+        setSuccess(`"${currentGuess}" found! +${response.data.guess.score} points`)
+        setCurrentGuess('')
         
         // Reload game state to get updated score and guesses
-        await loadGame();
+        await loadGame()
         
         // Check if game is over
         if (response.data.remainingGuesses === 0) {
           setTimeout(() => {
-            endGame();
-          }, 2000);
+            endGame()
+          }, 2000)
         }
       }
     } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to submit guess');
+      setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   const endGame = async () => {
-    if (!gameId) return;
+    if (!gameId) return
     
     try {
-      await gameAPI.endGame(gameId);
+      await gameAPI.endGame(gameId)
       // Redirect to home after a short delay
       setTimeout(() => {
-        navigate('/');
-      }, 3000);
+        navigate('/')
+      }, 3000)
     } catch (error) {
-      console.error('Failed to end game:', error);
+      console.error('Failed to end game:', error)
     }
-  };
+  }
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-blue-600';
-    if (score >= 40) return 'text-yellow-600';
-    return 'text-gray-600';
-  };
+    if (score >= 80) return 'text-green-600'
+    if (score >= 60) return 'text-blue-600'
+    if (score >= 40) return 'text-yellow-600'
+    return 'text-gray-600'
+  }
 
   const getRankColor = (rank: number) => {
-    if (rank === 1) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    if (rank === 2) return 'bg-gray-100 text-gray-800 border-gray-200';
-    if (rank === 3) return 'bg-orange-100 text-orange-800 border-orange-200';
-    return 'bg-blue-100 text-blue-800 border-blue-200';
-  };
+    if (rank === 1) return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    if (rank === 2) return 'bg-gray-100 text-gray-800 border-gray-200'
+    if (rank === 3) return 'bg-orange-100 text-orange-800 border-orange-200'
+    return 'bg-blue-100 text-blue-800 border-blue-200'
+  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-96">
         <LoadingSpinner size="lg" />
       </div>
-    );
+    )
   }
 
   if (!gameState) {
@@ -133,7 +133,7 @@ const Game: React.FC = () => {
           Back to Home
         </button>
       </div>
-    );
+    )
   }
 
   return (
@@ -330,7 +330,7 @@ const Game: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Game;
+export default Game

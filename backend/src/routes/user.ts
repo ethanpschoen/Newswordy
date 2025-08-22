@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import { getUserStats, updateProfile } from '../controllers/user';
-import { authenticateToken } from '../middleware/auth0'; // Use Auth0 middleware
+import { Router } from 'express'
+import { getUserStats, updateProfile } from '../controllers/user'
+import { authenticateToken } from '../middleware/auth0' // Use Auth0 middleware
 
-const router = Router();
+const router = Router()
 
 // All routes require authentication
-router.use(authenticateToken);
+router.use(authenticateToken)
 
-router.get('/stats', getUserStats);
-router.put('/profile', updateProfile);
+router.get('/stats', getUserStats)
+router.put('/profile', updateProfile)
 
-export default router;
+export default router

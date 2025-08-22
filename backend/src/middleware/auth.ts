@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { expressjwt as auth } from 'express-jwt';
-import jwksRsa from 'jwks-rsa';
-import { prisma } from '../utils/database';
+import { Request, Response, NextFunction } from 'express'
+import { expressjwt as auth } from 'express-jwt'
+import jwksRsa from 'jwks-rsa'
+import { prisma } from '../utils/database'
 
 const checkJwt = auth({
   secret: jwksRsa.expressJwtSecret({
@@ -13,7 +13,7 @@ const checkJwt = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuer: process.env.AUTH0_ISSUER_BASE_URL,
   algorithms: ['RS256']
-});
+})
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   checkJwt(req, res, async (err) => {
@@ -21,7 +21,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
       return res.status(401).json({
         success: false,
         error: 'Invalid or expired token'
-      });
+      })
     }
     
     // Get user from database based on Auth0 ID
@@ -33,26 +33,26 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
           email: true,
           username: true
         }
-      });
+      })
       
       if (user) {
         (req as any).user = {
           userId: user.id,
           email: user.email,
           username: user.username
-        };
+        }
       }
     }
     
-    return next();
-  });
-};
+    return next()
+  })
+}
 
 export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
   checkJwt(req, res, async (err) => {
     if (err) {
       // Continue without authentication
-      req.auth = undefined;
+      req.auth = undefined
     } else {
       // Get user from database based on Auth0 ID
       if (req.auth?.sub) {
@@ -63,17 +63,17 @@ export const optionalAuth = async (req: Request, res: Response, next: NextFuncti
             email: true,
             username: true
           }
-        });
+        })
         
         if (user) {
           (req as any).user = {
             userId: user.id,
             email: user.email,
             username: user.username
-          };
+          }
         }
       }
     }
-    return next();
-  });
-};
+    return next()
+  })
+}

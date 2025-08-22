@@ -1,48 +1,48 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Game from './pages/Game';
-import Profile from './pages/Profile';
-import Leaderboard from './pages/Leaderboard';
-import LoadingSpinner from './components/LoadingSpinner';
-import { Auth0Provider } from '@auth0/auth0-react';
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Game from './pages/Game'
+import Profile from './pages/Profile'
+import Leaderboard from './pages/Leaderboard'
+import LoadingSpinner from './components/LoadingSpinner'
+import { Auth0Provider } from '@auth0/auth0-react'
 
 // Protected route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth()
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner />
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />
   }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
 // Public route component (redirects if already logged in)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth()
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner />
   }
 
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" replace />
   }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
 const AppContent: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   return (
     <Router>
@@ -85,8 +85,8 @@ const AppContent: React.FC = () => {
         </main>
       </div>
     </Router>
-  );
-};
+  )
+}
 
 function App() {
   return (
@@ -103,7 +103,7 @@ function App() {
         <AppContent />
       </AuthProvider>
     </Auth0Provider>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { 
   HomeIcon, 
   UserIcon, 
   TrophyIcon, 
   Bars3Icon, 
   XMarkIcon 
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+    logout()
+    navigate('/login')
+  }
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
     { name: 'Profile', href: '/profile', icon: UserIcon },
     { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
-  ];
+  ]
 
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
         </div>
       )}
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

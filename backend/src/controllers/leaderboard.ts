@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import { prisma } from '../utils/database';
-import { TIME_PERIODS } from '../types';
+import { Request, Response } from 'express'
+import { prisma } from '../utils/database'
+import { TIME_PERIODS, TimePeriod } from '../types'
 
 export const getGlobalLeaderboard = async (req: Request, res: Response) => {
   try {
-    const limit = parseInt(req.query.limit as string) || 50;
-    const offset = parseInt(req.query.offset as string) || 0;
+    const limit = parseInt(req.query.limit as string) || 50
+    const offset = parseInt(req.query.offset as string) || 0
 
     // Get users with highest best scores
     const leaderboard = await prisma.user.findMany({
@@ -27,16 +27,16 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
       ],
       take: limit,
       skip: offset
-    });
+    })
 
     // Add ranks
     const leaderboardWithRanks = leaderboard.map((user, index) => ({
       ...user,
       rank: offset + index + 1
-    }));
+    }))
 
     // Get current user's rank if authenticated
-    let userRank = null;
+    let userRank = null
     if (req.user) {
       const userWithRank = await prisma.user.findFirst({
         where: {
@@ -54,7 +54,7 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
           { bestScore: 'desc' },
           { averageScore: 'desc' }
         ]
-      });
+      })
 
       if (userWithRank) {
         const rank = await prisma.user.count({
@@ -69,8 +69,8 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
               }
             ]
           }
-        });
-        userRank = rank + 1;
+        })
+        userRank = rank + 1
       }
     }
 
@@ -83,28 +83,28 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
           where: { bestScore: { gt: 0 } }
         })
       }
-    });
+    })
   } catch (error) {
-    console.error('Get global leaderboard error:', error);
+    console.error('Get global leaderboard error:', error)
     return res.status(500).json({
       success: false,
       error: 'Failed to get global leaderboard'
-    });
+    })
   }
-};
+}
 
 export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
   try {
-    const { timePeriod } = req.params;
-    const limit = parseInt(req.query.limit as string) || 50;
-    const offset = parseInt(req.query.offset as string) || 0;
+    const { timePeriod } = req.params
+    const limit = parseInt(req.query.limit as string) || 50
+    const offset = parseInt(req.query.offset as string) || 0
 
     // Validate time period
-    if (!Object.values(TIME_PERIODS).includes(timePeriod as any)) {
+    if (!Object.values(TIME_PERIODS).includes(timePeriod as TimePeriod)) {
       return res.status(400).json({
         success: false,
         error: `Invalid time period. Must be one of: ${Object.values(TIME_PERIODS).join(', ')}`
-      });
+      })
     }
 
     // Get best scores for the specific time period
@@ -126,7 +126,7 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
       },
       take: limit,
       skip: offset
-    });
+    })
 
     // Get user details for each entry
     const leaderboardWithUsers = await Promise.all(
@@ -137,19 +137,19 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
             id: true,
             username: true
           }
-        });
+        })
 
         return {
           userId: entry.userId,
           username: user?.username || 'Unknown',
           score: entry._max.score || 0,
           rank: offset + index + 1
-        };
+        }
       })
-    );
+    )
 
     // Get current user's rank if authenticated
-    let userRank = null;
+    let userRank = null
     if (req.user) {
       const userBestScore = await prisma.game.findFirst({
         where: {
@@ -161,7 +161,7 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
         },
         orderBy: { score: 'desc' },
         select: { score: true }
-      });
+      })
 
       if (userBestScore) {
         const rank = await prisma.game.count({
@@ -174,8 +174,8 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
               gt: userBestScore.score
             }
           }
-        });
-        userRank = rank + 1;
+        })
+        userRank = rank + 1
       }
     }
 
@@ -194,12 +194,12 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
           }
         })
       }
-    });
+    })
   } catch (error) {
-    console.error('Get time period leaderboard error:', error);
+    console.error('Get time period leaderboard error:', error)
     return res.status(500).json({
       success: false,
       error: 'Failed to get time period leaderboard'
-    });
+    })
   }
-};
+}

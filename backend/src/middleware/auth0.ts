@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { expressjwt as auth } from 'express-jwt';
-import jwksRsa from 'jwks-rsa';
+import { Request, Response, NextFunction } from 'express'
+import { expressjwt as auth } from 'express-jwt'
+import jwksRsa from 'jwks-rsa'
 
 const checkJwt = auth({
   secret: jwksRsa.expressJwtSecret({
@@ -12,7 +12,7 @@ const checkJwt = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuer: process.env.AUTH0_ISSUER_BASE_URL,
   algorithms: ['RS256']
-});
+})
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   checkJwt(req, res, (err) => {
@@ -20,18 +20,18 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return res.status(401).json({
         success: false,
         error: 'Invalid or expired token'
-      });
+      })
     }
-    return next();
-  });
-};
+    return next()
+  })
+}
 
 export const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
   checkJwt(req, res, (err) => {
     if (err) {
       // Continue without authentication
-      req.auth = undefined;
+      req.auth = undefined
     }
-    next();
-  });
-};
+    next()
+  })
+}

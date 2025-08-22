@@ -1,50 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { gameAPI } from '../services/api';
-import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { gameAPI } from '../services/api'
+import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types'
 import { 
   PlayIcon, 
   Cog6ToothIcon,
   ClockIcon,
   TrophyIcon,
   UserIcon
-} from '@heroicons/react/24/outline';
-import LoadingSpinner from '../components/LoadingSpinner';
+} from '@heroicons/react/24/outline'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Home: React.FC = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_DAY);
-  const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES);
-  const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE);
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_DAY)
+  const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
+  const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
 
   const handleStartGame = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await gameAPI.createGame({
         timePeriod: selectedTimePeriod,
         maxGuesses,
         scoreboardSize
-      });
+      })
 
       if (response.success && response.data) {
-        navigate(`/game/${response.data.game.id}`);
+        navigate(`/game/${response.data.game.id}`)
       }
     } catch (error) {
-      console.error('Failed to create game:', error);
+      console.error('Failed to create game:', error)
       // You could add a toast notification here
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const stats = [
     { name: 'Total Games', value: user?.totalGames || 0, icon: PlayIcon, color: 'text-blue-600' },
     { name: 'Best Score', value: user?.bestScore || 0, icon: TrophyIcon, color: 'text-yellow-600' },
     { name: 'Average Score', value: user?.averageScore?.toFixed(1) || '0.0', icon: UserIcon, color: 'text-green-600' },
-  ];
+  ]
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -183,7 +183,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
