@@ -4,9 +4,9 @@ Database models and connection for the Newswordy scraper
 
 import os
 from datetime import datetime, timezone
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Float, Index
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Float, Index, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 from config import DATABASE_CONFIG
@@ -38,7 +38,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     source = Column(String(50), nullable=False, index=True)
     headline = Column(Text, nullable=False)
-    url = Column(String(500), nullable=False)
+    url = Column(String(500), nullable=False, unique=True)
     published_date = Column(DateTime, nullable=True)
     scraped_date = Column(DateTime, default=datetime.now(timezone.utc))
     content = Column(Text, nullable=True)
@@ -47,23 +47,28 @@ class Article(Base):
     __table_args__ = (
         Index('idx_source_date', 'source', 'published_date'),
     )
+    
+    # Relationship to ArticleWord
+    words = relationship("ArticleWord", back_populates="article")
 
-class WordFrequency(Base):
-    """Model for storing word frequencies by time period"""
-    __tablename__ = "word_frequencies"
+class ArticleWord(Base):
+    """Model for storing individual word occurrences in articles"""
+    __tablename__ = "article_words"
     
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    article_id = Column(Integer, ForeignKey('articles.id'), nullable=False, index=True)
     word = Column(String(100), nullable=False, index=True)
-    frequency = Column(Integer, nullable=False, default=0)
-    time_period = Column(String(50), nullable=False, index=True)
-    start_date = Column(DateTime, nullable=False, index=True)
-    end_date = Column(DateTime, nullable=False, index=True)
+    frequency = Column(Integer, nullable=False, default=1)  # How many times this word appears in this article
     created_date = Column(DateTime, default=datetime.now(timezone.utc))
     
-    # Create unique index on word and time_period
+    # Create indexes for efficient querying
     __table_args__ = (
-        Index('idx_word_period', 'word', 'time_period', unique=True),
+        Index('idx_word_article', 'word', 'article_id'),
+        Index('idx_word_frequency', 'word', 'frequency'),
     )
+    
+    # Relationship to Article
+    article = relationship("Article", back_populates="words")
 
 class ScrapingLog(Base):
     """Model for logging scraping activities"""
@@ -126,36 +131,60 @@ class DatabaseManager:
             logger.error(f"Failed to save article: {e}")
             raise
     
-    def save_word_frequencies(self, word_freq_data: dict, time_period: str, 
-                            start_date: datetime, end_date: datetime):
-        """Save word frequencies for a time period"""
+    def save_article_words(self, article_id: int, word_freq_data: dict):
+        """Save word frequencies for a specific article"""
         try:
             for word, frequency in word_freq_data.items():
-                # Check if word frequency already exists for this period
-                existing = self.session.query(WordFrequency).filter(
-                    WordFrequency.word == word,
-                    WordFrequency.time_period == time_period
-                ).first()
-                
-                if existing:
-                    existing.frequency = frequency
-                    existing.start_date = start_date
-                    existing.end_date = end_date
-                else:
-                    word_freq = WordFrequency(
-                        word=word,
-                        frequency=frequency,
-                        time_period=time_period,
-                        start_date=start_date,
-                        end_date=end_date
-                    )
-                    self.session.add(word_freq)
+                article_word = ArticleWord(
+                    article_id=article_id,
+                    word=word,
+                    frequency=frequency
+                )
+                self.session.add(article_word)
             
             self.session.commit()
-            logger.info(f"Saved {len(word_freq_data)} word frequencies for {time_period}")
+            logger.info(f"Saved {len(word_freq_data)} words for article {article_id}")
         except SQLAlchemyError as e:
             self.session.rollback()
-            logger.error(f"Failed to save word frequencies: {e}")
+            logger.error(f"Failed to save article words: {e}")
+            raise
+    
+    def get_word_frequencies_by_range(self, start_date: datetime, end_date: datetime, 
+                                    sources: list = None, limit: int = 100):
+        """Get word frequencies for a date range and optional source filter"""
+        try:
+            # Build the query
+            query = self.session.query(
+                ArticleWord.word,
+                ArticleWord.frequency,
+                Article.source,
+                Article.published_date
+            ).join(Article, ArticleWord.article_id == Article.id).filter(
+                Article.published_date >= start_date,
+                Article.published_date <= end_date
+            )
+            
+            # Add source filter if specified
+            if sources:
+                query = query.filter(Article.source.in_(sources))
+            
+            # Execute query and aggregate results
+            results = query.all()
+            
+            # Aggregate word frequencies
+            word_frequencies = {}
+            for word, freq, source, date in results:
+                if word in word_frequencies:
+                    word_frequencies[word] += freq
+                else:
+                    word_frequencies[word] = freq
+            
+            # Sort by frequency and return top results
+            sorted_words = sorted(word_frequencies.items(), key=lambda x: x[1], reverse=True)
+            return dict(sorted_words[:limit])
+            
+        except SQLAlchemyError as e:
+            logger.error(f"Failed to get word frequencies: {e}")
             raise
     
     def get_articles_by_date_range(self, start_date: datetime, end_date: datetime, 
@@ -170,12 +199,6 @@ class DatabaseManager:
             query = query.filter(Article.source == source)
         
         return query.all()
-    
-    def get_word_frequencies(self, time_period: str, limit: int = 100):
-        """Get word frequencies for a time period, ordered by frequency"""
-        return self.session.query(WordFrequency).filter(
-            WordFrequency.time_period == time_period
-        ).order_by(WordFrequency.frequency.desc()).limit(limit).all()
     
     def log_scraping_activity(self, source: str, status: str, articles_scraped: int = 0,
                             error_message: str = None, start_time: datetime = None,

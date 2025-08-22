@@ -40,8 +40,8 @@ class WordProcessor:
         
         # Common news-specific words to exclude
         self.news_words = {
-            'news', 'breaking', 'update', 'latest', 'report', 'reports', 'reported',
-            'says', 'said', 'according', 'official', 'officials', 'government',
+            'new', 'news', 'breaking', 'update', 'latest', 'report', 'reports',
+            'reported', 'says', 'said', 'according', 'official', 'officials', 'government',
             'announced', 'announcement', 'statement', 'comment', 'comments', 'response',
             'responded', 'saying', 'told', 'tells', 'telling', 'speaking', 'spoke',
             'address', 'addressed', 'meeting', 'meet', 'met', 'conference', 'press',

@@ -80,19 +80,22 @@ def test_word_frequency_update():
     """Test word frequency update"""
     print("\nTesting word frequency update...")
     try:
-        scraper = NewsScraper()
+        db_manager = DatabaseManager()
         
         # Test with a small time period
         now = datetime.now(timezone.utc)
         start_date = now - timedelta(days=1)
         end_date = now
         
-        scraper.update_word_frequencies('test_period', start_date, end_date)
+        word_frequencies = db_manager.get_word_frequencies_by_range(
+            start_date, end_date, limit=10
+        )
         
-        print("✅ Word frequency update test successful")
+        print("✅ Word frequency query test successful")
+        print(f"   Found {len(word_frequencies)} word frequencies")
         return True
     except Exception as e:
-        print(f"❌ Word frequency update test failed: {e}")
+        print(f"❌ Word frequency query test failed: {e}")
         return False
 
 def main():

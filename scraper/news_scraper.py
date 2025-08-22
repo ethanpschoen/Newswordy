@@ -171,17 +171,30 @@ class NewsScraper:
             if not articles:
                 articles = self.scrape_website_headlines(source_config)
             
-            # Save articles to database
+            # Save articles to database and process word frequencies
             saved_count = 0
             for article in articles:
                 try:
-                    self.db_manager.save_article(
+                    # Save the article
+                    article_id = self.db_manager.save_article(
                         source=source_key,
                         headline=article['title'],
                         url=article['link'],
                         published_date=article['published'],
                         content=article.get('summary', '')
                     )
+                    
+                    # Process word frequencies for this article
+                    if article['title']:
+                        word_frequencies = self.word_processor.analyze_headlines(
+                            [article['title']], 
+                            min_frequency=1, 
+                            top_n=50
+                        )
+                        
+                        if word_frequencies:
+                            self.db_manager.save_article_words(article_id, word_frequencies)
+                    
                     saved_count += 1
                 except Exception as e:
                     logger.error(f"Error saving article: {e}")
@@ -234,41 +247,6 @@ class NewsScraper:
         
         return results
     
-    def update_word_frequencies(self, time_period: str, start_date: datetime, end_date: datetime):
-        """Update word frequencies for a specific time period"""
-        try:
-            logger.info(f"Updating word frequencies for {time_period}")
-            
-            # Get articles from database for the time period
-            articles = self.db_manager.get_articles_by_date_range(start_date, end_date)
-            
-            if not articles:
-                logger.warning(f"No articles found for time period {time_period}")
-                return
-            
-            # Extract headlines
-            headlines = [article.headline for article in articles if article.headline]
-            
-            # Process headlines to get word frequencies
-            word_frequencies = self.word_processor.analyze_headlines(
-                headlines, 
-                min_frequency=2, 
-                top_n=100
-            )
-            
-            # Save word frequencies to database
-            self.db_manager.save_word_frequencies(
-                word_frequencies, 
-                time_period, 
-                start_date, 
-                end_date
-            )
-            
-            logger.info(f"Updated word frequencies for {time_period}: {len(word_frequencies)} words")
-            
-        except Exception as e:
-            logger.error(f"Error updating word frequencies for {time_period}: {e}")
-    
     def run_daily_scrape(self):
         """Run daily scraping and update word frequencies"""
         logger.info("Starting daily scraping process")
@@ -278,17 +256,6 @@ class NewsScraper:
         
         # Calculate time periods
         now = datetime.now(timezone.utc)
-        
-        # Update word frequencies for different time periods
-        time_periods = {
-            'past_day': (now - timedelta(days=1), now),
-            'past_week': (now - timedelta(days=7), now),
-            'past_month': (now - timedelta(days=30), now),
-            'past_year': (now - timedelta(days=365), now)
-        }
-        
-        for period_name, (start_date, end_date) in time_periods.items():
-            self.update_word_frequencies(period_name, start_date, end_date)
         
         logger.info("Daily scraping process completed")
 
