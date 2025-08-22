@@ -9,12 +9,12 @@ from dotenv import load_dotenv
 
 # News sources configuration
 NEWS_SOURCES = {
-    'cnn': {
-        'name': 'CNN',
-        'url': 'https://www.cnn.com',
-        'rss_feed': 'http://rss.cnn.com/rss/edition.rss',
-        'headline_selectors': ['h3.cd__headline', '.container__headline', 'h1.headline__text'],
-        'article_selectors': ['article', '.card', '.container'],
+    'axios': {
+        'name': 'Axios',
+        'url': 'https://www.axios.com/',
+        'rss_feed': 'https://api.axios.com/feed/',
+        'headline_selectors': [''],
+        'article_selectors': [''],
         'enabled': True
     },
     'bbc': {
@@ -25,12 +25,52 @@ NEWS_SOURCES = {
         'article_selectors': ['.gs-c-promo', 'article', '.gs-c-promo-body'],
         'enabled': True
     },
-    'reuters': {
-        'name': 'Reuters',
-        'url': 'https://www.reuters.com',
-        'rss_feed': 'http://feeds.reuters.com/reuters/topNews',
-        'headline_selectors': ['h3[data-testid="Heading"]', '.story-card__heading', 'h1'],
-        'article_selectors': ['article', '.story-card', '.media-story-card'],
+    'cnn': {
+        'name': 'CNN',
+        'url': 'https://www.cnn.com',
+        'rss_feed': 'http://rss.cnn.com/rss/edition.rss',
+        'headline_selectors': ['h3.cd__headline', '.container__headline', 'h1.headline__text'],
+        'article_selectors': ['article', '.card', '.container'],
+        'enabled': True
+    },
+    'fox_news': {
+        'name': 'Fox News',
+        'url': 'https://www.foxnews.com/',
+        'rss_feed': 'https://moxie.foxnews.com/google-publisher/latest.xml',
+        'headline_selectors': [''],
+        'article_selectors': [''],
+        'enabled': True
+    },
+    'guardian': {
+        'name': 'The Guardian',
+        'url': 'https://www.theguardian.com',
+        'rss_feed': 'https://www.theguardian.com/world/rss',
+        'headline_selectors': ['h3.fc-item__title', '.fc-item__title', 'h1'],
+        'article_selectors': ['.fc-item', 'article', '.fc-item__container'],
+        'enabled': True
+    },
+    'los_angeles_times': {
+        'name': 'Los Angeles Times',
+        'url': 'https://www.latimes.com/',
+        'rss_feed': 'https://www.latimes.com/world-nation/rss2.0.xml#nt=0000016c-0bf3-d57d-afed-2fff84fd0000-1col-7030col1',
+        'headline_selectors': [''],
+        'article_selectors': [''],
+        'enabled': True
+    },
+    'nbc_news': {
+        'name': 'NBC News',
+        'url': 'https://www.nbcnews.com/',
+        'rss_feed': 'https://feeds.nbcnews.com/nbcnews/public/news',
+        'headline_selectors': [''],
+        'article_selectors': [''],
+        'enabled': True
+    },
+    'npr': {
+        'name': 'NPR',
+        'url': 'https://www.npr.org/',
+        'rss_feed': 'https://feeds.npr.org/1001/rss.xml',
+        'headline_selectors': [''],
+        'article_selectors': [''],
         'enabled': True
     },
     'nyt': {
@@ -41,12 +81,20 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.css-1l4w6pd', '.css-1l4w6pd'],
         'enabled': True
     },
-    'guardian': {
-        'name': 'The Guardian',
-        'url': 'https://www.theguardian.com',
-        'rss_feed': 'https://www.theguardian.com/world/rss',
-        'headline_selectors': ['h3.fc-item__title', '.fc-item__title', 'h1'],
-        'article_selectors': ['.fc-item', 'article', '.fc-item__container'],
+    'reuters': {
+        'name': 'Reuters',
+        'url': 'https://www.reuters.com',
+        'rss_feed': 'http://feeds.reuters.com/reuters/topNews',
+        'headline_selectors': ['h3[data-testid="Heading"]', '.story-card__heading', 'h1'],
+        'article_selectors': ['article', '.story-card', '.media-story-card'],
+        'enabled': True
+    },
+    'wall_street_journal': {
+        'name': 'The Wall Street Journal',
+        'url': 'https://www.wsj.com/',
+        'rss_feed': 'https://feeds.content.dowjones.io/public/rss/RSSWorldNews',
+        'headline_selectors': [''],
+        'article_selectors': [''],
         'enabled': True
     },
     'washington_post': {
