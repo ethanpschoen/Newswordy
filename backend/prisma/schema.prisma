@@ -11,18 +11,18 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  auth0Id   String   @unique
-  email     String   @unique
-  username  String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  auth0_id   String   @unique
+  email      String   @unique
+  username   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Game-related fields
-  totalGames    Int @default(0)
-  totalScore    Int @default(0)
-  averageScore  Float @default(0)
-  bestScore     Int @default(0)
+  total_games    Int @default(0)
+  total_score    Int @default(0)
+  average_score  Float @default(0)
+  best_score     Int @default(0)
   
   // Relationships
   games Game[]
@@ -32,73 +32,73 @@ model User {
 }
 
 model Game {
-  id          String   @id @default(cuid())
-  userId      String
-  timePeriod  String   // past_day, past_week, past_month, past_year, etc.
-  score       Int      @default(0)
-  maxGuesses  Int      @default(3)
-  scoreboardSize Int   @default(10)
-  createdAt   DateTime @default(now())
-  completedAt DateTime?
+  id              String   @id @default(cuid())
+  user_id         String
+  time_period     String   // past_day, past_week, past_month, past_year, etc.
+  score           Int      @default(0)
+  max_guesses     Int      @default(3)
+  scoreboard_size Int      @default(10)
+  created_at      DateTime @default(now())
+  completed_at    DateTime?
   
   // Relationships
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   guesses Guess[]
   
   @@map("games")
 }
 
 model Guess {
-  id        String   @id @default(cuid())
-  gameId    String
-  userId    String
-  word      String
-  frequency Int      @default(0)
-  score     Int      @default(0)
-  rank      Int?     // Position in the scoreboard
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  game_id    String
+  user_id    String
+  word       String
+  frequency  Int      @default(0)
+  score      Int      @default(0)
+  rank       Int?     // Position in the scoreboard
+  created_at DateTime @default(now())
   
   // Relationships
-  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [game_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   
   @@map("guesses")
 }
 
 model WordFrequency {
-  id          String   @id @default(cuid())
-  word        String
-  frequency   Int
-  timePeriod  String
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  word         String
+  frequency    Int
+  time_period  String
+  start_date   DateTime
+  end_date     DateTime
+  created_at   DateTime @default(now())
   
-  @@unique([word, timePeriod])
+  @@unique([word, time_period])
   @@map("word_frequencies")
 }
 
 model Article {
-  id            String    @id @default(cuid())
-  source        String
-  headline      String
-  url           String
-  publishedDate DateTime?
-  scrapedDate   DateTime  @default(now())
-  content       String?
+  id             String    @id @default(cuid())
+  source         String
+  headline       String
+  url            String
+  published_date DateTime?
+  scraped_date   DateTime  @default(now())
+  content        String?
   
   @@map("articles")
 }
 
 model ScrapingLog {
-  id              String    @id @default(cuid())
-  source          String
-  status          String    // success, error, partial
-  articlesScraped Int       @default(0)
-  errorMessage    String?
-  startTime       DateTime  @default(now())
-  endTime         DateTime?
-  durationSeconds Float?
+  id               String    @id @default(cuid())
+  source           String
+  status           String    // success, error, partial
+  articles_scraped Int       @default(0)
+  error_message    String?
+  start_time       DateTime  @default(now())
+  end_time         DateTime?
+  duration_seconds Float?
   
   @@map("scraping_logs")
 }

@@ -52,7 +52,7 @@ class WordFrequency(Base):
     """Model for storing word frequencies by time period"""
     __tablename__ = "word_frequencies"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     word = Column(String(100), nullable=False, index=True)
     frequency = Column(Integer, nullable=False, default=0)
     time_period = Column(String(50), nullable=False, index=True)
@@ -69,7 +69,7 @@ class ScrapingLog(Base):
     """Model for logging scraping activities"""
     __tablename__ = "scraping_logs"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     source = Column(String(50), nullable=False)
     status = Column(String(20), nullable=False)  # success, error, partial
     articles_scraped = Column(Integer, default=0)

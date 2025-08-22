@@ -5,6 +5,7 @@ Configuration file for the Newswordy scraper
 import os
 from datetime import datetime, timedelta
 from typing import Dict, List
+from dotenv import load_dotenv
 
 # News sources configuration
 NEWS_SOURCES = {
@@ -58,14 +59,16 @@ NEWS_SOURCES = {
     }
 }
 
+load_dotenv()
+
 # Database configuration
 DATABASE_CONFIG = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'port': os.getenv('DB_PORT', '5432'),
-    'database': os.getenv('DB_NAME', 'newswordy'),
-    'user': os.getenv('DB_USER', 'postgres'),
-    'password': os.getenv('DB_PASSWORD', ''),
-    'connection_string': os.getenv('DATABASE_URL', '')
+    'host': os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT'),
+    'database': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'connection_string': os.getenv('DATABASE_URL')
 }
 
 # Scraping configuration
