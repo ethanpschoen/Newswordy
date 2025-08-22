@@ -4,7 +4,7 @@ Test script for the news scraper
 
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -83,7 +83,7 @@ def test_word_frequency_update():
         scraper = NewsScraper()
         
         # Test with a small time period
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         start_date = now - timedelta(days=1)
         end_date = now
         

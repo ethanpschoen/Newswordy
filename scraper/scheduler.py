@@ -5,7 +5,7 @@ Scheduler for running the news scraper at regular intervals
 import schedule
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from news_scraper import NewsScraper
 
 # Set up logging
@@ -36,7 +36,7 @@ def run_word_frequency_update():
         scraper = NewsScraper()
         
         from datetime import datetime, timedelta
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Update word frequencies for different time periods
         time_periods = {

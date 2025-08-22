@@ -3,7 +3,7 @@ Database models and connection for the Newswordy scraper
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Float, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -35,12 +35,12 @@ class Article(Base):
     """Model for storing scraped articles"""
     __tablename__ = "articles"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     source = Column(String(50), nullable=False, index=True)
     headline = Column(Text, nullable=False)
     url = Column(String(500), nullable=False)
     published_date = Column(DateTime, nullable=True)
-    scraped_date = Column(DateTime, default=datetime.utcnow)
+    scraped_date = Column(DateTime, default=datetime.now(timezone.utc))
     content = Column(Text, nullable=True)
     
     # Create index on source and published_date for efficient queries
@@ -58,7 +58,7 @@ class WordFrequency(Base):
     time_period = Column(String(50), nullable=False, index=True)
     start_date = Column(DateTime, nullable=False, index=True)
     end_date = Column(DateTime, nullable=False, index=True)
-    created_date = Column(DateTime, default=datetime.utcnow)
+    created_date = Column(DateTime, default=datetime.now(timezone.utc))
     
     # Create unique index on word and time_period
     __table_args__ = (
@@ -74,7 +74,7 @@ class ScrapingLog(Base):
     status = Column(String(20), nullable=False)  # success, error, partial
     articles_scraped = Column(Integer, default=0)
     error_message = Column(Text, nullable=True)
-    start_time = Column(DateTime, default=datetime.utcnow)
+    start_time = Column(DateTime, default=datetime.now(timezone.utc))
     end_time = Column(DateTime, nullable=True)
     duration_seconds = Column(Float, nullable=True)
 
@@ -191,7 +191,7 @@ class DatabaseManager:
                 status=status,
                 articles_scraped=articles_scraped,
                 error_message=error_message,
-                start_time=start_time or datetime.utcnow(),
+                start_time=start_time or datetime.now(timezone.utc),
                 end_time=end_time,
                 duration_seconds=duration
             )

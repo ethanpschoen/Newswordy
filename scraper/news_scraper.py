@@ -5,7 +5,7 @@ Main news scraper for collecting headlines from various news sources
 import requests
 import feedparser
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import logging
 from typing import List, Dict, Optional, Tuple
@@ -157,7 +157,7 @@ class NewsScraper:
     
     def scrape_source(self, source_key: str, source_config: Dict) -> List[Dict]:
         """Scrape articles from a single source"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         articles = []
         
         try:
@@ -186,7 +186,7 @@ class NewsScraper:
                 except Exception as e:
                     logger.error(f"Error saving article: {e}")
             
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             
             # Log scraping activity
             self.db_manager.log_scraping_activity(
@@ -201,7 +201,7 @@ class NewsScraper:
             return articles
             
         except Exception as e:
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             
             # Log error
             self.db_manager.log_scraping_activity(
@@ -277,7 +277,7 @@ class NewsScraper:
         results = self.scrape_all_sources()
         
         # Calculate time periods
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Update word frequencies for different time periods
         time_periods = {
