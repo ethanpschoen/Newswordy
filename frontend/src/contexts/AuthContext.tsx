@@ -1,22 +1,21 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { User } from '../types';
 import { authAPI } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, username: string, password: string) => Promise<boolean>;
+  login: () => void;
   logout: () => void;
-  updateUser: (userData: User) => void;
+  getAccessToken: () => Promise<string | undefined>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
@@ -27,109 +26,60 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { user: auth0User, isAuthenticated, isLoading, loginWithRedirect, logout: auth0Logout, getAccessTokenSilently } = useAuth0();
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on app start
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        
-        // Verify token is still valid
+    if (!isLoading) {
+      if (isAuthenticated && auth0User) {
+        // Get user profile from your backend
         authAPI.getProfile()
           .then(response => {
             if (response.success && response.data) {
               setUser(response.data.user);
-              localStorage.setItem('user', JSON.stringify(response.data.user));
-            } else {
-              // Token is invalid, clear everything
-              logout();
             }
           })
-          .catch(() => {
-            logout();
+          .catch(error => {
+            console.error('Error fetching user profile:', error);
+          })
+          .finally(() => {
+            setLoading(false);
           });
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        logout();
+      } else {
+        setUser(null);
+        setLoading(false);
       }
     }
-    
-    setLoading(false);
-  }, []);
+  }, [isAuthenticated, auth0User, isLoading]);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const response = await authAPI.login(email, password);
-      
-      if (response.success && response.data) {
-        const { user: userData, token: tokenData } = response.data;
-        
-        setUser(userData);
-        setToken(tokenData);
-        
-        localStorage.setItem('token', tokenData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    }
-  };
-
-  const register = async (email: string, username: string, password: string): Promise<boolean> => {
-    try {
-      const response = await authAPI.register(email, username, password);
-      
-      if (response.success && response.data) {
-        const { user: userData, token: tokenData } = response.data;
-        
-        setUser(userData);
-        setToken(tokenData);
-        
-        localStorage.setItem('token', tokenData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Registration error:', error);
-      return false;
-    }
+  const login = () => {
+    loginWithRedirect();
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    auth0Logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
   };
 
-  const updateUser = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const getAccessToken = async () => {
+    try {
+      return await getAccessTokenSilently();
+    } catch (error) {
+      console.error('Error getting access token:', error);
+      return undefined;
+    }
   };
 
   const value: AuthContextType = {
     user,
-    token,
     loading,
     login,
-    register,
     logout,
-    updateUser,
+    getAccessToken,
   };
 
   return (

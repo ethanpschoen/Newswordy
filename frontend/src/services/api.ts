@@ -11,6 +11,7 @@ import {
   LeaderboardEntry,
   UserStats
 } from '../types';
+import { useAuth0 } from '@auth0/auth0-react';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -22,10 +23,16 @@ const api: AxiosInstance = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    // Get token from Auth0
+    const { getAccessTokenSilently } = useAuth0();
+    try {
+      const token = await getAccessTokenSilently();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error getting access token:', error);
     }
     return config;
   },

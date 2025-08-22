@@ -9,6 +9,7 @@ import Game from './pages/Game';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
 import LoadingSpinner from './components/LoadingSpinner';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 // Protected route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -87,12 +88,22 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Auth0Provider
+      domain={process.env.REACT_APP_AUTH0_DOMAIN!}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE
+      }}
+    >
+      <AuthProvider>
+        {/* Your app components */}
+        <AppContent />
+      </AuthProvider>
+    </Auth0Provider>
   );
-};
+}
 
 export default App;
