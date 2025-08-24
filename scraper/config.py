@@ -9,12 +9,28 @@ from dotenv import load_dotenv
 
 # News sources configuration
 NEWS_SOURCES = {
+    'abc': {
+        'name': 'ABC News',
+        'url': 'https://abcnews.go.com/',
+        'rss_feed': 'https://abcnews.go.com/abcnews/topstories',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '[data-testid="headline"]'],
+        'article_selectors': ['article', '.story', '.content', '.article-content'],
+        'enabled': True
+    },
+    'al_jazeera': {
+        'name': 'Al Jazeera',
+        'url': 'https://www.aljazeera.com/',
+        'rss_feed': 'https://www.aljazeera.com/xml/rss/all.xml',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.article', '.content', '.story'],
+        'enabled': True
+    },
     'axios': {
         'name': 'Axios',
         'url': 'https://www.axios.com/',
         'rss_feed': 'https://api.axios.com/feed/',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '[data-testid="headline"]'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'bbc': {
@@ -23,6 +39,14 @@ NEWS_SOURCES = {
         'rss_feed': 'http://feeds.bbci.co.uk/news/rss.xml',
         'headline_selectors': ['h3.gs-c-promo-heading__title', '.gs-c-promo-heading__title', 'h1'],
         'article_selectors': ['.gs-c-promo', 'article', '.gs-c-promo-body'],
+        'enabled': True
+    },
+    'cbs': {
+        'name': 'CBS News',
+        'url': 'https://www.cbsnews.com/',
+        'rss_feed': 'https://www.cbsnews.com/latest/rss/main',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'cnn': {
@@ -37,8 +61,8 @@ NEWS_SOURCES = {
         'name': 'Fox News',
         'url': 'https://www.foxnews.com/',
         'rss_feed': 'https://moxie.foxnews.com/google-publisher/latest.xml',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'guardian': {
@@ -52,25 +76,25 @@ NEWS_SOURCES = {
     'los_angeles_times': {
         'name': 'Los Angeles Times',
         'url': 'https://www.latimes.com/',
-        'rss_feed': 'https://www.latimes.com/world-nation/rss2.0.xml#nt=0000016c-0bf3-d57d-afed-2fff84fd0000-1col-7030col1',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'rss_feed': 'https://www.latimes.com/world-nation/rss2.0.xml',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'nbc_news': {
         'name': 'NBC News',
         'url': 'https://www.nbcnews.com/',
         'rss_feed': 'https://feeds.nbcnews.com/nbcnews/public/news',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'npr': {
         'name': 'NPR',
         'url': 'https://www.npr.org/',
         'rss_feed': 'https://feeds.npr.org/1001/rss.xml',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'nyt': {
@@ -81,28 +105,36 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.css-1l4w6pd', '.css-1l4w6pd'],
         'enabled': True
     },
-    'reuters': {
-        'name': 'Reuters',
-        'url': 'https://www.reuters.com',
-        'rss_feed': 'http://feeds.reuters.com/reuters/topNews',
-        'headline_selectors': ['h3[data-testid="Heading"]', '.story-card__heading', 'h1'],
-        'article_selectors': ['article', '.story-card', '.media-story-card'],
+    'politico': {
+        'name': 'Politico',
+        'url': 'https://www.politico.com/',
+        'rss_feed': 'https://www.politico.com/rss/politicopicks.xml',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'wall_street_journal': {
         'name': 'The Wall Street Journal',
         'url': 'https://www.wsj.com/',
         'rss_feed': 'https://feeds.content.dowjones.io/public/rss/RSSWorldNews',
-        'headline_selectors': [''],
-        'article_selectors': [''],
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
     'washington_post': {
         'name': 'The Washington Post',
         'url': 'https://www.washingtonpost.com',
-        'rss_feed': 'https://feeds.washingtonpost.com/rss/national',
+        'rss_feed': 'https://feeds.washingtonpost.com/rss/world',
         'headline_selectors': ['h3.font--headline', '.font--headline', 'h1'],
         'article_selectors': ['article', '.pb-feed-item', '.pb-feed-item__content'],
+        'enabled': True
+    },
+    'yahoo': {
+        'name': 'Yahoo News',
+        'url': 'https://www.yahoo.com/',
+        'rss_feed': 'https://www.yahoo.com/news/rss',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     }
 }
