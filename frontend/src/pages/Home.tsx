@@ -2,14 +2,37 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types'
-import { 
-  PlayIcon, 
-  Cog6ToothIcon,
-  ClockIcon,
-  TrophyIcon,
-  UserIcon
-} from '@heroicons/react/24/outline'
+import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceNames } from '../types'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Chip,
+  Container,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+  Alert,
+  Divider
+} from '@mui/material'
+import {
+  PlayArrow as PlayIcon,
+  Settings as SettingsIcon,
+  Schedule as ClockIcon,
+  EmojiEvents as TrophyIcon,
+  Person as UserIcon,
+  Language as GlobeIcon,
+  CheckCircle as CheckIcon
+} from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const Home: React.FC = () => {
@@ -65,161 +88,263 @@ const Home: React.FC = () => {
   }
 
   const stats = [
-    { name: 'Total Games', value: user?.totalGames || 0, icon: PlayIcon, color: 'text-blue-600' },
-    { name: 'Best Score', value: user?.bestScore || 0, icon: TrophyIcon, color: 'text-yellow-600' },
-    { name: 'Average Score', value: user?.averageScore?.toFixed(1) || '0.0', icon: UserIcon, color: 'text-green-600' },
+    { name: 'Total Games', value: user?.totalGames || 0, icon: PlayIcon, color: 'primary.main' },
+    { name: 'Best Score', value: user?.bestScore || 0, icon: TrophyIcon, color: 'warning.main' },
+    { name: 'Average Score', value: user?.averageScore?.toFixed(1) || '0.0', icon: UserIcon, color: 'success.main' },
   ]
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Profile */}
-      <div className="text-center mb-12">
-        {!!user ? (
-          <div>
-            <button onClick={logout}>Log out</button>
-          </div>
+    <Container maxWidth="lg">
+      {/* Authentication Status */}
+      <Box sx={{ mb: 4 }}>
+        {isAuthenticated ? (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Welcome back, <strong>{user?.nickname || user?.email}</strong>! Your stats will be saved.
+          </Alert>
         ) : (
-          <div>
-            <button onClick={signup}>Sign up</button>
-          </div>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Play without signing in! Sign in to save your stats and compete on the leaderboard.
+            </Typography>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => loginWithRedirect()}
+            >
+              Sign In to Save Stats
+            </Button>
+          </Alert>
         )}
-      </div>
+      </Box>
 
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           Welcome to Newswordy!
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        </Typography>
+        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
           Guess the most common words in news headlines from different time periods. 
           Test your knowledge of current events and compete with others!
-        </p>
-      </div>
+        </Typography>
+      </Box>
 
-      {/* User Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {stats.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-lg shadow-md p-6 text-center">
-            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4`}>
-              <stat.icon className={`w-6 h-6 ${stat.color}`} />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">{stat.value}</h3>
-            <p className="text-sm text-gray-600">{stat.name}</p>
-          </div>
-        ))}
-      </div>
+      {/* User Stats - Only show if authenticated */}
+      {isAuthenticated && (
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {stats.map((stat) => (
+            <Grid size={{ xs: 12, md: 4 }} key={stat.name}>
+              <Card>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                    <stat.icon sx={{ fontSize: 40, color: stat.color }} />
+                  </Box>
+                  <Typography variant="h4" component="div" gutterBottom>
+                    {stat.value}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {stat.name}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       {/* Game Configuration */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-        <div className="flex items-center mb-6">
-          <Cog6ToothIcon className="w-6 h-6 text-gray-600 mr-3" />
-          <h2 className="text-2xl font-bold text-gray-900">Game Settings</h2>
-        </div>
+      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <SettingsIcon sx={{ mr: 1, color: 'text.secondary' }} />
+          <Typography variant="h5" component="h2">
+            Game Settings
+          </Typography>
+        </Box>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Grid container spacing={3} sx={{ mb: 4 }}>
           {/* Time Period Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <ClockIcon className="w-4 h-4 inline mr-2" />
-              Time Period
-            </label>
-            <select
-              value={selectedTimePeriod}
-              onChange={(e) => setSelectedTimePeriod(e.target.value as any)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              {Object.entries(TIME_PERIOD_NAMES).map(([key, name]) => (
-                <option key={key} value={key}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormControl fullWidth>
+              <InputLabel>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ClockIcon sx={{ mr: 1, fontSize: 20 }} />
+                  Time Period
+                </Box>
+              </InputLabel>
+              <Select
+                value={selectedTimePeriod}
+                onChange={(e) => setSelectedTimePeriod(e.target.value as any)}
+                label="Time Period"
+              >
+                {Object.entries(TIME_PERIOD_NAMES).map(([key, name]) => (
+                  <MenuItem key={key} value={key}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
           {/* Max Guesses */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Max Guesses
-            </label>
-            <input
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField
+              fullWidth
+              label="Max Guesses"
               type="number"
-              min="1"
-              max="10"
               value={maxGuesses}
               onChange={(e) => setMaxGuesses(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              inputProps={{ min: 1, max: 10 }}
             />
-          </div>
+          </Grid>
 
           {/* Scoreboard Size */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Scoreboard Size
-            </label>
-            <input
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField
+              fullWidth
+              label="Scoreboard Size"
               type="number"
-              min="5"
-              max="50"
               value={scoreboardSize}
               onChange={(e) => setScoreboardSize(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              inputProps={{ min: 5, max: 50 }}
             />
-          </div>
-        </div>
+          </Grid>
+        </Grid>
+
+        {/* News Sources Selection */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <GlobeIcon sx={{ mr: 1, color: 'text.secondary' }} />
+            <Typography variant="h6">
+              News Sources (Optional - leave empty for all sources)
+            </Typography>
+          </Box>
+          
+          <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleSelectAllSources}
+            >
+              Select All
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleClearSources}
+            >
+              Clear All
+            </Button>
+          </Stack>
+
+          <Grid container spacing={2}>
+            {Object.entries(NewsSourceNames).map(([key, name]) => (
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={key}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedSources.includes(key as NewsSource)}
+                      onChange={() => handleSourceToggle(key as NewsSource)}
+                    />
+                  }
+                  label={name}
+                />
+              </Grid>
+            ))}
+          </Grid>
+          
+          {selectedSources.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Chip
+                label={`Selected ${selectedSources.length} source${selectedSources.length !== 1 ? 's' : ''}`}
+                color="primary"
+                variant="outlined"
+              />
+            </Box>
+          )}
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
 
         {/* Start Game Button */}
-        <div className="mt-8 text-center">
-          <button
+        <Box sx={{ textAlign: 'center' }}>
+          <Button
+            variant="contained"
+            size="large"
             onClick={handleStartGame}
-            disabled={loading}
-            className="inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            disabled={loading || isLoading}
+            startIcon={loading ? <LoadingSpinner size="sm" /> : <PlayIcon />}
+            sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}
           >
-            {loading ? (
-              <>
-                <LoadingSpinner size="sm" className="mr-2" />
-                Creating Game...
-              </>
-            ) : (
-              <>
-                <PlayIcon className="w-5 h-5 mr-2" />
-                Start New Game
-              </>
-            )}
-          </button>
-        </div>
-      </div>
+            {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start New Game'}
+          </Button>
+          {!isAuthenticated && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Your game progress won't be saved unless you sign in
+            </Typography>
+          )}
+        </Box>
+      </Paper>
 
       {/* How to Play */}
-      <div className="bg-gray-50 rounded-lg p-8">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">How to Play</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">1. Choose a Time Period</h4>
-            <p className="text-gray-600 text-sm">
-              Select from past day, week, month, or year to determine which news headlines to analyze.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">2. Guess Common Words</h4>
-            <p className="text-gray-600 text-sm">
-              Type words that you think appear frequently in news headlines from that period.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">3. Score Points</h4>
-            <p className="text-gray-600 text-sm">
-              Earn points based on how common your guessed words are. Higher frequency = more points!
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">4. Beat Your Best</h4>
-            <p className="text-gray-600 text-sm">
-              Try to achieve the highest score possible and compete on the leaderboard.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Paper elevation={1} sx={{ p: 4, bgcolor: 'grey.50' }}>
+        <Typography variant="h5" component="h3" gutterBottom>
+          How to Play
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <CheckIcon sx={{ mr: 1, mt: 0.5, color: 'success.main' }} />
+              <Box>
+                <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                  1. Choose a Time Period
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Select from past day, week, month, or year to determine which news headlines to analyze.
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <CheckIcon sx={{ mr: 1, mt: 0.5, color: 'success.main' }} />
+              <Box>
+                <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                  2. Select News Sources (Optional)
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Choose specific news sources or leave empty to include all available sources.
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <CheckIcon sx={{ mr: 1, mt: 0.5, color: 'success.main' }} />
+              <Box>
+                <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                  3. Guess Common Words
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Type words that you think appear frequently in news headlines from that period.
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <CheckIcon sx={{ mr: 1, mt: 0.5, color: 'success.main' }} />
+              <Box>
+                <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                  4. Score Points
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Earn points based on how common your guessed words are. Higher frequency = more points!
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Container>
   )
 }
 

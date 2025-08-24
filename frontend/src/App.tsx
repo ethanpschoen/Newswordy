@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { ThemeProvider, createTheme, Box, CssBaseline } from '@mui/material'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Game from './pages/Game'
@@ -8,6 +9,26 @@ import Leaderboard from './pages/Leaderboard'
 import LoadingSpinner from './components/LoadingSpinner'
 import { useAuth0 } from '@auth0/auth0-react'
 import { setAuthToken, setAnonymousSession } from './services/api'
+
+// Create a custom theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+  typography: {
+    h3: {
+      fontWeight: 700,
+    },
+    h5: {
+      fontWeight: 600,
+    },
+  },
+})
 
 // Protected route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -59,9 +80,9 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        {user && <Navbar />}
-        <main className="container mx-auto px-4 py-8">
+      <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+        <Navbar />
+        <Box component="main" sx={{ py: 4 }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game/:gameId" element={<Game />} />
@@ -77,15 +98,18 @@ const AppContent: React.FC = () => {
             } />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </main>
-      </div>
+        </Box>
+      </Box>
     </Router>
   )
 }
 
 function App() {
   return (
-    <AppContent />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppContent />
+    </ThemeProvider>
   )
 }
 

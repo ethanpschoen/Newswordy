@@ -1,16 +1,39 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { 
-  HomeIcon, 
-  UserIcon, 
-  TrophyIcon, 
-  Bars3Icon, 
-  XMarkIcon 
-} from '@heroicons/react/24/outline'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useTheme,
+  useMediaQuery
+} from '@mui/material'
+import {
+  Home as HomeIcon,
+  Person as UserIcon,
+  EmojiEvents as TrophyIcon,
+  Menu as MenuIcon,
+  Close as CloseIcon
+} from '@mui/icons-material'
 
 const Navbar: React.FC = () => {
   const { user, logout, isAuthenticated, loginWithRedirect } = useAuth0()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
 
   const handleLogout = () => {
     logout({ logoutParams: { returnTo: window.location.origin } })
@@ -30,99 +53,174 @@ const Navbar: React.FC = () => {
     ] : [])
   ]
 
-  return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo and main navigation */}
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">N</span>
-                </div>
-                <span className="text-xl font-bold text-gray-900">Newswordy</span>
-              </Link>
-            </div>
-            
-            {/* Desktop navigation */}
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent"
-                >
-                  <item.icon className="w-4 h-4 mr-2" />
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* User menu */}
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="ml-3 relative">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
-                  Welcome, <span className="font-medium">{user?.username}</span>
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="sm:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+  const drawer = (
+    <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Newswordy
+        </Typography>
+        <IconButton
+          color="inherit"
+          aria-label="close drawer"
+          edge="end"
+          onClick={handleDrawerToggle}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Divider />
+      <List>
+        {navigation.map((item) => (
+          <ListItem
+            key={item.name}
+            component={Link}
+            to={item.href}
+            onClick={handleDrawerToggle}
+            sx={{ color: 'inherit', textDecoration: 'none' }}
+          >
+            <ListItemIcon>
+              <item.icon />
+            </ListItemIcon>
+            <ListItemText primary={item.name} />
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <Box sx={{ p: 2 }}>
+        {isAuthenticated ? (
+          <Box>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Welcome, <strong>{user?.nickname || user?.email}</strong>
+            </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              fullWidth
+              onClick={handleLogout}
             >
-              {isMobileMenuOpen ? (
-                <XMarkIcon className="block h-6 w-6" />
-              ) : (
-                <Bars3Icon className="block h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
+              Logout
+            </Button>
+          </Box>
+        ) : (
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleLogin}
+          >
+            Sign In
+          </Button>
+        )}
+      </Box>
+    </Box>
+  )
 
-      {/* Mobile menu */}
-      {isMobileMenuOpen && (
-        <div className="sm:hidden">
-          <div className="pt-2 pb-3 space-y-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 border-l-4 border-transparent hover:border-primary-500"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <item.icon className="w-5 h-5 mr-3" />
-                {item.name}
-              </Link>
-            ))}
-            <div className="border-t border-gray-200 pt-4 pb-3">
-              <div className="px-3 py-2 text-sm text-gray-700">
-                Welcome, <span className="font-medium">{user?.username}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:text-red-800 hover:bg-red-50"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </nav>
+  return (
+    <>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: 'white',
+                borderRadius: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mr: 1
+              }}
+            >
+              <Typography variant="h6" color="primary" fontWeight="bold">
+                N
+              </Typography>
+            </Box>
+            Newswordy
+          </Typography>
+
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {navigation.map((item) => (
+                <Button
+                  key={item.name}
+                  component={Link}
+                  to={item.href}
+                  color="inherit"
+                  startIcon={<item.icon />}
+                  sx={{ textDecoration: 'none' }}
+                >
+                  {item.name}
+                </Button>
+              ))}
+              
+              {isAuthenticated ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Typography variant="body2">
+                    Welcome, <strong>{user?.nickname || user?.email}</strong>
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </Box>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleLogin}
+                >
+                  Sign In
+                </Button>
+              )}
+            </Box>
+          )}
+
+          {/* Mobile Menu Button */}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 280 },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </>
   )
 }
 
