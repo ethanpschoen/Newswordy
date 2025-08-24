@@ -26,10 +26,10 @@ export const getUserStats = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({
       where: { id: req.auth.sub },
       select: {
-        totalGames: true,
-        totalScore: true,
-        averageScore: true,
-        bestScore: true
+        total_games: true,
+        total_score: true,
+        average_score: true,
+        best_score: true
       }
     })
 
@@ -42,15 +42,15 @@ export const getUserStats = async (req: Request, res: Response) => {
 
     // Get recent games
     const recentGames = await prisma.game.findMany({
-      where: { userId: req.auth.sub },
-      orderBy: { createdAt: 'desc' },
+      where: { user_id: req.auth.sub },
+      orderBy: { created_at: 'desc' },
       take: 10,
       select: {
         id: true,
-        timePeriod: true,
+        time_period: true,
         score: true,
-        createdAt: true,
-        completedAt: true
+        created_at: true,
+        completed_at: true
       }
     })
 
@@ -113,11 +113,11 @@ export const updateProfile = async (req: Request, res: Response) => {
         id: true,
         email: true,
         username: true,
-        createdAt: true,
-        totalGames: true,
-        totalScore: true,
-        averageScore: true,
-        bestScore: true
+        created_at: true,
+        total_games: true,
+        total_score: true,
+        average_score: true,
+        best_score: true
       }
     })
 

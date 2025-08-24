@@ -10,20 +10,20 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
     // Get users with highest best scores
     const leaderboard = await prisma.user.findMany({
       where: {
-        bestScore: {
+        best_score: {
           gt: 0
         }
       },
       select: {
         id: true,
         username: true,
-        bestScore: true,
-        totalGames: true,
-        averageScore: true
+        best_score: true,
+        total_games: true,
+        average_score: true
       },
       orderBy: [
-        { bestScore: 'desc' },
-        { averageScore: 'desc' }
+        { best_score: 'desc' },
+        { average_score: 'desc' }
       ],
       take: limit,
       skip: offset
@@ -40,19 +40,19 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
     if (req.user) {
       const userWithRank = await prisma.user.findFirst({
         where: {
-          bestScore: {
+          best_score: {
             gt: 0
           }
         },
         select: {
           id: true,
           username: true,
-          bestScore: true,
-          averageScore: true
+          best_score: true,
+          average_score: true
         },
         orderBy: [
-          { bestScore: 'desc' },
-          { averageScore: 'desc' }
+          { best_score: 'desc' },
+          { average_score: 'desc' }
         ]
       })
 
@@ -60,11 +60,11 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
         const rank = await prisma.user.count({
           where: {
             OR: [
-              { bestScore: { gt: userWithRank.bestScore } },
+              { best_score: { gt: userWithRank.best_score } },
               {
                 AND: [
-                  { bestScore: userWithRank.bestScore },
-                  { averageScore: { gt: userWithRank.averageScore } }
+                  { best_score: userWithRank.best_score },
+                  { average_score: { gt: userWithRank.average_score } }
                 ]
               }
             ]
@@ -80,7 +80,7 @@ export const getGlobalLeaderboard = async (req: Request, res: Response) => {
         leaderboard: leaderboardWithRanks,
         userRank,
         total: await prisma.user.count({
-          where: { bestScore: { gt: 0 } }
+          where: { best_score: { gt: 0 } }
         })
       }
     })
@@ -109,10 +109,10 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
 
     // Get best scores for the specific time period
     const leaderboard = await prisma.game.groupBy({
-      by: ['userId'],
+      by: ['user_id'],
       where: {
-        timePeriod,
-        completedAt: {
+        time_period: timePeriod,
+        completed_at: {
           not: null
         }
       },
@@ -132,7 +132,7 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
     const leaderboardWithUsers = await Promise.all(
       leaderboard.map(async (entry, index) => {
         const user = await prisma.user.findUnique({
-          where: { id: entry.userId },
+          where: { id: entry.user_id },
           select: {
             id: true,
             username: true
@@ -140,7 +140,7 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
         })
 
         return {
-          userId: entry.userId,
+          userId: entry.user_id,
           username: user?.username || 'Unknown',
           score: entry._max.score || 0,
           rank: offset + index + 1
@@ -153,9 +153,9 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
     if (req.user) {
       const userBestScore = await prisma.game.findFirst({
         where: {
-          userId: req.user.userId,
-          timePeriod,
-          completedAt: {
+          user_id: req.user.userId,
+          time_period: timePeriod,
+          completed_at: {
             not: null
           }
         },
@@ -166,8 +166,8 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
       if (userBestScore) {
         const rank = await prisma.game.count({
           where: {
-            timePeriod,
-            completedAt: {
+            time_period: timePeriod,
+            completed_at: {
               not: null
             },
             score: {
@@ -187,8 +187,8 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
         userRank,
         total: await prisma.game.count({
           where: {
-            timePeriod,
-            completedAt: {
+            time_period: timePeriod,
+            completed_at: {
               not: null
             }
           }

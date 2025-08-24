@@ -16,10 +16,10 @@ export const createGame = async (req: Request, res: Response) => {
     // Create new game
     const game = await prisma.game.create({
       data: {
-        userId: req.user.userId,
-        timePeriod,
-        maxGuesses,
-        scoreboardSize
+        user_id: req.user.userId,
+        time_period: timePeriod,
+        max_guesses: maxGuesses,
+        scoreboard_size: scoreboardSize
       }
     })
 
@@ -45,7 +45,7 @@ export const getGameState = async (req: Request, res: Response) => {
       where: { id: gameId },
       include: {
         guesses: {
-          orderBy: { createdAt: 'asc' }
+          orderBy: { created_at: 'asc' }
         },
         user: {
           select: {
@@ -63,20 +63,20 @@ export const getGameState = async (req: Request, res: Response) => {
       })
     }
 
-    const remainingGuesses = game.maxGuesses - game.guesses.length
-    const isCompleted = game.completedAt !== null || remainingGuesses === 0
+    const remainingGuesses = game.max_guesses - game.guesses.length
+    const isCompleted = game.completed_at !== null || remainingGuesses === 0
 
     return res.json({
       success: true,
       data: {
         gameId: game.id,
-        timePeriod: game.timePeriod,
+        timePeriod: game.time_period,
         score: game.score,
         guesses: game.guesses,
         remainingGuesses,
         isCompleted,
-        maxGuesses: game.maxGuesses,
-        scoreboardSize: game.scoreboardSize,
+        maxGuesses: game.max_guesses,
+        scoreboardSize: game.scoreboard_size,
         user: game.user
       }
     })
@@ -117,7 +117,7 @@ export const submitGuess = async (req: Request, res: Response) => {
     }
 
     // Check if user owns the game
-    if (game.userId !== req.user.userId) {
+    if (game.user_id !== req.user.userId) {
       return res.status(403).json({
         success: false,
         error: 'Not authorized to play this game'
@@ -125,7 +125,7 @@ export const submitGuess = async (req: Request, res: Response) => {
     }
 
     // Check if game is completed
-    if (game.completedAt) {
+    if (game.completed_at) {
       return res.status(400).json({
         success: false,
         error: 'Game is already completed'
@@ -133,7 +133,7 @@ export const submitGuess = async (req: Request, res: Response) => {
     }
 
     // Check if user has remaining guesses
-    if (game.guesses.length >= game.maxGuesses) {
+    if (game.guesses.length >= game.max_guesses) {
       return res.status(400).json({
         success: false,
         error: 'No more guesses allowed'
@@ -172,8 +172,8 @@ export const submitGuess = async (req: Request, res: Response) => {
     // Create guess
     const guess = await prisma.guess.create({
       data: {
-        gameId,
-        userId: req.user.userId,
+        game_id: gameId,
+        user_id: req.user.userId,
         word,
         frequency,
         score,
@@ -193,7 +193,7 @@ export const submitGuess = async (req: Request, res: Response) => {
       data: {
         guess,
         newScore,
-        remainingGuesses: game.maxGuesses - game.guesses.length - 1
+        remainingGuesses: game.max_guesses - game.guesses.length - 1
       },
       message: `Word "${word}" found with frequency ${frequency}`
     })
@@ -269,7 +269,7 @@ export const endGame = async (req: Request, res: Response) => {
       })
     }
 
-    if (game.userId !== req.user.userId) {
+    if (game.user_id !== req.user.userId) {
       return res.status(403).json({
         success: false,
         error: 'Not authorized to end this game'
@@ -279,7 +279,7 @@ export const endGame = async (req: Request, res: Response) => {
     // Update game as completed
     const updatedGame = await prisma.game.update({
       where: { id: gameId },
-      data: { completedAt: new Date() }
+      data: { completed_at: new Date() }
     })
 
     // Update user stats
@@ -306,18 +306,18 @@ async function updateUserStats(userId: string, gameScore: number) {
 
   if (!user) return
 
-  const newTotalGames = user.totalGames + 1
-  const newTotalScore = user.totalScore + gameScore
+  const newTotalGames = user.total_games + 1
+  const newTotalScore = user.total_score + gameScore
   const newAverageScore = newTotalScore / newTotalGames
-  const newBestScore = Math.max(user.bestScore, gameScore)
+  const newBestScore = Math.max(user.best_score, gameScore)
 
   await prisma.user.update({
     where: { id: userId },
     data: {
-      totalGames: newTotalGames,
-      totalScore: newTotalScore,
-      averageScore: newAverageScore,
-      bestScore: newBestScore
+      total_games: newTotalGames,
+      total_score: newTotalScore,
+      average_score: newAverageScore,
+      best_score: newBestScore
     }
   })
 }
