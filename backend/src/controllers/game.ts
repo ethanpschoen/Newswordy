@@ -1,6 +1,138 @@
 import { Request, Response } from 'express'
 import { prisma } from '../utils/database'
-import { CreateGameRequest, SubmitGuessRequest, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types'
+import { CreateGameRequest, SubmitGuessRequest, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, TIME_PERIODS, TimePeriodRange } from '../types'
+
+// Utility function to convert time period to date range
+function getTimePeriodRange(timePeriod: string): TimePeriodRange {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  
+  switch (timePeriod) {
+    case TIME_PERIODS.PAST_DAY:
+      // Last calendar day (not including today)
+      const yesterday = new Date(today)
+      yesterday.setDate(yesterday.getDate() - 1)
+      return {
+        startDate: yesterday,
+        endDate: new Date(today.getTime() - 1) // End of yesterday
+      }
+      
+    case TIME_PERIODS.PAST_WEEK:
+      // Last 7 calendar days (not including today)
+      const weekAgo = new Date(today)
+      weekAgo.setDate(weekAgo.getDate() - 7)
+      return {
+        startDate: weekAgo,
+        endDate: new Date(today.getTime() - 1) // End of yesterday
+      }
+      
+    case TIME_PERIODS.PAST_MONTH:
+      // Last 30 calendar days (not including today)
+      const monthAgo = new Date(today)
+      monthAgo.setDate(monthAgo.getDate() - 30)
+      return {
+        startDate: monthAgo,
+        endDate: new Date(today.getTime() - 1) // End of yesterday
+      }
+      
+    case TIME_PERIODS.PAST_YEAR:
+      // Last 365 calendar days (not including today)
+      const yearAgo = new Date(today)
+      yearAgo.setDate(yearAgo.getDate() - 365)
+      return {
+        startDate: yearAgo,
+        endDate: new Date(today.getTime() - 1) // End of yesterday
+      }
+      
+    case TIME_PERIODS.LAST_WEEK:
+      // Last full Monday-Sunday week
+      const lastMonday = new Date(today)
+      const dayOfWeek = lastMonday.getDay()
+      const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+      lastMonday.setDate(lastMonday.getDate() - daysToSubtract - 7)
+      const lastSunday = new Date(lastMonday)
+      lastSunday.setDate(lastSunday.getDate() + 6)
+      return {
+        startDate: lastMonday,
+        endDate: new Date(lastSunday.getTime() + 24 * 60 * 60 * 1000 - 1) // End of Sunday
+      }
+      
+    case TIME_PERIODS.LAST_MONTH:
+      // Last full month
+      const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+      const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+      return {
+        startDate: lastMonth,
+        endDate: new Date(lastMonthEnd.getTime() + 24 * 60 * 60 * 1000 - 1) // End of last month
+      }
+      
+    case TIME_PERIODS.LAST_YEAR:
+      // Last full year (Jan 1 - Dec 31)
+      const lastYear = new Date(today.getFullYear() - 1, 0, 1)
+      const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31)
+      return {
+        startDate: lastYear,
+        endDate: new Date(lastYearEnd.getTime() + 24 * 60 * 60 * 1000 - 1) // End of Dec 31
+      }
+      
+    default:
+      // Default to past week if unknown time period
+      const defaultWeekAgo = new Date(today)
+      defaultWeekAgo.setDate(defaultWeekAgo.getDate() - 7)
+      return {
+        startDate: defaultWeekAgo,
+        endDate: new Date(today.getTime() - 1)
+      }
+  }
+}
+
+// Function to get articles based on game sources and time period
+async function getArticlesForGame(game: any) {
+  const timeRange = getTimePeriodRange(game.time_period)
+  
+  // Build the where clause for articles
+  const whereClause: any = {
+    published_date: {
+      gte: timeRange.startDate,
+      lte: timeRange.endDate
+    }
+  }
+  
+  // Add source filter if game has sources specified
+  if (game.sources && game.sources.length > 0) {
+    whereClause.source = {
+      in: game.sources
+    }
+  }
+  
+  // Get articles with their associated words
+  const articles = await prisma.article.findMany({
+    where: whereClause,
+    include: {
+      words: true
+    },
+    orderBy: {
+      published_date: 'desc'
+    }
+  })
+  
+  return articles
+}
+
+// Function to calculate word frequencies from articles
+function calculateWordFrequencies(articles: any[]): Map<string, number> {
+  const wordFreqMap = new Map<string, number>()
+  
+  articles.forEach(article => {
+    article.words.forEach((articleWord: any) => {
+      const word = articleWord.word.toLowerCase()
+      const currentFreq = wordFreqMap.get(word) || 0
+      wordFreqMap.set(word, currentFreq + articleWord.frequency)
+    })
+  })
+  
+  return wordFreqMap
+}
 
 export const createGame = async (req: Request, res: Response) => {
   try {
@@ -149,25 +281,20 @@ export const submitGuess = async (req: Request, res: Response) => {
       })
     }
 
-    // Get word frequency from database
-    const wordFrequency = await prisma.wordFrequency.findFirst({
-      where: {
-        word,
-        timePeriod: game.timePeriod
-      }
-    })
+    // Get articles and calculate word frequencies
+    const articles = await getArticlesForGame(game)
+    const wordFreqMap = calculateWordFrequencies(articles)
 
-    const frequency = wordFrequency?.frequency || 0
+    const frequency = wordFreqMap.get(word.toLowerCase()) || 0
 
-    // Calculate score based on frequency and rank
-    const scoreboard = await prisma.wordFrequency.findMany({
-      where: { timePeriod: game.timePeriod },
-      orderBy: { frequency: 'desc' },
-      take: game.scoreboardSize
-    })
+    // Create scoreboard from word frequencies
+    const scoreboardEntries = Array.from(wordFreqMap.entries())
+      .map(([word, freq]) => ({ word, frequency: freq }))
+      .sort((a, b) => b.frequency - a.frequency)
+      .slice(0, game.scoreboard_size)
 
-    const rank = scoreboard.findIndex(wf => wf.word === word) + 1
-    const score = rank > 0 ? Math.max(1, game.scoreboardSize - rank + 1) * 10 : 0
+    const rank = scoreboardEntries.findIndex(entry => entry.word === word.toLowerCase()) + 1
+    const score = rank > 0 ? Math.max(1, game.scoreboard_size - rank + 1) * 10 : 0
 
     // Create guess
     const guess = await prisma.guess.create({
@@ -221,16 +348,19 @@ export const getScoreboard = async (req: Request, res: Response) => {
       })
     }
 
-    // Get word frequencies for the time period
-    const scoreboard = await prisma.wordFrequency.findMany({
-      where: { timePeriod: game.timePeriod },
-      orderBy: { frequency: 'desc' },
-      take: game.scoreboardSize
-    })
+    // Get articles and calculate word frequencies for the time period
+    const articles = await getArticlesForGame(game)
+    const wordFreqMap = calculateWordFrequencies(articles)
+    
+    // Create scoreboard from word frequencies
+    const scoreboardEntries = Array.from(wordFreqMap.entries())
+      .map(([word, freq]) => ({ word, frequency: freq }))
+      .sort((a, b) => b.frequency - a.frequency)
+      .slice(0, game.scoreboard_size)
 
-    const scoreboardData = scoreboard.map((wf, index) => ({
-      word: wf.word,
-      frequency: wf.frequency,
+    const scoreboardData = scoreboardEntries.map((entry, index) => ({
+      word: entry.word,
+      frequency: entry.frequency,
       rank: index + 1
     }))
 
