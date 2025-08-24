@@ -18,6 +18,32 @@ declare global {
   }
 }
 
+// News sources enum based on config.py
+export enum NewsSource {
+  ABC = 'abc',
+  AL_JAZEERA = 'al_jazeera',
+  AXIOS = 'axios',
+  BBC = 'bbc',
+  CBS = 'cbs',
+  CNN = 'cnn',
+  FOX_NEWS = 'fox_news',
+  GUARDIAN = 'guardian',
+  LOS_ANGELES_TIMES = 'los_angeles_times',
+  NBC_NEWS = 'nbc_news',
+  NPR = 'npr',
+  NYT = 'nyt',
+  POLITICO = 'politico',
+  WALL_STREET_JOURNAL = 'wall_street_journal',
+  WASHINGTON_POST = 'washington_post',
+  YAHOO = 'yahoo'
+}
+
+// Time period date range interface
+export interface TimePeriodRange {
+  startDate: Date
+  endDate: Date
+}
+
 export interface User {
   id: string
   auth0Id?: string
@@ -46,6 +72,7 @@ export interface Game {
   id: string
   userId: string
   timePeriod: string
+  sources: NewsSource[]
   score: number
   maxGuesses: number
   scoreboardSize: number
