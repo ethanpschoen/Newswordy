@@ -51,14 +51,14 @@ const AppContent: React.FC = () => {
         <main className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={
-              <ProtectedRoute>
+              <PublicRoute>
                 <Home />
-              </ProtectedRoute>
+              </PublicRoute>
             } />
             <Route path="/game/:gameId" element={
-              <ProtectedRoute>
+              <PublicRoute>
                 <Game />
-              </ProtectedRoute>
+              </PublicRoute>
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
