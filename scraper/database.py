@@ -2,7 +2,6 @@
 Database models and connection for the Newswordy scraper
 """
 
-import os
 from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Float, Index, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base

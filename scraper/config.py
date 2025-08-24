@@ -3,8 +3,6 @@ Configuration file for the Newswordy scraper
 """
 
 import os
-from datetime import datetime, timedelta
-from typing import Dict, List
 from dotenv import load_dotenv
 
 # News sources configuration
@@ -157,15 +155,12 @@ SCRAPING_CONFIG = {
     'request_delay': 1,  # seconds between requests
     'timeout': 30,  # seconds
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'retry_attempts': 3,
-    'retry_delay': 5  # seconds
 }
 
 # Word processing configuration
 WORD_PROCESSING_CONFIG = {
     'min_word_length': 3,
     'max_word_length': 20,
-    'stop_words_file': 'stop_words.txt',
     'common_words_to_exclude': [
         'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
         'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
@@ -173,45 +168,6 @@ WORD_PROCESSING_CONFIG = {
         'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
         'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs'
     ]
-}
-
-# Time periods for data organization
-TIME_PERIODS = {
-    'past_day': {
-        'name': 'Past Day',
-        'days': 1,
-        'description': 'Last 24 hours'
-    },
-    'past_week': {
-        'name': 'Past Week',
-        'days': 7,
-        'description': 'Last 7 days'
-    },
-    'past_month': {
-        'name': 'Past Month',
-        'days': 30,
-        'description': 'Last 30 days'
-    },
-    'past_year': {
-        'name': 'Past Year',
-        'days': 365,
-        'description': 'Last 365 days'
-    },
-    'last_week': {
-        'name': 'Last Week',
-        'days': 7,
-        'description': 'Previous calendar week'
-    },
-    'last_month': {
-        'name': 'Last Month',
-        'days': 30,
-        'description': 'Previous calendar month'
-    },
-    'last_year': {
-        'name': 'Last Year',
-        'days': 365,
-        'description': 'Previous calendar year'
-    }
 }
 
 # Logging configuration

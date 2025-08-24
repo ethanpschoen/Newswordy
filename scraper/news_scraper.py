@@ -5,11 +5,11 @@ Main news scraper for collecting headlines from various news sources
 import requests
 import feedparser
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 import time
 import logging
-from typing import List, Dict, Optional, Tuple
-from urllib.parse import urljoin, urlparse
+from typing import List, Dict, Optional
+from urllib.parse import urljoin
 import re
 
 from config import NEWS_SOURCES, SCRAPING_CONFIG
@@ -252,10 +252,7 @@ class NewsScraper:
         logger.info("Starting daily scraping process")
         
         # Scrape all sources
-        results = self.scrape_all_sources()
-        
-        # Calculate time periods
-        now = datetime.now(timezone.utc)
+        self.scrape_all_sources()
         
         logger.info("Daily scraping process completed")
 

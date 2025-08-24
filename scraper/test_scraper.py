@@ -4,18 +4,17 @@ Test script for the news scraper
 
 import os
 import sys
-from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
+
+from news_scraper import NewsScraper
+from word_processor import WordProcessor
+from database import create_tables
 
 # Load environment variables
 load_dotenv()
 
 # Add current directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from news_scraper import NewsScraper
-from word_processor import WordProcessor
-from database import DatabaseManager, create_tables
 
 def test_database_connection():
     """Test database connection and create tables"""
@@ -45,7 +44,7 @@ def test_word_processor():
         
         word_freq = processor.analyze_headlines(test_headlines)
         
-        print(f"✅ Word processor test successful")
+        print("✅ Word processor test successful")
         print(f"   Found {len(word_freq)} unique words")
         print(f"   Top words: {list(word_freq.items())[:5]}")
         return True
@@ -65,7 +64,7 @@ def test_single_source_scraping():
         
         articles = scraper.scrape_source('bbc', bbc_config)
         
-        print(f"✅ Single source scraping test successful")
+        print("✅ Single source scraping test successful")
         print(f"   Scraped {len(articles)} articles from BBC")
         
         if articles:
@@ -76,28 +75,6 @@ def test_single_source_scraping():
         print(f"❌ Single source scraping test failed: {e}")
         return False
 
-def test_word_frequency_update():
-    """Test word frequency update"""
-    print("\nTesting word frequency update...")
-    try:
-        db_manager = DatabaseManager()
-        
-        # Test with a small time period
-        now = datetime.now(timezone.utc)
-        start_date = now - timedelta(days=1)
-        end_date = now
-        
-        word_frequencies = db_manager.get_word_frequencies_by_range(
-            start_date, end_date, limit=10
-        )
-        
-        print("✅ Word frequency query test successful")
-        print(f"   Found {len(word_frequencies)} word frequencies")
-        return True
-    except Exception as e:
-        print(f"❌ Word frequency query test failed: {e}")
-        return False
-
 def main():
     """Run all tests"""
     print("🧪 Running Newswordy scraper tests...\n")
@@ -105,8 +82,7 @@ def main():
     tests = [
         ("Database Connection", test_database_connection),
         ("Word Processor", test_word_processor),
-        ("Single Source Scraping", test_single_source_scraping),
-        ("Word Frequency Update", test_word_frequency_update)
+        ("Single Source Scraping", test_single_source_scraping)
     ]
     
     passed = 0

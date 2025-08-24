@@ -5,7 +5,7 @@ Word processing module for analyzing headlines and extracting word frequencies
 import re
 import string
 from collections import Counter
-from typing import List, Dict, Set
+from typing import List, Dict
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
