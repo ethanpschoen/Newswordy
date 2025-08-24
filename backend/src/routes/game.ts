@@ -7,16 +7,17 @@ import {
   endGame 
 } from '../controllers/game'
 import { 
-  validateTimePeriod, 
-  validateGameSettings, 
-  validateGuess 
+  validateTimePeriod,
+  validateSources,
+  validateGameSettings,
+  validateGuess
 } from '../middleware/validation'
 import { authenticateToken, optionalAuth } from '../middleware/auth0'
 
 const router = Router()
 
-// Game management
-router.post('/create', authenticateToken, validateTimePeriod, validateGameSettings, createGame)
+// Game management - authentication optional for creation and play
+router.post('/create', optionalAuth, validateTimePeriod, validateSources, validateGameSettings, createGame)
 router.get('/:gameId', optionalAuth, getGameState)
 router.post('/:gameId/guess', optionalAuth, validateGuess, submitGuess)
 router.get('/:gameId/scoreboard', getScoreboard)

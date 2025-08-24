@@ -23,6 +23,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_DAY)
+  const [selectedSources, setSelectedSources] = useState<NewsSource[]>([])
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
 
@@ -31,6 +32,7 @@ const Home: React.FC = () => {
     try {
       const response = await gameAPI.createGame({
         timePeriod: selectedTimePeriod,
+        sources: selectedSources,
         maxGuesses,
         scoreboardSize
       })
@@ -44,6 +46,22 @@ const Home: React.FC = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSourceToggle = (source: NewsSource) => {
+    setSelectedSources(prev => 
+      prev.includes(source) 
+        ? prev.filter(s => s !== source)
+        : [...prev, source]
+    )
+  }
+
+  const handleSelectAllSources = () => {
+    setSelectedSources(Object.values(NewsSource))
+  }
+
+  const handleClearSources = () => {
+    setSelectedSources([])
   }
 
   const stats = [

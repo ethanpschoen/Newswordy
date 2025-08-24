@@ -16,6 +16,7 @@ export interface Game {
   userId?: string
   sessionId?: string
   timePeriod: string
+  sources: NewsSource[]
   score: number
   maxGuesses: number
   scoreboardSize: number
@@ -43,6 +44,7 @@ export interface ScoreboardEntry {
 export interface GameState {
   gameId: string
   timePeriod: string
+  sources: NewsSource[]
   score: number
   guesses: Guess[]
   remainingGuesses: number
@@ -57,6 +59,7 @@ export interface GameState {
 
 export interface CreateGameRequest {
   timePeriod: string
+  sources: NewsSource[]
   maxGuesses?: number
   scoreboardSize?: number
 }
@@ -100,6 +103,26 @@ export const TIME_PERIODS = {
 
 export type TimePeriod = typeof TIME_PERIODS[keyof typeof TIME_PERIODS]
 
+// News sources enum based on config.py
+export enum NewsSource {
+  ABC = 'abc',
+  AL_JAZEERA = 'al_jazeera',
+  AXIOS = 'axios',
+  BBC = 'bbc',
+  CBS = 'cbs',
+  CNN = 'cnn',
+  FOX_NEWS = 'fox_news',
+  GUARDIAN = 'guardian',
+  LOS_ANGELES_TIMES = 'los_angeles_times',
+  NBC_NEWS = 'nbc_news',
+  NPR = 'npr',
+  NYT = 'nyt',
+  POLITICO = 'politico',
+  WALL_STREET_JOURNAL = 'wall_street_journal',
+  WASHINGTON_POST = 'washington_post',
+  YAHOO = 'yahoo'
+}
+
 // Game settings
 export const DEFAULT_MAX_GUESSES = 3
 export const DEFAULT_SCOREBOARD_SIZE = 10
@@ -115,4 +138,23 @@ export const TIME_PERIOD_NAMES: Record<TimePeriod, string> = {
   [TIME_PERIODS.LAST_WEEK]: 'Last Week',
   [TIME_PERIODS.LAST_MONTH]: 'Last Month',
   [TIME_PERIODS.LAST_YEAR]: 'Last Year'
+}
+
+export const NewsSourceNames: Record<NewsSource, string> = {
+  [NewsSource.ABC]: 'ABC News',
+  [NewsSource.AL_JAZEERA]: 'Al Jazeera',
+  [NewsSource.AXIOS]: 'Axios',
+  [NewsSource.BBC]: 'BBC News',
+  [NewsSource.CBS]: 'CBS News',
+  [NewsSource.CNN]: 'CNN',
+  [NewsSource.FOX_NEWS]: 'Fox News',
+  [NewsSource.GUARDIAN]: 'The Guardian',
+  [NewsSource.LOS_ANGELES_TIMES]: 'Los Angeles Times',
+  [NewsSource.NBC_NEWS]: 'NBC News',
+  [NewsSource.NPR]: 'NPR',
+  [NewsSource.NYT]: 'The New York Times',
+  [NewsSource.POLITICO]: 'Politico',
+  [NewsSource.WALL_STREET_JOURNAL]: 'The Wall Street Journal',
+  [NewsSource.WASHINGTON_POST]: 'The Washington Post',
+  [NewsSource.YAHOO]: 'Yahoo News'
 }

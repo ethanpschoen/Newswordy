@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, MAX_GUESSES, MAX_SCOREBOARD_SIZE } from '../types'
+import { TIME_PERIODS, NewsSource, MAX_GUESSES, MAX_SCOREBOARD_SIZE } from '../types'
 
 export const validateTimePeriod = (req: Request, res: Response, next: NextFunction) => {
   const { timePeriod } = req.body
@@ -11,6 +11,19 @@ export const validateTimePeriod = (req: Request, res: Response, next: NextFuncti
     })
   }
   
+  return next()
+}
+
+export const validateSources = (req: Request, res: Response, next: NextFunction) => {
+  const { sources } = req.body
+
+  if (!sources || !Array.isArray(sources) || sources.some(source => !Object.values(NewsSource).includes(source))) {
+    return res.status(400).json({
+      success: false,
+      error: `Invalid sources. Must be from: ${Object.values(NewsSource).join(', ')}`
+    })
+  }
+
   return next()
 }
 
