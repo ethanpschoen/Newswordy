@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
 import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE } from '../types'
 import { 
@@ -13,7 +13,21 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const Home: React.FC = () => {
-  const { user } = useAuth()
+  const {
+    isLoading, // Loading state, the SDK needs to reach Auth0 on load
+    isAuthenticated,
+    error,
+    loginWithRedirect: login, // Starts the login flow
+    logout: auth0Logout, // Starts the logout flow
+    user, // User profile
+  } = useAuth0();
+
+  const signup = () =>
+    login({ authorizationParams: { screen_hint: "signup" } });
+
+  const logout = () =>
+    auth0Logout({ logoutParams: { returnTo: window.location.origin } });
+
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_DAY)
@@ -48,6 +62,19 @@ const Home: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
+      {/* Profile */}
+      <div className="text-center mb-12">
+        {!!user ? (
+          <div>
+            <button onClick={logout}>Log out</button>
+          </div>
+        ) : (
+          <div>
+            <button onClick={signup}>Sign up</button>
+          </div>
+        )}
+      </div>
+
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
