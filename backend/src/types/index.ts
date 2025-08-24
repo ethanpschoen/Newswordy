@@ -121,12 +121,6 @@ export interface ApiResponse<T = any> {
   error?: string
 }
 
-export interface JwtPayload {
-  userId: string
-  email: string
-  username: string
-}
-
 // Time periods
 export const TIME_PERIODS = {
   PAST_DAY: 'past_day',

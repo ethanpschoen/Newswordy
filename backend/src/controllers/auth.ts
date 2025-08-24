@@ -14,7 +14,7 @@ export const getProfile = async (req: Request, res: Response) => {
 
     // Find or create user
     let user = await prisma.user.findUnique({
-      where: { auth0Id }
+      where: { auth0_id: auth0Id }
     })
 
     if (!user) {
@@ -22,7 +22,7 @@ export const getProfile = async (req: Request, res: Response) => {
       const auth0User = req.auth
       user = await prisma.user.create({
         data: {
-          auth0Id,
+          auth0_id: auth0Id,
           email: auth0User?.email || '',
           username: auth0User?.nickname || auth0User?.email?.split('@')[0] || ''
         }
