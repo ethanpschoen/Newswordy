@@ -14,19 +14,11 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 const Home: React.FC = () => {
   const {
-    isLoading, // Loading state, the SDK needs to reach Auth0 on load
+    isLoading,
     isAuthenticated,
-    error,
-    loginWithRedirect: login, // Starts the login flow
-    logout: auth0Logout, // Starts the logout flow
-    user, // User profile
+    loginWithRedirect,
+    user,
   } = useAuth0();
-
-  const signup = () =>
-    login({ authorizationParams: { screen_hint: "signup" } });
-
-  const logout = () =>
-    auth0Logout({ logoutParams: { returnTo: window.location.origin } });
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)

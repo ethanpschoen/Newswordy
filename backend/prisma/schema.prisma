@@ -33,7 +33,8 @@ model User {
 
 model Game {
   id              String   @id @default(cuid())
-  user_id         String
+  user_id         String?  // Optional for anonymous games
+  session_id      String?  // For anonymous games
   time_period     String   // past_day, past_week, past_month, past_year, etc.
   sources         String[]
   score           Int      @default(0)
@@ -43,7 +44,7 @@ model Game {
   completed_at    DateTime?
   
   // Relationships
-  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   guesses Guess[]
   
   @@map("games")
@@ -52,7 +53,7 @@ model Game {
 model Guess {
   id         String   @id @default(cuid())
   game_id    String
-  user_id    String
+  user_id    String?  // Optional for anonymous games
   word       String
   frequency  Int      @default(0)
   score      Int      @default(0)
@@ -61,7 +62,7 @@ model Guess {
   
   // Relationships
   game Game @relation(fields: [game_id], references: [id], onDelete: Cascade)
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
   
   @@map("guesses")
 }

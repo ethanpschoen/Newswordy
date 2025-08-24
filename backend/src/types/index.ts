@@ -57,17 +57,6 @@ export interface User {
   bestScore: number
 }
 
-export interface CreateUserRequest {
-  email: string
-  username: string
-  password: string
-}
-
-export interface LoginRequest {
-  email: string
-  password: string
-}
-
 export interface Game {
   id: string
   userId: string

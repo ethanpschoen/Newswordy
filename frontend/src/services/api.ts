@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import { 
   ApiResponse, 
-  AuthResponse, 
   User, 
   Game, 
   GameState, 
@@ -11,6 +10,7 @@ import {
   LeaderboardEntry,
   UserStats
 } from '../types'
+
 // Create axios instance
 const api: AxiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
@@ -19,13 +19,14 @@ const api: AxiosInstance = axios.create({
   },
 })
 
-// Helper function to set auth token
-export const setAuthToken = (token: string | null) => {
-  if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  } else {
-    delete api.defaults.headers.common['Authorization']
-  }
+// Helper function to set session ID for anonymous games
+const setSessionId = (sessionId: string): void => {
+  localStorage.setItem('newswordy_session_id', sessionId)
+}
+
+// Helper function to clear session ID
+const clearSessionId = (): void => {
+  localStorage.removeItem('newswordy_session_id')
 }
 
 // Response interceptor to handle errors
@@ -33,26 +34,35 @@ api.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      // Clear session ID on authentication error
+      clearSessionId()
+      // Redirect to home on authentication error
+      window.location.href = '/'
     }
     return Promise.reject(error)
   }
 )
 
-// Auth API
+// Helper function to set Auth0 token
+export const setAuthToken = (token: string | null) => {
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    // Clear session ID when authenticated
+    clearSessionId()
+  } else {
+    delete api.defaults.headers.common['Authorization']
+  }
+}
+
+// Helper function to set session ID for anonymous games
+export const setAnonymousSession = (sessionId: string) => {
+  setSessionId(sessionId)
+  // Set session ID in headers for API calls
+  api.defaults.headers.common['x-session-id'] = sessionId
+}
+
+// Auth API - only profile endpoint since Auth0 handles login/register
 export const authAPI = {
-  register: async (email: string, username: string, password: string): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post('/auth/register', { email, username, password })
-    return response.data
-  },
-
-  login: async (email: string, password: string): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post('/auth/login', { email, password })
-    return response.data
-  },
-
   getProfile: async (): Promise<ApiResponse<{ user: User }>> => {
     const response = await api.get('/auth/profile')
     return response.data
@@ -63,6 +73,12 @@ export const authAPI = {
 export const gameAPI = {
   createGame: async (data: CreateGameRequest): Promise<ApiResponse<{ game: Game }>> => {
     const response = await api.post('/game/create', data)
+    
+    // If this is an anonymous game, store the session ID
+    if (response.data.success && response.data.data?.game?.session_id) {
+      setAnonymousSession(response.data.data.game.session_id)
+    }
+    
     return response.data
   },
 

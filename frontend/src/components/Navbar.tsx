@@ -10,19 +10,24 @@ import {
 } from '@heroicons/react/24/outline'
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth0()
-  const navigate = useNavigate()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { user, logout, isAuthenticated, loginWithRedirect } = useAuth0()
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
+    logout({ logoutParams: { returnTo: window.location.origin } })
+    setMobileOpen(false)
+  }
+
+  const handleLogin = () => {
+    loginWithRedirect()
+    setMobileOpen(false)
   }
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
-    { name: 'Profile', href: '/profile', icon: UserIcon },
-    { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
+    ...(isAuthenticated ? [
+      { name: 'Profile', href: '/profile', icon: UserIcon },
+      { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
+    ] : [])
   ]
 
   return (

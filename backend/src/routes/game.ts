@@ -18,8 +18,8 @@ const router = Router()
 // Game management
 router.post('/create', authenticateToken, validateTimePeriod, validateGameSettings, createGame)
 router.get('/:gameId', optionalAuth, getGameState)
-router.post('/:gameId/guess', authenticateToken, validateGuess, submitGuess)
+router.post('/:gameId/guess', optionalAuth, validateGuess, submitGuess)
 router.get('/:gameId/scoreboard', getScoreboard)
-router.post('/:gameId/end', authenticateToken, endGame)
+router.post('/:gameId/end', optionalAuth, endGame)
 
 export default router

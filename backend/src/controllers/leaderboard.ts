@@ -130,22 +130,24 @@ export const getTimePeriodLeaderboard = async (req: Request, res: Response) => {
 
     // Get user details for each entry
     const leaderboardWithUsers = await Promise.all(
-      leaderboard.map(async (entry, index) => {
-        const user = await prisma.user.findUnique({
-          where: { id: entry.user_id },
-          select: {
-            id: true,
-            username: true
+      leaderboard
+        .filter(entry => entry.user_id !== null) // Filter out anonymous games
+        .map(async (entry, index) => {
+          const user = await prisma.user.findUnique({
+            where: { id: entry.user_id! }, // Use non-null assertion since we filtered
+            select: {
+              id: true,
+              username: true
+            }
+          })
+
+          return {
+            userId: entry.user_id!,
+            username: user?.username || 'Unknown',
+            score: entry._max.score || 0,
+            rank: offset + index + 1
           }
         })
-
-        return {
-          userId: entry.user_id,
-          username: user?.username || 'Unknown',
-          score: entry._max.score || 0,
-          rank: offset + index + 1
-        }
-      })
     )
 
     // Get current user's rank if authenticated

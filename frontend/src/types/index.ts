@@ -13,7 +13,8 @@ export interface User {
 
 export interface Game {
   id: string
-  userId: string
+  userId?: string
+  sessionId?: string
   timePeriod: string
   score: number
   maxGuesses: number
@@ -69,11 +70,6 @@ export interface ApiResponse<T = any> {
   data?: T
   message?: string
   error?: string
-}
-
-export interface AuthResponse {
-  user: User
-  token: string
 }
 
 export interface LeaderboardEntry {

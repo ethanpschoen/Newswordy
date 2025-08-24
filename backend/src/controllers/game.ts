@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { prisma } from '../utils/database'
 import { CreateGameRequest, SubmitGuessRequest, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, TIME_PERIODS, TimePeriodRange } from '../types'
+import { v4 as uuidv4 } from 'uuid'
 
 // Utility function to convert time period to date range
 function getTimePeriodRange(timePeriod: string): TimePeriodRange {
@@ -136,19 +137,18 @@ function calculateWordFrequencies(articles: any[]): Map<string, number> {
 
 export const createGame = async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated'
-      })
-    }
-
     const { timePeriod, maxGuesses = DEFAULT_MAX_GUESSES, scoreboardSize = DEFAULT_SCOREBOARD_SIZE }: CreateGameRequest = req.body
+
+    // Determine if this is an authenticated or anonymous game
+    const isAuthenticated = !!req.user
+    const userId = req.user?.userId
+    const sessionId = isAuthenticated ? null : uuidv4()
 
     // Create new game
     const game = await prisma.game.create({
       data: {
-        user_id: req.user.userId,
+        user_id: userId,
+        session_id: sessionId,
         time_period: timePeriod,
         max_guesses: maxGuesses,
         scoreboard_size: scoreboardSize
@@ -158,7 +158,7 @@ export const createGame = async (req: Request, res: Response) => {
     return res.status(201).json({
       success: true,
       data: { game },
-      message: 'Game created successfully'
+      message: isAuthenticated ? 'Game created successfully' : 'Anonymous game created successfully'
     })
   } catch (error) {
     console.error('Create game error:', error)
@@ -195,6 +195,19 @@ export const getGameState = async (req: Request, res: Response) => {
       })
     }
 
+    // Check if user has access to this game
+    const isAuthenticated = !!req.user
+    const hasAccess = isAuthenticated 
+      ? game.user_id === req.user?.userId 
+      : game.session_id && req.headers['x-session-id'] === game.session_id
+
+    if (!hasAccess) {
+      return res.status(403).json({
+        success: false,
+        error: 'Not authorized to access this game'
+      })
+    }
+
     const remainingGuesses = game.max_guesses - game.guesses.length
     const isCompleted = game.completed_at !== null || remainingGuesses === 0
 
@@ -209,7 +222,8 @@ export const getGameState = async (req: Request, res: Response) => {
         isCompleted,
         maxGuesses: game.max_guesses,
         scoreboardSize: game.scoreboard_size,
-        user: game.user
+        user: game.user,
+        isAnonymous: !game.user_id
       }
     })
   } catch (error) {
@@ -223,13 +237,6 @@ export const getGameState = async (req: Request, res: Response) => {
 
 export const submitGuess = async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated'
-      })
-    }
-
     const { gameId } = req.params
     const { word }: SubmitGuessRequest = req.body
 
@@ -248,8 +255,13 @@ export const submitGuess = async (req: Request, res: Response) => {
       })
     }
 
-    // Check if user owns the game
-    if (game.user_id !== req.user.userId) {
+    // Check if user has access to this game
+    const isAuthenticated = !!req.user
+    const hasAccess = isAuthenticated 
+      ? game.user_id === req.user?.userId 
+      : game.session_id && req.headers['x-session-id'] === game.session_id
+
+    if (!hasAccess) {
       return res.status(403).json({
         success: false,
         error: 'Not authorized to play this game'
@@ -300,7 +312,7 @@ export const submitGuess = async (req: Request, res: Response) => {
     const guess = await prisma.guess.create({
       data: {
         game_id: gameId,
-        user_id: req.user.userId,
+        user_id: game.user_id, // Will be null for anonymous games
         word,
         frequency,
         score,
@@ -379,13 +391,6 @@ export const getScoreboard = async (req: Request, res: Response) => {
 
 export const endGame = async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated'
-      })
-    }
-
     const { gameId } = req.params
 
     const game = await prisma.game.findUnique({
@@ -399,7 +404,13 @@ export const endGame = async (req: Request, res: Response) => {
       })
     }
 
-    if (game.user_id !== req.user.userId) {
+    // Check if user has access to this game
+    const isAuthenticated = !!req.user
+    const hasAccess = isAuthenticated 
+      ? game.user_id === req.user?.userId 
+      : game.session_id && req.headers['x-session-id'] === game.session_id
+
+    if (!hasAccess) {
       return res.status(403).json({
         success: false,
         error: 'Not authorized to end this game'
@@ -412,13 +423,15 @@ export const endGame = async (req: Request, res: Response) => {
       data: { completed_at: new Date() }
     })
 
-    // Update user stats
-    await updateUserStats(req.user.userId, game.score)
+    // Only update user stats if the game is authenticated
+    if (game.user_id) {
+      await updateUserStats(game.user_id, game.score)
+    }
 
     return res.json({
       success: true,
       data: { game: updatedGame },
-      message: 'Game ended successfully'
+      message: game.user_id ? 'Game ended successfully' : 'Anonymous game ended successfully'
     })
   } catch (error) {
     console.error('End game error:', error)
