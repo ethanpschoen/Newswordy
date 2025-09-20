@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceNames } from '../types'
+import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig } from '../types'
 import {
   Box,
   Button,
@@ -45,7 +45,7 @@ const Home: React.FC = () => {
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_DAY)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_WEEK)
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>([])
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
@@ -69,6 +69,11 @@ const Home: React.FC = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleTestGame = () => {
+    // Navigate to test game with hard-coded data
+    navigate('/game/test')
   }
 
   const handleSourceToggle = (source: NewsSource) => {
@@ -236,7 +241,7 @@ const Home: React.FC = () => {
           </Stack>
 
           <Grid container spacing={2}>
-            {Object.entries(NewsSourceNames).map(([key, name]) => (
+            {Object.entries(NewsSourceConfig).map(([key, config]) => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={key}>
                 <FormControlLabel
                   control={
@@ -245,7 +250,7 @@ const Home: React.FC = () => {
                       onChange={() => handleSourceToggle(key as NewsSource)}
                     />
                   }
-                  label={name}
+                  label={config.name}
                 />
               </Grid>
             ))}
@@ -275,6 +280,15 @@ const Home: React.FC = () => {
             sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}
           >
             {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start New Game'}
+          </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={handleTestGame}
+            startIcon={<PlayIcon />}
+            sx={{ px: 4, py: 1.5, fontSize: '1.1rem', ml: 2 }}
+          >
+            Test Game (Hard-coded Data)
           </Button>
           {!isAuthenticated && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
