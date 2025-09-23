@@ -35,3 +35,13 @@ code {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Override Tailwind Forms plugin focus styles for Material-UI components */
+.MuiInputBase-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.MuiOutlinedInput-root:focus-within {
+  outline: none !important;
+}

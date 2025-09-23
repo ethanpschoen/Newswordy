@@ -22,6 +22,7 @@ import {
   Stack,
   Container
 } from '@mui/material'
+import { Close as CloseIcon } from '@mui/icons-material'
 import { 
   TrophyIcon,
   ArrowLeftIcon,
@@ -233,10 +234,10 @@ const Game: React.FC = () => {
   }
 
   const getRankColor = (rank: number) => {
-    if (rank === 1) return `${Color.RANK_FIRST_BG} ${Color.RANK_FIRST_TEXT} ${Color.RANK_FIRST_BORDER}`
-    if (rank === 2) return `${Color.RANK_SECOND_BG} ${Color.RANK_SECOND_TEXT} ${Color.RANK_SECOND_BORDER}`
-    if (rank === 3) return `${Color.RANK_THIRD_BG} ${Color.RANK_THIRD_TEXT} ${Color.RANK_THIRD_BORDER}`
-    return `${Color.RANK_DEFAULT_BG} ${Color.RANK_DEFAULT_TEXT} ${Color.RANK_DEFAULT_BORDER}`
+    if (rank === 1) return Color.RANK_FIRST_BG
+    if (rank === 2) return Color.RANK_SECOND_BG
+    if (rank === 3) return Color.RANK_THIRD_BG
+    return Color.RANK_DEFAULT_BG
   }
 
   const handleWordClick = (word: string) => {
@@ -308,7 +309,7 @@ const Game: React.FC = () => {
       {/* Game Header */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Button
                 onClick={() => navigate('/')}
@@ -405,51 +406,6 @@ const Game: React.FC = () => {
                 </Button>
               </Box>
             )}
-
-            {/* Recent Guesses */}
-            {gameState.guesses.length > 0 && (
-              <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" component="h3" sx={{ fontWeight: 'semibold', mb: 2 }}>
-                  Your Guesses
-                </Typography>
-                <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {gameState.guesses.map((guess, index) => (
-                    <Paper
-                      key={guess.id}
-                      elevation={1}
-                      sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'semibold' }}>
-                          {guess.word}
-                        </Typography>
-                        {guess.rank && (
-                          <Chip
-                            label={`#${guess.rank}`}
-                            size="small"
-                            color={guess.rank === 1 ? 'warning' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'secondary' : 'primary'}
-                          />
-                        )}
-                      </Box>
-                      <Box sx={{ textAlign: 'right' }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            fontWeight: 'bold',
-                            color: getScoreColor(guess.score)
-                          }}
-                        >
-                          +{guess.score}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Frequency: {guess.frequency}
-                        </Typography>
-                      </Box>
-                    </Paper>
-                  ))}
-                </List>
-              </Box>
-            )}
           </CardContent>
         </Card>
 
@@ -500,7 +456,7 @@ const Game: React.FC = () => {
                           fontSize: '0.75rem',
                           fontWeight: 'bold',
                           bgcolor: getRankColor(index + 1),
-                          color: 'white'
+                          color: 'black'
                         }}
                       >
                         {index + 1}
@@ -519,7 +475,7 @@ const Game: React.FC = () => {
                       <Typography 
                         variant="body2" 
                         sx={{ 
-                          fontWeight: 'semibold',
+                          fontWeight: 'bold',
                           color: isGuessed ? 'text.primary' : 'text.disabled'
                         }}
                       >
@@ -550,7 +506,7 @@ const Game: React.FC = () => {
         </Card>
       </Stack>
 
-      {/* Game Stats - Moved to Bottom */}
+      {/* Game Stats */}
       <Card sx={{ mt: 4 }}>
         <CardContent>
           <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 3 }}>
@@ -584,10 +540,10 @@ const Game: React.FC = () => {
                 }}
               >
                 <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 1 }}>
-                  {gameState.remainingGuesses}
+                  {gameState.guesses.length - gameState.maxGuesses + gameState.remainingGuesses}
                 </Typography>
                 <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-                  Guesses Left
+                  Words Guessed
                 </Typography>
               </Paper>
             </Grid>
@@ -601,10 +557,10 @@ const Game: React.FC = () => {
                 }}
               >
                 <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 1 }}>
-                  {gameState.guesses.length}
+                  {gameState.remainingGuesses}
                 </Typography>
                 <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-                  Words Guessed
+                  Wrong Guesses Left
                 </Typography>
               </Paper>
             </Grid>
@@ -628,6 +584,53 @@ const Game: React.FC = () => {
           </Grid>
         </CardContent>
       </Card>
+
+      {/* Recent Guesses Section */}
+      {gameState.guesses.length > 0 && (
+        <Card sx={{ mt: 4 }}>
+          <CardContent>
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Your Guesses
+            </Typography>
+            <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {gameState.guesses.map((guess, index) => (
+                <Paper
+                  key={guess.id}
+                  elevation={1}
+                  sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'semibold' }}>
+                      {guess.word}
+                    </Typography>
+                    <Chip
+                      label={guess.rank !== undefined ? `#${guess.rank}` : `X`}
+                      size="small"
+                      color={guess.rank === 1 ? 'success' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'warning' : guess.rank !== undefined ? 'primary' : 'error'}
+                    />
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography 
+                      variant="h6" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        color: getScoreColor(guess.score)
+                      }}
+                    >
+                      +{guess.score}
+                    </Typography>
+                    {guess.rank !== undefined && 
+                      <Typography variant="body2" color="text.secondary">
+                        Frequency: {guess.frequency}
+                      </Typography>
+                    }
+                  </Box>
+                </Paper>
+              ))}
+            </List>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Article Panel */}
       <Dialog
@@ -657,9 +660,7 @@ const Game: React.FC = () => {
             size="small"
             sx={{ color: 'text.secondary' }}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <CloseIcon />
           </IconButton>
         </DialogTitle>
         
