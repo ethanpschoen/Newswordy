@@ -80,8 +80,9 @@ const Game: React.FC = () => {
           gameId: 'test',
           timePeriod: 'past_week',
           sources: [],
-          score: score,
-          guesses: guesses,
+          score,
+          guesses,
+          guessedWords,
           remainingGuesses: 3 - wrongGuesses,
           isCompleted: false,
           maxGuesses: 3,
@@ -132,21 +133,34 @@ const Game: React.FC = () => {
 
     try {
       const guessWord = currentGuess.trim().toLowerCase()
-      const foundWord = scoreboard.find(entry => entry.word === guessWord)
-
-      let index: number | undefined
-      let score: number
 
       if (gameState!.guesses.some(guess => guess.word === guessWord)) {
         setError(`"${currentGuess}" has already been guessed`)
         return
       }
-      else if (foundWord) {
+
+      const foundWord = scoreboard.find(entry => entry.word === guessWord)
+
+      let index: number | undefined
+      let wordScore: number
+      let updatedScore = score
+      let updatedGuessedWords = new Set(Array.from(guessedWords))
+      let updatedWrongGuesses = wrongGuesses
+      
+      if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
-        score = calculateScore(index, scoreboard.length)
+        wordScore = calculateScore(index, scoreboard.length)
+
+        updatedScore += wordScore
+        setScore(updatedScore)
+        updatedGuessedWords.add(guessWord)
+        setGuessedWords(updatedGuessedWords)
       } else {
         index = undefined
-        score = 0
+        wordScore = 0
+
+        updatedWrongGuesses += 1
+        setWrongGuesses(updatedWrongGuesses)
       }
 
       const newGuess: Guess = {
@@ -155,34 +169,31 @@ const Game: React.FC = () => {
         userId: 'test-user',
         word: guessWord,
         frequency: foundWord ? foundWord.frequency : 0,
-        score,
+        score: wordScore,
         rank: typeof index === 'number' ? index + 1 : undefined,
         createdAt: new Date().toISOString()
       }
 
-      setScore(prev => prev + score)
       const updatedGuesses = [...guesses, newGuess]
       setGuesses(updatedGuesses)
-      setGuessedWords(prev => new Set(Array.from(prev).concat(guessWord)))
-      const updatedWrongGuesses = wrongGuesses + (foundWord ? 0 : 1)
-      setWrongGuesses(updatedWrongGuesses)
-      
+
       // Update gameState through setGameState to trigger re-render
       setGameState(prev => prev ? {
         ...prev,
-        score: prev.score + score,
+        score: updatedScore,
         guesses: updatedGuesses,
-        remainingGuesses: prev.maxGuesses - (wrongGuesses + (foundWord ? 0 : 1))
+        guessedWords: updatedGuessedWords,
+        remainingGuesses: prev.maxGuesses - updatedWrongGuesses
       } : null)
       setCurrentGuess('')
 
       if (foundWord) {
-        setSuccess(`"${currentGuess}" found! +${score} points`)
+        setSuccess(`"${currentGuess}" found! +${wordScore} points`)
       } else {
         setError(`"${currentGuess}" not found in the word list`)
       }
 
-      if (gameState!.maxGuesses - updatedWrongGuesses === 0 || gameState!.scoreboardSize === updatedGuesses.length - updatedWrongGuesses) {
+      if (gameState!.maxGuesses === updatedWrongGuesses || gameState!.scoreboardSize === updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, isCompleted: true } : null)
         setTimeout(() => {
           endGame()
@@ -519,7 +530,7 @@ const Game: React.FC = () => {
                 }}
               >
                 <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 1 }}>
-                  {gameState.guesses.length - gameState.maxGuesses + gameState.remainingGuesses}
+                  {gameState.guessedWords.size}
                 </Typography>
                 <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
                   Words Guessed

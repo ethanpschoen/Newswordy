@@ -173,6 +173,7 @@ export interface GameState {
   sources: NewsSource[]
   score: number
   guesses: Guess[]
+  guessedWords: Set<string>
   remainingGuesses: number
   isCompleted: boolean
   maxGuesses: number
