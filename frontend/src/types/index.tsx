@@ -164,6 +164,7 @@ export interface ScoreboardEntry {
   word: string
   frequency: number
   rank: number
+  articles: Article[]
 }
 
 export interface GameState {
@@ -290,10 +291,4 @@ export interface Article {
   source: string
   headline: string
   published_date: string
-}
-
-export interface WordData {
-  word: string
-  count: number
-  articles: Article[]
 }

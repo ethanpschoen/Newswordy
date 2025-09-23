@@ -3,7 +3,8 @@
     "results": [
       {
         "word": "trump",
-        "count": 584,
+        "frequency": 584,
+        "rank": 1,
         "articles": [
           {
             "url": "https://abcnews.go.com/Business/bls-set-release-1st-jobs-report-trump-fired/story?id=125249122",
@@ -3501,7 +3502,8 @@
       },
       {
         "word": "gaza",
-        "count": 135,
+        "frequency": 135,
+        "rank": 2,
         "articles": [
           {
             "url": "https://www.aljazeera.com/features/2025/9/3/gazas-christians-refuse-to-abandon-churches-before-israeli-attack?traffic_source=rss",
@@ -4317,7 +4319,8 @@
       },
       {
         "word": "court",
-        "count": 103,
+        "frequency": 103,
+        "rank": 3,
         "articles": [
           {
             "url": "https://www.aljazeera.com/economy/2025/9/8/us-supreme-court-allows-trump-to-oust-ftc-commissioner-for-now?traffic_source=rss",
@@ -4941,7 +4944,8 @@
       },
       {
         "word": "epstein",
-        "count": 101,
+        "frequency": 101,
+        "rank": 4,
         "articles": [
           {
             "url": "https://abcnews.go.com/Politics/gop-led-house-oversight-committee-expected-receive-epstein/story?id=125365100",
@@ -5553,7 +5557,8 @@
       },
       {
         "word": "war",
-        "count": 100,
+        "frequency": 100,
+        "rank": 5,
         "articles": [
           {
             "url": "https://abcnews.go.com/Business/wireStory/apple-unveil-iphone-amid-trump-trade-war-result-125386310",
@@ -6141,7 +6146,8 @@
       },
       {
         "word": "china",
-        "count": 84,
+        "frequency": 84,
+        "rank": 6,
         "articles": [
           {
             "url": "https://abcnews.go.com/Politics/trump-reacts-putin-kim-jong-xi-chinas-military/story?id=125201888",
@@ -6651,7 +6657,8 @@
       },
       {
         "word": "rfk",
-        "count": 80,
+        "frequency": 80,
+        "rank": 7,
         "articles": [
           {
             "url": "https://abcnews.go.com/Politics/rfk-jr-set-testify-senate-finance-committee-amid/story?id=125222389",
@@ -7137,7 +7144,8 @@
       },
       {
         "word": "israel",
-        "count": 79,
+        "frequency": 79,
+        "rank": 8,
         "articles": [
           {
             "url": "https://www.aljazeera.com/features/longform/2025/9/8/israels-settler-outposts-choke-palestinian-life-in-west-banks-villages?traffic_source=rss",
@@ -7617,7 +7625,8 @@
       },
       {
         "word": "house",
-        "count": 78,
+        "frequency": 78,
+        "rank": 9,
         "articles": [
           {
             "url": "https://abcnews.go.com/Politics/video/gop-led-house-oversight-committee-receives-epstein-estate-125391731",
@@ -8091,7 +8100,8 @@
       },
       {
         "word": "city",
-        "count": 77,
+        "frequency": 77,
+        "rank": 10,
         "articles": [
           {
             "url": "https://www.aljazeera.com/features/2025/9/4/the-rsf-targets-young-men-civilians-speak-out-from-sudans-besieged-city?traffic_source=rss",

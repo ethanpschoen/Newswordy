@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { gameAPI } from '../services/api'
-import { Color, GameState, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig, WordData, NewsSource } from '../types'
+import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig, NewsSource } from '../types'
 import { 
   Box, 
   Button, 
@@ -33,7 +33,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import testData from '../components/test_data.json'
 
 // Extract the test data from the JSON file with proper typing
-const TEST_DATA: WordData[] = testData[0].results
+const TEST_DATA: ScoreboardEntry[] = testData[0].results
 
 const Game: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>()
@@ -45,7 +45,10 @@ const Game: React.FC = () => {
   
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
+  const [guesses, setGuesses] = useState<Guess[]>([])
   const [guessedWords, setGuessedWords] = useState<Set<string>>(new Set())
+  const [wrongGuesses, setWrongGuesses] = useState(0)
+  const [score, setScore] = useState(0)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [currentGuess, setCurrentGuess] = useState('')
@@ -55,12 +58,7 @@ const Game: React.FC = () => {
   
   // Article panel state
   const [showArticlePanel, setShowArticlePanel] = useState(false)
-  const [selectedWordData, setSelectedWordData] = useState<WordData | null>(null)
-  
-  // Test mode state
-  const [testScore, setTestScore] = useState(0)
-  const [testGuesses, setTestGuesses] = useState<any[]>([])
-  const [testRemainingGuesses, setTestRemainingGuesses] = useState(3)
+  const [selectedWordData, setSelectedWordData] = useState<ScoreboardEntry | null>(null)
 
   // Calculate score based on index and total scoreboard length
   const calculateScore = (index: number, totalLength: number): number => {
@@ -82,9 +80,9 @@ const Game: React.FC = () => {
           gameId: 'test',
           timePeriod: 'past_week',
           sources: [],
-          score: testScore,
-          guesses: testGuesses,
-          remainingGuesses: 3,
+          score: score,
+          guesses: guesses,
+          remainingGuesses: 3 - wrongGuesses,
           isCompleted: false,
           maxGuesses: 3,
           scoreboardSize: 10,
@@ -94,11 +92,7 @@ const Game: React.FC = () => {
           }
         }
 
-        const scoreboard: ScoreboardEntry[] = TEST_DATA.map((item, index) => ({
-          word: item.word,
-          frequency: item.count,
-          rank: index + 1
-        }))
+        const scoreboard: ScoreboardEntry[] = TEST_DATA
 
         setGameState(gameState)
         setScoreboard(scoreboard)
@@ -137,61 +131,62 @@ const Game: React.FC = () => {
     setSuccess('')
 
     try {
-      if (isTestMode) {
-        // Handle test mode guess
-        const guessWord = currentGuess.trim().toLowerCase()
-        const foundWord = TEST_DATA.find(item => item.word.toLowerCase() === guessWord)
-        
-        if (foundWord) {
-          const index = TEST_DATA.findIndex(item => item.word.toLowerCase() === guessWord)
-          const score = calculateScore(index, TEST_DATA.length)
-          const newGuess = {
-            id: `test-${Date.now()}`,
-            gameId: 'test',
-            userId: 'test-user',
-            word: guessWord,
-            frequency: foundWord.count,
-            score: score,
-            rank: index + 1,
-            createdAt: new Date().toISOString()
-          }
-          
-          setTestScore(prev => prev + score)
-          setTestGuesses(prev => [...prev, newGuess])
-          setGuessedWords(prev => new Set(Array.from(prev).concat(guessWord)))
-          setTestRemainingGuesses(prev => prev - (foundWord ? 0 : 1))
-          setSuccess(`"${currentGuess}" found! +${score} points`)
-          setCurrentGuess('')
-          
-          // Check if game is over
-          if (testRemainingGuesses - 1 === 0) {
-            setTimeout(() => {
-              endTestGame()
-            }, 2000)
-          }
-        } else {
-          setError(`"${currentGuess}" not found in the word list`)
-        }
+      const guessWord = currentGuess.trim().toLowerCase()
+      const foundWord = scoreboard.find(entry => entry.word === guessWord)
+
+      let index: number | undefined
+      let score: number
+
+      if (gameState!.guesses.some(guess => guess.word === guessWord)) {
+        setError(`"${currentGuess}" has already been guessed`)
+        return
+      }
+      else if (foundWord) {
+        index = scoreboard.findIndex(entry => entry.word === guessWord)
+        score = calculateScore(index, scoreboard.length)
       } else {
-        const response = await gameAPI.submitGuess(gameId, { word: currentGuess.trim() })
-        
-        if (response.success && response.data) {
-          setSuccess(`"${currentGuess}" found! +${response.data.guess.score} points`)
-          setCurrentGuess('')
-          
-          // Add the guessed word to our set
-          setGuessedWords(prev => new Set(Array.from(prev).concat(currentGuess.trim().toLowerCase())))
-          
-          // Reload game state to get updated score and guesses
-          await loadGame()
-          
-          // Check if game is over
-          if (response.data.remainingGuesses === 0) {
-            setTimeout(() => {
-              endGame()
-            }, 2000)
-          }
-        }
+        index = undefined
+        score = 0
+      }
+
+      const newGuess: Guess = {
+        id: `${Date.now()}`,
+        gameId,
+        userId: 'test-user',
+        word: guessWord,
+        frequency: foundWord ? foundWord.frequency : 0,
+        score,
+        rank: typeof index === 'number' ? index + 1 : undefined,
+        createdAt: new Date().toISOString()
+      }
+
+      setScore(prev => prev + score)
+      const updatedGuesses = [...guesses, newGuess]
+      setGuesses(updatedGuesses)
+      setGuessedWords(prev => new Set(Array.from(prev).concat(guessWord)))
+      const updatedWrongGuesses = wrongGuesses + (foundWord ? 0 : 1)
+      setWrongGuesses(updatedWrongGuesses)
+      
+      // Update gameState through setGameState to trigger re-render
+      setGameState(prev => prev ? {
+        ...prev,
+        score: prev.score + score,
+        guesses: updatedGuesses,
+        remainingGuesses: prev.maxGuesses - (wrongGuesses + (foundWord ? 0 : 1))
+      } : null)
+      setCurrentGuess('')
+
+      if (foundWord) {
+        setSuccess(`"${currentGuess}" found! +${score} points`)
+      } else {
+        setError(`"${currentGuess}" not found in the word list`)
+      }
+
+      if (gameState!.maxGuesses - updatedWrongGuesses === 0 || gameState!.scoreboardSize === updatedGuesses.length - updatedWrongGuesses) {
+        setGameState(prev => prev ? { ...prev, isCompleted: true } : null)
+        setTimeout(() => {
+          endGame()
+        }, 2000)
       }
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
@@ -200,27 +195,11 @@ const Game: React.FC = () => {
     }
   }
 
-  const endTestGame = () => {
-    // For test mode, just redirect to home
-    setTimeout(() => {
-      navigate('/')
-    }, 3000)
-  }
-
   const endGame = async () => {
     if (!gameId) return
     
-    if (isTestMode) {
-      endTestGame()
-      return
-    }
-    
     try {
       await gameAPI.endGame(gameId)
-      // Redirect to home after a short delay
-      setTimeout(() => {
-        navigate('/')
-      }, 3000)
     } catch (error) {
       console.error('Failed to end game:', error)
     }
