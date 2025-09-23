@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Newswordy",
+  "name": "Newswordy",
   "icons": [
     {
       "src": "favicon.ico",
