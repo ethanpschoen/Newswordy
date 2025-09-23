@@ -216,13 +216,6 @@ const Game: React.FC = () => {
     }
   }
 
-  const getScoreColor = (score: number) => {
-    if (score >= 800) return Color.SCORE_HIGH
-    if (score >= 600) return Color.SCORE_MEDIUM
-    if (score >= 400) return Color.SCORE_LOW
-    return Color.SCORE_DEFAULT
-  }
-
   const getRankColor = (rank: number) => {
     if (rank === 1) return Color.RANK_FIRST_BG
     if (rank === 2) return Color.RANK_SECOND_BG
@@ -503,7 +496,7 @@ const Game: React.FC = () => {
             Game Statistics
           </Typography>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
               <Paper 
                 elevation={1} 
                 sx={{ 
@@ -520,7 +513,7 @@ const Game: React.FC = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
               <Paper 
                 elevation={1} 
                 sx={{ 
@@ -533,11 +526,11 @@ const Game: React.FC = () => {
                   {gameState.guessedWords.size}
                 </Typography>
                 <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-                  Words Guessed
+                  Word{gameState.guessedWords.size === 1 ? null : 's'} Guessed
                 </Typography>
               </Paper>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
               <Paper 
                 elevation={1} 
                 sx={{ 
@@ -550,24 +543,7 @@ const Game: React.FC = () => {
                   {gameState.remainingGuesses}
                 </Typography>
                 <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-                  Wrong Guesses Left
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Paper 
-                elevation={1} 
-                sx={{ 
-                  p: 3, 
-                  textAlign: 'center',
-                  background: `linear-gradient(135deg, ${Color.GRADIENT_ORANGE_START} 0%, ${Color.GRADIENT_ORANGE_END} 100%)`
-                }}
-              >
-                <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'warning.main', mb: 1 }}>
-                  {gameState.maxGuesses}
-                </Typography>
-                <Typography variant="body2" color="warning.main" sx={{ fontWeight: 'medium' }}>
-                  Max Guesses
+                  Wrong Guess{gameState.remainingGuesses === 1 ? null : 'es'} Left
                 </Typography>
               </Paper>
             </Grid>
@@ -604,7 +580,7 @@ const Game: React.FC = () => {
                       variant="h6" 
                       sx={{ 
                         fontWeight: 'bold',
-                        color: getScoreColor(guess.score)
+                        color: guess.rank !== undefined ? Color.SCORE_HIGH : Color.ERROR
                       }}
                     >
                       +{guess.score}
