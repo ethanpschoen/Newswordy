@@ -358,7 +358,7 @@ const Game: React.FC = () => {
                       Selected Time Period
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 'semibold', color: 'text.primary' }}>
-                      {TIME_PERIOD_NAMES[gameState.timePeriod as keyof typeof TIME_PERIOD_NAMES]}
+                      {isTestMode ? 'September 2nd - September 8th' : TIME_PERIOD_NAMES[gameState.timePeriod as keyof typeof TIME_PERIOD_NAMES]}
                     </Typography>
                   </Box>
                 </Stack>
