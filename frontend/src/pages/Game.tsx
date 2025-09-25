@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { gameAPI } from '../services/api'
-import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig, NewsSource } from '../types'
+import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig } from '../types'
 import { 
   Box,
   Button,
@@ -29,6 +29,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import testData from '../components/test_data.json'
 
 // Extract the test data from the JSON file with proper typing
+// @ts-ignore
 const TEST_DATA: ScoreboardEntry[] = testData[0].results
 
 const Game: React.FC = () => {
@@ -690,7 +691,7 @@ const Game: React.FC = () => {
                                 flexShrink: 0
                               }}
                             >
-                              {NewsSourceConfig[article.source as NewsSource].logo}
+                              {NewsSourceConfig[article.source].logo}
                             </Box>
                             
                             {/* Article Content */}
@@ -728,7 +729,7 @@ const Game: React.FC = () => {
                                 })}
                               </Typography>
                               <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5, fontSize: '0.7rem' }}>
-                                {NewsSourceConfig[article.source as NewsSource].name}
+                                {NewsSourceConfig[article.source].name}
                               </Typography>
                             </Box>
                           </Box>

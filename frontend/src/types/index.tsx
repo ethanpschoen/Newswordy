@@ -289,7 +289,7 @@ export const NewsSourceConfig: Record<NewsSource, { name: string, logo: React.Re
 // Test data types
 export interface Article {
   url: string
-  source: string
+  source: NewsSource
   headline: string
   published_date: string
 }
