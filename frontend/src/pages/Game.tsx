@@ -62,10 +62,43 @@ const Game: React.FC = () => {
   // Article panel pagination state
   const [currentPage, setCurrentPage] = useState(0)
   const articlesPerPage = 10
+  
+  // Animation and scroll state
+  const [highlightedWord, setHighlightedWord] = useState<string | null>(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const wordRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   // Calculate score based on index and total scoreboard length
   const calculateScore = (index: number, totalLength: number): number => {
     return Math.round(1000 * (1 - (index / totalLength)))
+  }
+
+  // Scroll to word and trigger highlight animation
+  const scrollToWordAndHighlight = (word: string) => {
+    // Prevent overlapping animations
+    if (isAnimating) return
+    
+    setIsAnimating(true)
+    setHighlightedWord(word)
+    
+    // Small delay before scrolling
+    setTimeout(() => {
+      const wordElement = wordRefs.current[word.toLowerCase()]
+      if (wordElement) {
+        // Scroll the word into view with smooth behavior
+        wordElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        })
+      }
+    }, 300) // Reduced delay to 300ms
+    
+    // Clear animation after 1.5 seconds (gentle animation)
+    setTimeout(() => {
+      setHighlightedWord(null)
+      setIsAnimating(false)
+    }, 1500)
   }
 
   useEffect(() => {
@@ -219,6 +252,8 @@ const Game: React.FC = () => {
 
       if (foundWord) {
         setSuccess(`"${currentGuess}" found! +${wordScore} points`)
+        // Trigger scroll and highlight animation
+        scrollToWordAndHighlight(guessWord)
       } else {
         setError(`"${currentGuess}" not found in the word list`)
       }
@@ -562,9 +597,13 @@ const Game: React.FC = () => {
                 <Stack spacing={1}>
                   {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
                     const isGuessed = guessedWords.has(entry.word.toLowerCase())
+                    const isHighlighted = highlightedWord === entry.word.toLowerCase()
                     return (
                       <Paper
                         key={entry.word}
+                        ref={(el) => {
+                          wordRefs.current[entry.word.toLowerCase()] = el
+                        }}
                         elevation={isGuessed ? 2 : 1}
                         sx={{
                           p: 2,
@@ -573,9 +612,31 @@ const Game: React.FC = () => {
                           justifyContent: 'space-between',
                           cursor: isGuessed ? 'pointer' : 'default',
                           minHeight: '48px',
+                          // Highlight animation styles
+                          ...(isHighlighted && {
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            border: '1px solid',
+                            borderColor: 'rgba(76, 175, 80, 0.3)',
+                            boxShadow: '0 0 8px rgba(76, 175, 80, 0.2)',
+                            animation: 'subtleHighlight 1.5s ease-in-out',
+                            '@keyframes subtleHighlight': {
+                              '0%': {
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                boxShadow: '0 0 8px rgba(76, 175, 80, 0.2)'
+                              },
+                              '50%': {
+                                backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                                boxShadow: '0 0 12px rgba(76, 175, 80, 0.3)'
+                              },
+                              '100%': {
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                boxShadow: '0 0 8px rgba(76, 175, 80, 0.2)'
+                              }
+                            }
+                          }),
                           '&:hover': isGuessed ? {
                             backgroundColor: 'action.hover',
-                            transform: 'translateY(-1px)',
+                            transform: isHighlighted ? 'scale(1.02)' : 'translateY(-1px)',
                             transition: 'all 0.2s ease-in-out'
                           } : {}
                         }}
