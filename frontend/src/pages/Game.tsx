@@ -40,29 +40,30 @@ const Game: React.FC = () => {
   // Check if this is test mode
   const isTestMode = gameId === 'test'
   
+  // Game state variables
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
-  const [guesses, setGuesses] = useState<Guess[]>([])
-  const [guessedWords, setGuessedWords] = useState<Set<string>>(new Set())
-  const [wrongGuesses, setWrongGuesses] = useState(0)
+  const [guesses, setGuesses] = useState<Guess[]>([]) // Words submitted by player
+  const [guessedWords, setGuessedWords] = useState<Set<string>>(new Set()) // Correct guesses
+  const [wrongGuesses, setWrongGuesses] = useState(0) // Number of wrong guesses
   const [score, setScore] = useState(0)
+  
+  // Action state variables
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [currentGuess, setCurrentGuess] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const [showScoreboard, setShowScoreboard] = useState(false)
+  const [error, setError] = useState('') // Incorrect guess message
+  const [success, setSuccess] = useState('') // Correct guess message
   
   // Article panel state
   const [selectedWordData, setSelectedWordData] = useState<ScoreboardEntry | null>(null)
+  const [currentPage, setCurrentPage] = useState(0) // Pagination state
+  const articlesPerPage = 10
   
   // Refs and state for height management
+  const [showScoreboard, setShowScoreboard] = useState(false)
   const scoreboardRef = useRef<HTMLDivElement>(null)
   const [scoreboardHeight, setScoreboardHeight] = useState<number>(0)
-  
-  // Article panel pagination state
-  const [currentPage, setCurrentPage] = useState(0)
-  const articlesPerPage = 10
 
   // Calculate score based on index and total scoreboard length
   const calculateScore = (index: number, totalLength: number): number => {
@@ -165,6 +166,7 @@ const Game: React.FC = () => {
     try {
       const guessWord = currentGuess.trim().toLowerCase()
 
+      // If the word has already been guessed, don't count it
       if (gameState!.guesses.some(guess => guess.word === guessWord)) {
         setError(`"${currentGuess}" has already been guessed`)
         return
@@ -201,7 +203,7 @@ const Game: React.FC = () => {
         word: guessWord,
         frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,
-        rank: typeof index === 'number' ? index + 1 : undefined,
+        rank: index !== undefined ? index + 1 : undefined,
         createdAt: new Date().toISOString()
       }
 
@@ -224,6 +226,7 @@ const Game: React.FC = () => {
         setError(`"${currentGuess}" not found in the word list`)
       }
 
+      // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
       if (gameState!.maxGuesses === updatedWrongGuesses || gameState!.scoreboardSize === updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, isCompleted: true } : null)
         setTimeout(() => {
@@ -327,7 +330,7 @@ const Game: React.FC = () => {
             height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
             maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
           }}>
-            {/* Game Header */}
+            {/* Game Information */}
             <Card>
               <CardContent sx={{ py: 2 }}>
                 <Stack spacing={2}>
@@ -623,7 +626,7 @@ const Game: React.FC = () => {
                             color={isGuessed ? 'text.secondary' : 'text.disabled'}
                             sx={{ minWidth: '90px', textAlign: 'right' }}
                           >
-                            {`${isGuessed ? `${entry.frequency}` : '???'} mentions`}
+                            {`${isGuessed ? entry.frequency : '???'} mentions`}
                           </Typography>
                         </Box>
                       </Paper>
