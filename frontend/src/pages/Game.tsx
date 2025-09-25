@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { gameAPI } from '../services/api'
 import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig, NewsSource } from '../types'
 import { 
-  Box, 
-  Button, 
-  Typography, 
-  Card, 
-  CardContent, 
-  TextField, 
-  Alert, 
-  Chip, 
-  Grid, 
-  Paper, 
-  IconButton, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent,
-  List,
+  Box,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  TextField,
+  Alert,
+  Chip,
+  Grid,
+  Paper,
+  IconButton,
   Avatar,
   Stack,
   Container
 } from '@mui/material'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { Close as CloseIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon } from '@mui/icons-material'
 import { 
   TrophyIcon,
   ArrowLeftIcon,
@@ -57,8 +53,15 @@ const Game: React.FC = () => {
   const [showScoreboard, setShowScoreboard] = useState(false)
   
   // Article panel state
-  const [showArticlePanel, setShowArticlePanel] = useState(false)
   const [selectedWordData, setSelectedWordData] = useState<ScoreboardEntry | null>(null)
+  
+  // Refs and state for height management
+  const scoreboardRef = useRef<HTMLDivElement>(null)
+  const [scoreboardHeight, setScoreboardHeight] = useState<number>(0)
+  
+  // Article panel pagination state
+  const [currentPage, setCurrentPage] = useState(0)
+  const articlesPerPage = 10
 
   // Calculate score based on index and total scoreboard length
   const calculateScore = (index: number, totalLength: number): number => {
@@ -70,6 +73,33 @@ const Game: React.FC = () => {
       loadGame()
     }
   }, [gameId]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Effect to measure scoreboard height
+  useEffect(() => {
+    const updateScoreboardHeight = () => {
+      if (scoreboardRef.current) {
+        const height = scoreboardRef.current.offsetHeight
+        setScoreboardHeight(height)
+      }
+    }
+
+    // Initial measurement
+    updateScoreboardHeight()
+
+    // Set up ResizeObserver to watch for changes
+    const resizeObserver = new ResizeObserver(updateScoreboardHeight)
+    if (scoreboardRef.current) {
+      resizeObserver.observe(scoreboardRef.current)
+    }
+
+    // Also update when scoreboard content changes
+    const timeoutId = setTimeout(updateScoreboardHeight, 100)
+
+    return () => {
+      resizeObserver.disconnect()
+      clearTimeout(timeoutId)
+    }
+  }, [scoreboard, showScoreboard, gameState?.guesses])
 
   const loadGame = async () => {
     try {
@@ -228,12 +258,11 @@ const Game: React.FC = () => {
     const wordData = TEST_DATA.find(item => item.word.toLowerCase() === word.toLowerCase())
     if (wordData) {
       setSelectedWordData(wordData)
-      setShowArticlePanel(true)
+      setCurrentPage(0) // Reset to first page when selecting a new word
     }
   }
 
   const closeArticlePanel = () => {
-    setShowArticlePanel(false)
     setSelectedWordData(null)
   }
 
@@ -288,418 +317,496 @@ const Game: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg">
-      {/* Game Header */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Button
-                onClick={() => navigate('/')}
-                variant="outlined"
-                startIcon={<ArrowLeftIcon className="w-4 h-4" />}
-                sx={{ textTransform: 'none' }}
-              >
-                Back to Home
-              </Button>
-              <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-                Newswordy Game
-              </Typography>
-            </Box>
-            <Box sx={{ textAlign: 'right' }}>
-              <Typography variant="body2" color="text.secondary">
-                Time Period
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: 'semibold' }}>
-                {TIME_PERIOD_NAMES[gameState.timePeriod as keyof typeof TIME_PERIOD_NAMES]}
-              </Typography>
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
-
-      <Stack spacing={4}>
-        {/* Word Input Section */}
-        <Card>
-          <CardContent>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Guess a Word
-            </Typography>
-            
-            {gameState.isCompleted ? (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <TrophyIcon className="w-16 h-16 mx-auto mb-4" style={{ color: Color.TROPHY }} />
-                <Typography variant="h4" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
-                  Game Complete!
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                  Final Score: {gameState.score} points
-                </Typography>
-                <Button
-                  onClick={() => navigate('/')}
-                  variant="contained"
-                  size="large"
-                  startIcon={<PlayIcon className="w-5 h-5" />}
-                  sx={{ textTransform: 'none' }}
-                >
-                  Play Again
-                </Button>
-              </Box>
-            ) : (
-              <Box component="form" onSubmit={handleSubmitGuess} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField
-                  fullWidth
-                  label="Enter a word that appears in news headlines:"
-                  value={currentGuess}
-                  onChange={(e) => setCurrentGuess(e.target.value)}
-                  placeholder="Type a word..."
-                  variant="outlined"
-                  size="medium"
-                  disabled={submitting}
-                  sx={{ '& .MuiInputBase-input': { fontSize: '1.125rem' } }}
-                />
-                
-                {error && (
-                  <Alert severity="error" sx={{ mt: 1 }}>
-                    {error}
-                  </Alert>
-                )}
-                
-                {success && (
-                  <Alert severity="success" sx={{ mt: 1 }}>
-                    {success}
-                  </Alert>
-                )}
-                
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  disabled={submitting || !currentGuess.trim()}
-                  sx={{ textTransform: 'none', py: 1.5 }}
-                >
-                  {submitting ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <LoadingSpinner size="sm" />
-                      Submitting...
-                    </Box>
-                  ) : (
-                    'Submit Guess'
-                  )}
-                </Button>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Scoreboard Section */}
-        <Card>
-          <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
-                Top Words
-              </Typography>
-              {scoreboard.length > 10 && (
-                <Button
-                  onClick={() => setShowScoreboard(!showScoreboard)}
-                  size="small"
-                  sx={{ textTransform: 'none' }}
-                >
-                  {showScoreboard ? 'Hide' : 'Show'} Full List
-                </Button>
-              )}
-            </Box>
-            
-            <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-                const isGuessed = guessedWords.has(entry.word.toLowerCase())
-                return (
-                  <Paper
-                    key={entry.word}
-                    elevation={isGuessed ? 2 : 1}
-                    sx={{
-                      p: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      cursor: isGuessed ? 'pointer' : 'default',
-                      '&:hover': isGuessed ? {
-                        backgroundColor: 'action.hover',
-                        transform: 'translateY(-1px)',
-                        transition: 'all 0.2s ease-in-out'
-                      } : {}
-                    }}
-                    onClick={isGuessed ? () => handleWordClick(entry.word) : undefined}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar
-                        sx={{
-                          width: 24,
-                          height: 24,
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold',
-                          bgcolor: getRankColor(index + 1),
-                          color: 'black'
-                        }}
-                      >
-                        {index + 1}
-                      </Avatar>
-                      <Typography 
-                        variant="body1"
-                        sx={{ 
-                          fontWeight: 'medium',
-                          color: isGuessed ? 'text.primary' : 'text.disabled'
-                        }}
-                      >
-                        {isGuessed ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ textAlign: 'right' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 'bold',
-                          color: isGuessed ? 'text.primary' : 'text.disabled'
-                        }}
-                      >
-                        {calculateScore(index, scoreboard.length)}
-                      </Typography>
-                      <Typography 
-                        variant="caption" 
-                        color={isGuessed ? 'text.secondary' : 'text.disabled'}
-                      >
-                        {isGuessed ? `${entry.frequency} mentions` : '???'}
-                      </Typography>
-                    </Box>
-                  </Paper>
-                )
-              })}
-            </List>
-            
-            {!showScoreboard && scoreboard.length > 10 && (
-              <Button
-                onClick={() => setShowScoreboard(true)}
-                fullWidth
-                sx={{ mt: 2, textTransform: 'none' }}
-              >
-                Show {scoreboard.length - 10} more words...
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      </Stack>
-
-      {/* Game Stats */}
-      <Card sx={{ mt: 4 }}>
-        <CardContent>
-          <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 3 }}>
-            Game Statistics
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-              <Paper 
-                elevation={1} 
-                sx={{ 
-                  p: 3, 
-                  textAlign: 'center',
-                  background: `linear-gradient(135deg, ${Color.GRADIENT_BLUE_START} 0%, ${Color.GRADIENT_BLUE_END} 100%)`
-                }}
-              >
-                <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
-                  {gameState.score}
-                </Typography>
-                <Typography variant="body2" color="primary.main" sx={{ fontWeight: 'medium' }}>
-                  Total Score
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-              <Paper 
-                elevation={1} 
-                sx={{ 
-                  p: 3, 
-                  textAlign: 'center',
-                  background: `linear-gradient(135deg, ${Color.GRADIENT_GREEN_START} 0%, ${Color.GRADIENT_GREEN_END} 100%)`
-                }}
-              >
-                <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 1 }}>
-                  {gameState.guessedWords.size}
-                </Typography>
-                <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-                  Word{gameState.guessedWords.size === 1 ? null : 's'} Guessed
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-              <Paper 
-                elevation={1} 
-                sx={{ 
-                  p: 3, 
-                  textAlign: 'center',
-                  background: `linear-gradient(135deg, ${Color.GRADIENT_PURPLE_START} 0%, ${Color.GRADIENT_PURPLE_END} 100%)`
-                }}
-              >
-                <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 1 }}>
-                  {gameState.remainingGuesses}
-                </Typography>
-                <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-                  Wrong Guess{gameState.remainingGuesses === 1 ? null : 'es'} Left
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-
-      {/* Recent Guesses Section */}
-      {gameState.guesses.length > 0 && (
-        <Card sx={{ mt: 4 }}>
-          <CardContent>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Your Guesses
-            </Typography>
-            <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {gameState.guesses.map((guess, index) => (
-                <Paper
-                  key={guess.id}
-                  elevation={1}
-                  sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'semibold' }}>
-                      {guess.word}
-                    </Typography>
-                    <Chip
-                      label={guess.rank !== undefined ? `#${guess.rank}` : `X`}
+    <Container maxWidth="xl">
+      {/* Main 3-Column Layout */}
+      <Grid container spacing={3}>
+        {/* Left Column - Header Info, Game Stats & Recent Guesses */}
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <Stack spacing={2} sx={{ 
+            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
+          }}>
+            {/* Game Header */}
+            <Card>
+              <CardContent sx={{ py: 2 }}>
+                <Stack spacing={2}>
+                  {/* Navigation and Title */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Button
+                      onClick={() => navigate('/')}
+                      variant="outlined"
                       size="small"
-                      color={guess.rank === 1 ? 'success' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'warning' : guess.rank !== undefined ? 'primary' : 'error'}
-                    />
-                  </Box>
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography 
-                      variant="h6" 
-                      sx={{ 
-                        fontWeight: 'bold',
-                        color: guess.rank !== undefined ? Color.SCORE_HIGH : Color.ERROR
-                      }}
+                      startIcon={<ArrowLeftIcon className="w-4 h-4" />}
+                      sx={{ textTransform: 'none' }}
                     >
-                      +{guess.score}
+                      Back to Home
+                    </Button>
+                    <Typography variant="h6" component="h1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                      Newswordy
                     </Typography>
-                    {guess.rank !== undefined && 
-                      <Typography variant="body2" color="text.secondary">
-                        Frequency: {guess.frequency}
-                      </Typography>
-                    }
                   </Box>
-                </Paper>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      )}
+                  
+                  {/* Time Period Info */}
+                  <Box sx={{ 
+                    p: 1.5, 
+                    bgcolor: 'grey.50', 
+                    borderRadius: 1,
+                    border: '1px solid',
+                    borderColor: 'grey.200'
+                  }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Selected Time Period
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 'semibold', color: 'text.primary' }}>
+                      {TIME_PERIOD_NAMES[gameState.timePeriod as keyof typeof TIME_PERIOD_NAMES]}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
 
-      {/* Article Panel */}
-      <Dialog
-        open={showArticlePanel}
-        onClose={closeArticlePanel}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            height: '100vh',
-            width: '400px',
-            maxWidth: '100vw',
-            margin: 0,
-            borderRadius: 0
-          }
-        }}
-      >
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
-            Articles for "{selectedWordData?.word.toUpperCase()}"
-          </Typography>
-          <IconButton
-            onClick={closeArticlePanel}
-            size="small"
-            sx={{ color: 'text.secondary' }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        
-        <DialogContent sx={{ p: 0 }}>
-          <Box sx={{ p: 3 }}>
-            <Stack spacing={2}>
-              {selectedWordData?.articles.map((article, index) => (
-                <Paper
-                  key={index}
-                  elevation={1}
-                  sx={{ p: 2, '&:hover': { elevation: 3 } }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                    {/* Source Icon */}
-                    <Box
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'primary.light',
-                        borderRadius: '50%',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      {NewsSourceConfig[article.source as NewsSource].logo}
-                    </Box>
-                    
-                    {/* Article Content */}
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography
-                        component="a"
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variant="body2"
-                        sx={{
-                          fontWeight: 'medium',
-                          color: 'text.primary',
-                          textDecoration: 'none',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          '&:hover': {
-                            color: 'primary.main',
-                            textDecoration: 'underline'
-                          }
-                        }}
-                      >
-                        {article.headline}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                        {new Date(article.published_date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </Typography>
-                      <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5 }}>
-                        {NewsSourceConfig[article.source as NewsSource].name}
-                      </Typography>
-                    </Box>
+            {/* Game Stats */}
+            <Card>
+              <CardContent sx={{ py: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
+                  Game Statistics
+                </Typography>
+                <Stack spacing={1.5}>
+                  <Paper 
+                    elevation={1} 
+                    sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      background: `linear-gradient(135deg, ${Color.GRADIENT_BLUE_START} 0%, ${Color.GRADIENT_BLUE_END} 100%)`
+                    }}
+                  >
+                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5 }}>
+                      {gameState.score}
+                    </Typography>
+                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 'medium' }}>
+                      Total Score
+                    </Typography>
+                  </Paper>
+                  <Paper 
+                    elevation={1} 
+                    sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      background: `linear-gradient(135deg, ${Color.GRADIENT_GREEN_START} 0%, ${Color.GRADIENT_GREEN_END} 100%)`
+                    }}
+                  >
+                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 0.5 }}>
+                      {gameState.guessedWords.size}
+                    </Typography>
+                    <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
+                      Word{gameState.guessedWords.size === 1 ? null : 's'} Guessed
+                    </Typography>
+                  </Paper>
+                  <Paper 
+                    elevation={1} 
+                    sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      background: `linear-gradient(135deg, ${Color.GRADIENT_PURPLE_START} 0%, ${Color.GRADIENT_PURPLE_END} 100%)`
+                    }}
+                  >
+                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 0.5 }}>
+                      {gameState.remainingGuesses}
+                    </Typography>
+                    <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
+                      Wrong Guess{gameState.remainingGuesses === 1 ? null : 'es'} Left
+                    </Typography>
+                  </Paper>
+                </Stack>
+              </CardContent>
+            </Card>
+
+            {/* Recent Guesses */}
+            {gameState.guesses.length > 0 && (
+              <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                <CardContent sx={{ py: 2, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5, flexShrink: 0 }}>
+                    Your Guesses
+                  </Typography>
+                  <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+                    <Stack spacing={1}>
+                      {gameState.guesses.map((guess, index) => (
+                        <Paper
+                          key={guess.id}
+                          elevation={1}
+                          sx={{ p: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 'semibold' }}>
+                              {guess.word}
+                            </Typography>
+                            <Chip
+                              label={guess.rank !== undefined ? `#${guess.rank}` : `X`}
+                              size="small"
+                              color={guess.rank === 1 ? 'success' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'warning' : guess.rank !== undefined ? 'primary' : 'error'}
+                            />
+                          </Box>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              fontWeight: 'bold',
+                              color: guess.rank !== undefined ? Color.SCORE_HIGH : Color.ERROR
+                            }}
+                          >
+                            +{guess.score}
+                          </Typography>
+                        </Paper>
+                      ))}
+                    </Stack>
                   </Box>
-                </Paper>
-              ))}
-            </Stack>
-          </Box>
-        </DialogContent>
-      </Dialog>
+                </CardContent>
+              </Card>
+            )}
+          </Stack>
+        </Grid>
+
+        {/* Middle Column - Word Input & Scoreboard */}
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <Stack spacing={3} ref={scoreboardRef}>
+            {/* Word Input Section */}
+            <Card>
+              <CardContent sx={{ py: 2 }}>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
+                  Guess a Word
+                </Typography>
+                
+                {gameState.isCompleted ? (
+                  <Box sx={{ textAlign: 'center', py: 3 }}>
+                    <TrophyIcon className="w-12 h-12 mx-auto mb-3" style={{ color: Color.TROPHY }} />
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      Game Complete!
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      Final Score: {gameState.score} points
+                    </Typography>
+                    <Button
+                      onClick={() => navigate('/')}
+                      variant="contained"
+                      size="medium"
+                      startIcon={<PlayIcon className="w-4 h-4" />}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      Play Again
+                    </Button>
+                  </Box>
+                ) : (
+                  <Box component="form" onSubmit={handleSubmitGuess} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <TextField
+                      fullWidth
+                      label="Enter a word that appears in news headlines:"
+                      value={currentGuess}
+                      onChange={(e) => setCurrentGuess(e.target.value)}
+                      placeholder="Type a word..."
+                      variant="outlined"
+                      size="small"
+                      disabled={submitting}
+                      sx={{ '& .MuiInputBase-input': { fontSize: '1rem' } }}
+                    />
+                    
+                    {error && (
+                      <Alert severity="error" sx={{ py: 0.5 }}>
+                        {error}
+                      </Alert>
+                    )}
+                    
+                    {success && (
+                      <Alert severity="success" sx={{ py: 0.5 }}>
+                        {success}
+                      </Alert>
+                    )}
+                    
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      size="medium"
+                      disabled={submitting || !currentGuess.trim()}
+                      sx={{ textTransform: 'none', py: 1 }}
+                    >
+                      {submitting ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <LoadingSpinner size="sm" />
+                          Submitting...
+                        </Box>
+                      ) : (
+                        'Submit Guess'
+                      )}
+                    </Button>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Scoreboard Section */}
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
+                    Top Words
+                  </Typography>
+                  {scoreboard.length > 10 && (
+                    <Button
+                      onClick={() => setShowScoreboard(!showScoreboard)}
+                      size="small"
+                      sx={{ textTransform: 'none' }}
+                    >
+                      {showScoreboard ? 'Hide' : 'Show'} Full List
+                    </Button>
+                  )}
+                </Box>
+                
+                <Stack spacing={1}>
+                  {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
+                    const isGuessed = guessedWords.has(entry.word.toLowerCase())
+                    return (
+                      <Paper
+                        key={entry.word}
+                        elevation={isGuessed ? 2 : 1}
+                        sx={{
+                          p: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: isGuessed ? 'pointer' : 'default',
+                          minHeight: '48px',
+                          '&:hover': isGuessed ? {
+                            backgroundColor: 'action.hover',
+                            transform: 'translateY(-1px)',
+                            transition: 'all 0.2s ease-in-out'
+                          } : {}
+                        }}
+                        onClick={isGuessed ? () => handleWordClick(entry.word) : undefined}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Avatar
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              fontSize: '0.7rem',
+                              fontWeight: 'bold',
+                              bgcolor: getRankColor(index + 1),
+                              color: 'black'
+                            }}
+                          >
+                            {index + 1}
+                          </Avatar>
+                          <Typography 
+                            variant="body1"
+                            sx={{ 
+                              fontWeight: 'medium',
+                              color: isGuessed ? 'text.primary' : 'text.disabled',
+                              minWidth: '120px'
+                            }}
+                          >
+                            {isGuessed ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Typography 
+                            variant="body1" 
+                            sx={{ 
+                              fontWeight: 'bold',
+                              color: isGuessed ? 'text.primary' : 'text.disabled',
+                              minWidth: '40px',
+                              textAlign: 'right'
+                            }}
+                          >
+                            {calculateScore(index, scoreboard.length)}
+                          </Typography>
+                          <Typography 
+                            variant="caption" 
+                            color={isGuessed ? 'text.secondary' : 'text.disabled'}
+                            sx={{ minWidth: '90px', textAlign: 'right' }}
+                          >
+                            {`${isGuessed ? `${entry.frequency}` : '???'} mentions`}
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    )
+                  })}
+                </Stack>
+                
+                {!showScoreboard && scoreboard.length > 10 && (
+                  <Button
+                    onClick={() => setShowScoreboard(true)}
+                    fullWidth
+                    sx={{ mt: 2, textTransform: 'none' }}
+                  >
+                    Show {scoreboard.length - 10} more words...
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </Stack>
+        </Grid>
+
+        {/* Right Column - Article Info */}
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <Card sx={{ 
+            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
+          }}>
+            <CardContent sx={{ py: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+              {selectedWordData ? (
+                <>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+                      Articles for "{selectedWordData.word.toUpperCase()}"
+                    </Typography>
+                    <IconButton
+                      onClick={closeArticlePanel}
+                      size="small"
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+                    <Stack spacing={1.5} sx={{ flex: 1 }}>
+                      {selectedWordData.articles
+                        .slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage)
+                        .map((article, index) => (
+                        <Paper
+                          key={currentPage * articlesPerPage + index}
+                          elevation={1}
+                          sx={{ p: 1.5, '&:hover': { elevation: 3 } }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                            {/* Source Icon */}
+                            <Box
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                bgcolor: 'primary.light',
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                flexShrink: 0
+                              }}
+                            >
+                              {NewsSourceConfig[article.source as NewsSource].logo}
+                            </Box>
+                            
+                            {/* Article Content */}
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              <Typography
+                                component="a"
+                                href={article.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="body2"
+                                sx={{
+                                  fontWeight: 'medium',
+                                  color: 'text.primary',
+                                  textDecoration: 'none',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 3,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden',
+                                  fontSize: '0.8rem',
+                                  lineHeight: 1.3,
+                                  '&:hover': {
+                                    color: 'primary.main',
+                                    textDecoration: 'underline'
+                                  }
+                                }}
+                              >
+                                {article.headline}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block', fontSize: '0.7rem' }}>
+                                {new Date(article.published_date).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </Typography>
+                              <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5, fontSize: '0.7rem' }}>
+                                {NewsSourceConfig[article.source as NewsSource].name}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      ))}
+                    </Stack>
+                    
+                    {/* Pagination Controls */}
+                    {selectedWordData.articles.length > articlesPerPage && (
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        mt: 2, 
+                        pt: 2, 
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        flexShrink: 0
+                      }}>
+                        <Typography variant="caption" color="text.secondary">
+                          Showing {currentPage * articlesPerPage + 1}-{Math.min((currentPage + 1) * articlesPerPage, selectedWordData.articles.length)} of {selectedWordData.articles.length}
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <IconButton
+                            size="small"
+                            disabled={currentPage === 0}
+                            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                            sx={{ 
+                              width: 24, 
+                              height: 24,
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              '&:hover': {
+                                backgroundColor: 'action.hover'
+                              }
+                            }}
+                          >
+                            <ChevronLeftIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            disabled={(currentPage + 1) * articlesPerPage >= selectedWordData.articles.length}
+                            onClick={() => setCurrentPage(prev => prev + 1)}
+                            sx={{ 
+                              width: 24, 
+                              height: 24,
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              '&:hover': {
+                                backgroundColor: 'action.hover'
+                              }
+                            }}
+                          >
+                            <ChevronRightIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                </>
+              ) : (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  py: 4, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  minHeight: '200px'
+                }}>
+                  <Typography variant="body1" color="text.secondary">
+                    Click on a guessed word to see related articles
+                  </Typography>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Container>
   )
 }
