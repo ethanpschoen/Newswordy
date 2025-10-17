@@ -42,6 +42,8 @@ code {
   box-shadow: none !important;
 }
 
-.MuiOutlinedInput-root:focus-within {
-  outline: none !important;
+.MuiFormControl-root .MuiInputLabel-root {
+  z-index: 1 !important;
+  background-color: white !important;
+  padding: 0 4px !important;
 }
