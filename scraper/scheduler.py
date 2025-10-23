@@ -31,9 +31,6 @@ def run_scraping_job():
 def setup_schedule():
     """Set up the scheduling for different jobs"""
     
-    # Run scraping every 6 hours
-    schedule.every(6).hours.do(run_scraping_job)
-
     # Run scraping at specific times (morning and evening)
     schedule.every().day.at("06:00").do(run_scraping_job)
     schedule.every().day.at("18:00").do(run_scraping_job)
