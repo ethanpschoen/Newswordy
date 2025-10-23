@@ -47,6 +47,7 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
+    # TODO: they stopped updating feed, remove from game
     'cnn': {
         'name': 'CNN',
         'url': 'https://www.cnn.com',
@@ -103,6 +104,7 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.css-1l4w6pd', '.css-1l4w6pd'],
         'enabled': True
     },
+    # TODO: Error fetching RSS feed https://www.politico.com/rss/politicopicks.xml: 403 Client Error: Forbidden for url: https://www.politico.com/rss/politicopicks.xml
     'politico': {
         'name': 'Politico',
         'url': 'https://www.politico.com/',
