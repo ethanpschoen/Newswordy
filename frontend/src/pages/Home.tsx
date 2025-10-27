@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { gameAPI } from '../services/api'
+import { supabase } from '../services/supabaseClient'
 import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig } from '../types'
 import {
   Box,
@@ -46,23 +46,36 @@ const Home: React.FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_WEEK)
-  const [selectedSources, setSelectedSources] = useState<NewsSource[]>([])
+  const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
 
   const handleStartGame = async () => {
     setLoading(true)
     try {
-      const response = await gameAPI.createGame({
-        timePeriod: selectedTimePeriod,
-        sources: selectedSources,
-        maxGuesses,
-        scoreboardSize
-      })
+      const { data, error } = await supabase
+        .from('games')
+        .insert([{
+          score: 0,
+          created_at: new Date().toISOString(),
+          max_guesses: maxGuesses,
+          scoreboard_size: scoreboardSize,
+          time_period: selectedTimePeriod,
+          sources: selectedSources,
+          guessed_words: [],
+          remaining_guesses: maxGuesses,
+          is_completed: false
+        }])
+        .select('id')
+        .single()
 
-      if (response.success && response.data) {
-        navigate(`/game/${response.data.game.id}`)
+      if (error) {
+        console.error('Error creating game:', error);
+        return;
       }
+    
+      const gameId = data.id
+      navigate(`/game/${gameId}`)
     } catch (error) {
       console.error('Failed to create game:', error)
       // You could add a toast notification here

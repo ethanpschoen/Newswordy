@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { gameAPI } from '../services/api'
-import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig } from '../types'
+import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig } from '../types'
 import { 
   Box,
   Button,
@@ -27,6 +27,7 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner'
 
 import testData from '../components/test_data.json'
+import { supabase } from '../services/supabaseClient'
 
 // Extract the test data from the JSON file with proper typing
 // @ts-ignore
@@ -126,22 +127,55 @@ const Game: React.FC = () => {
         setGameState(gameState)
         setScoreboard(scoreboard)
       } else {
-        const [gameResponse, scoreboardResponse] = await Promise.all([
-          gameAPI.getGameState(gameId!),
-          gameAPI.getScoreboard(gameId!)
-        ])
-
-        if (gameResponse.success && gameResponse.data) {
-          setGameState(gameResponse.data)
-          
-          // Initialize guessed words from existing guesses
-          const initialGuessedWords = new Set(gameResponse.data.guesses.map(guess => guess.word.toLowerCase()))
-          setGuessedWords(initialGuessedWords)
+        const fetchGame = (gameId: string) => {
+          return supabase
+            .from('games')
+            .select(`
+              *,
+              guesses(*)
+            `)
+            .eq('id', gameId)
+            .maybeSingle()
         }
 
-        if (scoreboardResponse.success && scoreboardResponse.data) {
-          setScoreboard(scoreboardResponse.data.scoreboard)
+        const fetchScoreboard = (timePeriod: string, sources: NewsSource[], scoreboardSize: number) => {
+          const today = new Date()
+          const yesterday = new Date(today)
+
+          yesterday.setDate(yesterday.getDate() - 10)
+
+          return supabase
+            .rpc('get_top_words_scoreboard', {
+              start_date: yesterday.toISOString(),
+              end_date: today.toISOString(),
+              sources,
+              size: scoreboardSize
+            })
+            .select('*')
         }
+
+        const gameResponse = await fetchGame(gameId!)
+
+        if (gameResponse.error) {
+          console.error('Failed to load game:', gameResponse.error)
+        }
+
+        const game = gameResponse.data
+        game.guessed_words = new Set(game.guessed_words)
+        setGameState(game)
+
+        // Initialize guessed words from existing guesses
+        const initialGuessedWords = new Set<string>(game.guesses.map((guess: Guess) => guess.word.toLowerCase()))
+        setGuessedWords(initialGuessedWords)
+
+        const scoreboardResponse = await fetchScoreboard(game.time_period, game.sources, game.scoreboard_size)
+
+        if (scoreboardResponse.error) {
+          console.error('Failed to fetch scoreboard', scoreboardResponse.error)
+        }
+
+        const board = scoreboardResponse.data
+        setScoreboard(board)
       }
     } catch (error) {
       console.error('Failed to load game:', error)
@@ -255,7 +289,7 @@ const Game: React.FC = () => {
 
   const handleWordClick = (word: string) => {
     // Find the word data from TEST_DATA
-    const wordData = TEST_DATA.find(item => item.word.toLowerCase() === word.toLowerCase())
+    const wordData = scoreboard.find(item => item.word.toLowerCase() === word.toLowerCase())
     if (wordData) {
       setSelectedWordData(wordData)
       setCurrentPage(0) // Reset to first page when selecting a new word
