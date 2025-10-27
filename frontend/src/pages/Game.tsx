@@ -139,6 +139,7 @@ const Game: React.FC = () => {
         }
 
         const fetchScoreboard = (timePeriod: string, sources: NewsSource[], scoreboardSize: number) => {
+          // TODO: fix time period logic
           const today = new Date()
           const yesterday = new Date(today)
 
@@ -245,8 +246,8 @@ const Game: React.FC = () => {
         ...prev,
         score: updatedScore,
         guesses: updatedGuesses,
-        guessedWords: updatedGuessedWords,
-        remainingGuesses: prev.max_guesses - updatedWrongGuesses
+        guessed_words: updatedGuessedWords,
+        remaining_guesses: prev.max_guesses - updatedWrongGuesses
       } : null)
       setCurrentGuess('')
 
@@ -257,8 +258,8 @@ const Game: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (gameState!.max_guesses === updatedWrongGuesses || gameState!.scoreboard_size === updatedGuessedWords.size) {
-        setGameState(prev => prev ? { ...prev, isCompleted: true } : null)
+      if (gameState!.max_guesses <= updatedWrongGuesses || gameState!.scoreboard_size <= updatedGuessedWords.size) {
+        setGameState(prev => prev ? { ...prev, is_completed: true } : null)
         setTimeout(() => {
           endGame()
         }, 2000)
