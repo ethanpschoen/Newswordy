@@ -129,35 +129,39 @@ export interface User {
   id: string
   email: string
   username: string
-  createdAt: string
-  totalGames: number
-  totalScore: number
-  averageScore: number
-  bestScore: number
+  auth0_id: string
+  created_at: string
+  updated_at: string
+  total_games: number
+  total_score: number
+  average_score: number
+  best_score: number
 }
 
 export interface Game {
   id: string
-  userId?: string
-  sessionId?: string
-  timePeriod: string
+  time_period: string
   sources: NewsSource[]
   score: number
-  maxGuesses: number
-  scoreboardSize: number
-  createdAt: string
-  completedAt?: string
+  guessed_words: Set<string>
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+  user_id: string
+  completed_at?: string
+  created_at: string
 }
 
 export interface Guess {
   id: string
-  gameId: string
-  userId: string
+  game_id: string
+  user_id: string
   word: string
-  frequency: number
+  frequency?: number
   score: number
   rank?: number
-  createdAt: string
+  created_at: string
 }
 
 export interface ScoreboardEntry {
@@ -168,20 +172,16 @@ export interface ScoreboardEntry {
 }
 
 export interface GameState {
-  gameId: string
-  timePeriod: string
+  id: string
+  time_period: string
   sources: NewsSource[]
   score: number
   guesses: Guess[]
-  guessedWords: Set<string>
-  remainingGuesses: number
-  isCompleted: boolean
-  maxGuesses: number
-  scoreboardSize: number
-  user: {
-    id: string
-    username: string
-  }
+  guessed_words: Set<string>
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
 }
 
 export interface CreateGameRequest {

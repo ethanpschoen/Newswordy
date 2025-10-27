@@ -109,20 +109,16 @@ const Game: React.FC = () => {
 
       if (isTestMode) {
         const gameState: GameState = {
-          gameId: 'test',
-          timePeriod: 'past_week',
+          id: 'test',
+          time_period: 'past_week',
           sources: [],
           score,
           guesses,
-          guessedWords,
-          remainingGuesses: 3 - wrongGuesses,
-          isCompleted: false,
-          maxGuesses: 3,
-          scoreboardSize: 10,
-          user: {
-            id: 'test-user',
-            username: 'Test User'
-          }
+          guessed_words: guessedWords,
+          remaining_guesses: 3 - wrongGuesses,
+          is_completed: false,
+          max_guesses: 3,
+          scoreboard_size: 10
         }
 
         const scoreboard: ScoreboardEntry[] = TEST_DATA
@@ -198,13 +194,13 @@ const Game: React.FC = () => {
 
       const newGuess: Guess = {
         id: `${Date.now()}`,
-        gameId,
-        userId: 'test-user',
+        game_id: gameId,
+        user_id: 'test-user',
         word: guessWord,
         frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,
         rank: index !== undefined ? index + 1 : undefined,
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString()
       }
 
       const updatedGuesses = [...guesses, newGuess]
@@ -216,7 +212,7 @@ const Game: React.FC = () => {
         score: updatedScore,
         guesses: updatedGuesses,
         guessedWords: updatedGuessedWords,
-        remainingGuesses: prev.maxGuesses - updatedWrongGuesses
+        remainingGuesses: prev.max_guesses - updatedWrongGuesses
       } : null)
       setCurrentGuess('')
 
@@ -227,7 +223,7 @@ const Game: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (gameState!.maxGuesses === updatedWrongGuesses || gameState!.scoreboardSize === updatedGuessedWords.size) {
+      if (gameState!.max_guesses === updatedWrongGuesses || gameState!.scoreboard_size === updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, isCompleted: true } : null)
         setTimeout(() => {
           endGame()
@@ -362,7 +358,7 @@ const Game: React.FC = () => {
                       Selected Time Period
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 'semibold', color: 'text.primary' }}>
-                      {isTestMode ? 'September 2nd - September 8th' : TIME_PERIOD_NAMES[gameState.timePeriod as keyof typeof TIME_PERIOD_NAMES]}
+                      {isTestMode ? 'September 2nd - September 8th' : TIME_PERIOD_NAMES[gameState.time_period as keyof typeof TIME_PERIOD_NAMES]}
                     </Typography>
                   </Box>
                 </Stack>
@@ -400,10 +396,10 @@ const Game: React.FC = () => {
                     }}
                   >
                     <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 0.5 }}>
-                      {gameState.guessedWords.size}
+                      {gameState.guessed_words.size}
                     </Typography>
                     <Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-                      Word{gameState.guessedWords.size === 1 ? null : 's'} Guessed
+                      Word{gameState.guessed_words.size === 1 ? null : 's'} Guessed
                     </Typography>
                   </Paper>
                   <Paper 
@@ -415,10 +411,10 @@ const Game: React.FC = () => {
                     }}
                   >
                     <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 0.5 }}>
-                      {gameState.remainingGuesses}
+                      {gameState.remaining_guesses}
                     </Typography>
                     <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-                      Wrong Guess{gameState.remainingGuesses === 1 ? null : 'es'} Left
+                      Wrong Guess{gameState.remaining_guesses === 1 ? null : 'es'} Left
                     </Typography>
                   </Paper>
                 </Stack>
@@ -479,7 +475,7 @@ const Game: React.FC = () => {
                   Guess a Word
                 </Typography>
                 
-                {gameState.isCompleted ? (
+                {gameState.is_completed ? (
                   <Box sx={{ textAlign: 'center', py: 3 }}>
                     <TrophyIcon className="w-12 h-12 mx-auto mb-3" style={{ color: Color.TROPHY }} />
                     <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -565,7 +561,7 @@ const Game: React.FC = () => {
                 
                 <Stack spacing={1}>
                   {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-                    const showWord = guessedWords.has(entry.word.toLowerCase()) || gameState.isCompleted
+                    const showWord = guessedWords.has(entry.word.toLowerCase()) || gameState.is_completed
                     return (
                       <Paper
                         key={entry.word}
