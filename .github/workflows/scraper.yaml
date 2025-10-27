@@ -3,6 +3,9 @@ name: Run Scraper
 on:
   schedule:
     - cron: "0 1,13 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
 
 
 jobs:
@@ -17,11 +20,8 @@ jobs:
         with:
           python-version: "3.11"
       
-      - name: Change directory
-        run: cd scraper
-      
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r scraper/requirements.txt
       
       - name: Run scraper
         env:
@@ -31,4 +31,4 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: python news_scraper.py
+        run: python scraper/news_scraper.py
