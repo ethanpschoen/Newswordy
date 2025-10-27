@@ -565,25 +565,25 @@ const Game: React.FC = () => {
                 
                 <Stack spacing={1}>
                   {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-                    const isGuessed = guessedWords.has(entry.word.toLowerCase())
+                    const showWord = guessedWords.has(entry.word.toLowerCase()) || gameState.isCompleted
                     return (
                       <Paper
                         key={entry.word}
-                        elevation={isGuessed ? 2 : 1}
+                        elevation={showWord ? 2 : 1}
                         sx={{
                           p: 2,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          cursor: isGuessed ? 'pointer' : 'default',
+                          cursor: showWord ? 'pointer' : 'default',
                           minHeight: '48px',
-                          '&:hover': isGuessed ? {
+                          '&:hover': showWord ? {
                             backgroundColor: 'action.hover',
                             transform: 'translateY(-1px)',
                             transition: 'all 0.2s ease-in-out'
                           } : {}
                         }}
-                        onClick={isGuessed ? () => handleWordClick(entry.word) : undefined}
+                        onClick={showWord ? () => handleWordClick(entry.word) : undefined}
                       >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                           <Avatar
@@ -602,11 +602,11 @@ const Game: React.FC = () => {
                             variant="body1"
                             sx={{ 
                               fontWeight: 'medium',
-                              color: isGuessed ? 'text.primary' : 'text.disabled',
+                              color: showWord ? 'text.primary' : 'text.disabled',
                               minWidth: '120px'
                             }}
                           >
-                            {isGuessed ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
+                            {showWord ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
                           </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -614,7 +614,7 @@ const Game: React.FC = () => {
                             variant="body1" 
                             sx={{ 
                               fontWeight: 'bold',
-                              color: isGuessed ? 'text.primary' : 'text.disabled',
+                              color: showWord ? 'text.primary' : 'text.disabled',
                               minWidth: '40px',
                               textAlign: 'right'
                             }}
@@ -623,10 +623,10 @@ const Game: React.FC = () => {
                           </Typography>
                           <Typography 
                             variant="caption" 
-                            color={isGuessed ? 'text.secondary' : 'text.disabled'}
+                            color={showWord ? 'text.secondary' : 'text.disabled'}
                             sx={{ minWidth: '90px', textAlign: 'right' }}
                           >
-                            {`${isGuessed ? entry.frequency : '???'} mentions`}
+                            {`${showWord ? entry.frequency : '???'} mentions`}
                           </Typography>
                         </Box>
                       </Paper>
