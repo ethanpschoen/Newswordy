@@ -251,7 +251,7 @@ export enum NewsSource {
 }
 
 // Game settings
-export const DEFAULT_MAX_GUESSES = 3
+export const DEFAULT_MAX_GUESSES = 5
 export const DEFAULT_SCOREBOARD_SIZE = 10
 export const MAX_GUESSES = 10
 export const MAX_SCOREBOARD_SIZE = 50
