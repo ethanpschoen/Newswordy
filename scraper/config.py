@@ -54,7 +54,7 @@ NEWS_SOURCES = {
         'rss_feed': 'http://rss.cnn.com/rss/edition.rss',
         'headline_selectors': ['h3.cd__headline', '.container__headline', 'h1.headline__text'],
         'article_selectors': ['article', '.card', '.container'],
-        'enabled': True
+        'enabled': False
     },
     'fox_news': {
         'name': 'Fox News',
@@ -111,7 +111,7 @@ NEWS_SOURCES = {
         'rss_feed': 'https://www.politico.com/rss/politicopicks.xml',
         'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
         'article_selectors': ['article', '.story', '.content', '.article'],
-        'enabled': True
+        'enabled': False
     },
     'wall_street_journal': {
         'name': 'The Wall Street Journal',
