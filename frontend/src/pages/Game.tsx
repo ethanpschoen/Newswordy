@@ -796,6 +796,7 @@ const Game: React.FC = () => {
                                 {new Date(article.published_date).toLocaleDateString('en-US', {
                                   month: 'short',
                                   day: 'numeric',
+                                  year: 'numeric',
                                   hour: '2-digit',
                                   minute: '2-digit'
                                 })}
