@@ -122,7 +122,7 @@ const Home: React.FC = () => {
         ) : (
           <Alert severity="info" sx={{ mb: 2 }}>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Play without signing in! Sign in to save your stats and compete on the leaderboard.
+              Sign in to save your stats and compete on the leaderboard!
             </Typography>
             <Button
               variant="contained"
@@ -232,7 +232,7 @@ const Home: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <GlobeIcon sx={{ mr: 1, color: 'text.secondary' }} />
             <Typography variant="h6">
-              News Sources (Optional - leave empty for all sources)
+              News Sources
             </Typography>
           </Box>
           
@@ -335,10 +335,10 @@ const Home: React.FC = () => {
               <CheckIcon sx={{ mr: 1, mt: 0.5, color: 'success.main' }} />
               <Box>
                 <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-                  2. Select News Sources (Optional)
+                  2. Select News Sources
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Choose specific news sources or leave empty to include all available sources.
+                  Choose specific news sources to get headlines from.
                 </Typography>
               </Box>
             </Box>
