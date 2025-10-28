@@ -58,10 +58,10 @@ const Home: React.FC = () => {
         .insert([{
           score: 0,
           created_at: new Date().toISOString(),
-          max_guesses: maxGuesses,
-          scoreboard_size: scoreboardSize,
-          time_period: selectedTimePeriod,
-          sources: selectedSources,
+          max_guesses: maxGuesses || DEFAULT_MAX_GUESSES,
+          scoreboard_size: scoreboardSize || DEFAULT_SCOREBOARD_SIZE,
+          time_period: selectedTimePeriod || TIME_PERIODS.PAST_WEEK,
+          sources: selectedSources.length === 0 ? null : selectedSources,
           guessed_words: [],
           remaining_guesses: maxGuesses,
           is_completed: false
