@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { supabase } from '../services/supabaseClient'
-import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig } from '../types'
+import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
 import {
   Box,
   Button,
@@ -210,7 +210,7 @@ const Home: React.FC = () => {
               type="number"
               value={maxGuesses}
               onChange={(e) => setMaxGuesses(parseInt(e.target.value))}
-              inputProps={{ min: 1, max: 10 }}
+              inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
             />
           </Grid>
 
@@ -222,7 +222,7 @@ const Home: React.FC = () => {
               type="number"
               value={scoreboardSize}
               onChange={(e) => setScoreboardSize(parseInt(e.target.value))}
-              inputProps={{ min: 5, max: 50 }}
+              inputProps={{ min: 5, max: MAX_SCOREBOARD_SIZE }}
             />
           </Grid>
         </Grid>
