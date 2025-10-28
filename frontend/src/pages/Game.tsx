@@ -695,7 +695,7 @@ const Game: React.FC = () => {
                             color={showWord ? 'text.secondary' : 'text.disabled'}
                             sx={{ minWidth: '90px', textAlign: 'right' }}
                           >
-                            {`${showWord ? entry.frequency : '???'} mentions`}
+                            {`${showWord ? entry.frequency.toLocaleString() : '???'} mentions`}
                           </Typography>
                         </Box>
                       </Paper>
