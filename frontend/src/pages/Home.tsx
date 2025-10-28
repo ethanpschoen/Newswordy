@@ -294,15 +294,17 @@ const Home: React.FC = () => {
           >
             {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start New Game'}
           </Button>
-          <Button
-            variant="outlined"
-            size="large"
-            onClick={handleTestGame}
-            startIcon={<PlayIcon />}
-            sx={{ px: 4, py: 1.5, fontSize: '1.1rem', ml: 2 }}
-          >
-            Test Game (Hard-coded Data)
-          </Button>
+          {window.location.href.includes('localhost') &&
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={handleTestGame}
+              startIcon={<PlayIcon />}
+              sx={{ px: 4, py: 1.5, fontSize: '1.1rem', ml: 2 }}
+            >
+              Test Game (Hard-coded Data)
+            </Button>
+          }
           {!isAuthenticated && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               Your game progress won't be saved unless you sign in
