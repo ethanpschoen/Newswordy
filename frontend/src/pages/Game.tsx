@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { gameAPI } from '../services/api'
-import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig } from '../types'
+import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig, TIME_PERIODS, TimePeriod } from '../types'
 import { 
   Box,
   Button,
@@ -138,17 +138,55 @@ const Game: React.FC = () => {
             .maybeSingle()
         }
 
-        const fetchScoreboard = (timePeriod: string, sources: NewsSource[], scoreboardSize: number) => {
-          // TODO: fix time period logic
+        const defineTimePeriod = (timePeriod: TimePeriod) => {
           const today = new Date()
-          const yesterday = new Date(today)
+          today.setHours(0)
+          today.setMinutes(0)
+          today.setSeconds(0)
+          today.setMilliseconds(0)
+          let start_date = new Date(today)
+          let end_date = new Date(today)
+          switch (timePeriod) {
+            case TIME_PERIODS.PAST_DAY:
+              start_date.setDate(today.getDate() - 1)
+              break
+            case TIME_PERIODS.PAST_WEEK:
+              start_date.setDate(today.getDate() - 7)
+              break
+            case TIME_PERIODS.PAST_MONTH:
+              start_date.setMonth(today.getMonth() - 1)
+              break
+            case TIME_PERIODS.PAST_YEAR:
+              start_date.setFullYear(today.getFullYear() - 1)
+              break
+            case TIME_PERIODS.LAST_WEEK:
+              const day = today.getDay() - 1
+              end_date.setDate(today.getDate() - (day !== -1 ? day : 6))
+              start_date.setDate(today.getDate() - 7 - (day !== -1 ? day : 6))
+              break
+            case TIME_PERIODS.LAST_MONTH:
+              end_date.setDate(1)
+              start_date.setMonth(today.getMonth() - 1)
+              start_date.setDate(1)
+              break
+            case TIME_PERIODS.LAST_YEAR:
+              end_date.setMonth(0)
+              end_date.setDate(1)
+              start_date.setFullYear(today.getFullYear() - 1)
+              start_date.setMonth(0)
+              start_date.setDate(1)
+              break
+          }
+          return { start_date: start_date.toISOString(), end_date: end_date.toISOString() }
+        }
 
-          yesterday.setDate(yesterday.getDate() - 10)
+        const fetchScoreboard = (timePeriod: TimePeriod, sources: NewsSource[], scoreboardSize: number) => {
+          const { start_date, end_date } = defineTimePeriod(timePeriod)
 
           return supabase
             .rpc('get_top_words_scoreboard', {
-              start_date: yesterday.toISOString(),
-              end_date: today.toISOString(),
+              start_date,
+              end_date,
               sources,
               size: scoreboardSize
             })
