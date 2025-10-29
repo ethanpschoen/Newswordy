@@ -641,7 +641,9 @@ const Game: React.FC = () => {
                 
                 <Stack spacing={1}>
                   {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-                    const showWord = gameState?.guessed_words.has(entry.word.toLowerCase()) || gameState.is_completed
+                    const gameCompleted = gameState.is_completed
+                    const wordGuessed = gameState.guessed_words.has(entry.word.toLowerCase())
+                    const showWord = wordGuessed || gameCompleted
                     return (
                       <Paper
                         key={entry.word}
@@ -653,6 +655,7 @@ const Game: React.FC = () => {
                           justifyContent: 'space-between',
                           cursor: showWord ? 'pointer' : 'default',
                           minHeight: '48px',
+                          backgroundColor: showWord && !wordGuessed ? '#fbe7e5' : null,
                           '&:hover': showWord ? {
                             backgroundColor: 'action.hover',
                             transform: 'translateY(-1px)',
