@@ -264,7 +264,9 @@ const Game: React.FC = () => {
         created_at: new Date().toISOString()
       }
 
-      await supabase.from('guesses').insert(newGuess)
+      if (!isTestMode) {
+        await supabase.from('guesses').insert(newGuess)
+      }
 
       const updatedGuesses = [...gameState?.guesses || [], newGuess]
 
@@ -304,7 +306,9 @@ const Game: React.FC = () => {
       // @ts-ignore
       updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
 
-      await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)      
+      if (!isTestMode) {
+        await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
+      }
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
