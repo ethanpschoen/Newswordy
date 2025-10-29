@@ -44,10 +44,6 @@ const Game: React.FC = () => {
   // Game state variables
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
-  const [guesses, setGuesses] = useState<Guess[]>([]) // Words submitted by player
-  const [guessedWords, setGuessedWords] = useState<Set<string>>(new Set()) // Correct guesses
-  const [wrongGuesses, setWrongGuesses] = useState(0) // Number of wrong guesses
-  const [score, setScore] = useState(0)
   
   // Action state variables
   const [loading, setLoading] = useState(true)
@@ -113,10 +109,10 @@ const Game: React.FC = () => {
           id: 'test',
           time_period: 'past_week',
           sources: [],
-          score,
-          guesses,
-          guessed_words: guessedWords,
-          remaining_guesses: 3 - wrongGuesses,
+          score: 0,
+          guesses: [],
+          guessed_words: new Set(),
+          remaining_guesses: 3,
           is_completed: false,
           max_guesses: 3,
           scoreboard_size: 10
@@ -203,10 +199,6 @@ const Game: React.FC = () => {
         game.guessed_words = new Set(game.guessed_words)
         setGameState(game)
 
-        // Initialize guessed words from existing guesses
-        const initialGuessedWords = new Set<string>(game.guesses.map((guess: Guess) => guess.word.toLowerCase()))
-        setGuessedWords(initialGuessedWords)
-
         const scoreboardResponse = await fetchScoreboard(game.time_period, game.sources, game.scoreboard_size)
 
         if (scoreboardResponse.error) {
@@ -245,24 +237,21 @@ const Game: React.FC = () => {
 
       let index: number | undefined
       let wordScore: number
-      let updatedScore = score
-      let updatedGuessedWords = new Set(Array.from(guessedWords))
-      let updatedWrongGuesses = wrongGuesses
+      let updatedScore = gameState?.score || 0
+      let updatedGuessedWords = new Set<string>(Array.from(gameState?.guessed_words || new Set()))
+      let updatedRemainingGuesses = gameState?.remaining_guesses || 0
       
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
         wordScore = calculateScore(index, scoreboard.length)
 
         updatedScore += wordScore
-        setScore(updatedScore)
         updatedGuessedWords.add(guessWord)
-        setGuessedWords(updatedGuessedWords)
       } else {
         index = undefined
         wordScore = 0
 
-        updatedWrongGuesses += 1
-        setWrongGuesses(updatedWrongGuesses)
+        updatedRemainingGuesses -= 1
       }
 
       const newGuess: Guess = {
@@ -276,17 +265,30 @@ const Game: React.FC = () => {
         created_at: new Date().toISOString()
       }
 
-      const updatedGuesses = [...guesses, newGuess]
-      setGuesses(updatedGuesses)
+      await supabase.from('guesses').insert(newGuess)
+
+      const updatedGuesses = [...gameState?.guesses || [], newGuess]
+
+      const updatedGameState = {
+        ...gameState,
+        score: updatedScore,
+        guesses: updatedGuesses,
+        guessed_words: updatedGuessedWords,
+        remaining_guesses: updatedRemainingGuesses
+      }
 
       // Update gameState through setGameState to trigger re-render
       setGameState(prev => prev ? {
         ...prev,
-        score: updatedScore,
-        guesses: updatedGuesses,
-        guessed_words: updatedGuessedWords,
-        remaining_guesses: prev.max_guesses - updatedWrongGuesses
+        ...updatedGameState
       } : null)
+
+      let { guesses: _, ...updatedGame } = updatedGameState
+      
+      updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
+
+      await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
+
       setCurrentGuess('')
 
       if (foundWord) {
@@ -296,7 +298,7 @@ const Game: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (gameState!.max_guesses <= updatedWrongGuesses || gameState!.scoreboard_size <= updatedGuessedWords.size) {
+      if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, is_completed: true } : null)
         setTimeout(() => {
           endGame()
@@ -514,16 +516,16 @@ const Game: React.FC = () => {
                               {guess.word}
                             </Typography>
                             <Chip
-                              label={guess.rank !== undefined ? `#${guess.rank}` : `X`}
+                              label={guess.rank !== undefined && guess.rank !== null ? `#${guess.rank}` : `X`}
                               size="small"
-                              color={guess.rank === 1 ? 'success' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'warning' : guess.rank !== undefined ? 'primary' : 'error'}
+                              color={guess.rank === 1 ? 'success' : guess.rank === 2 ? 'default' : guess.rank === 3 ? 'warning' : guess.rank !== undefined && guess.rank !== null ? 'primary' : 'error'}
                             />
                           </Box>
                           <Typography 
                             variant="body2" 
                             sx={{ 
                               fontWeight: 'bold',
-                              color: guess.rank !== undefined ? Color.SCORE_HIGH : Color.ERROR
+                              color: guess.rank !== undefined && guess.rank !== null ? Color.SCORE_HIGH : Color.ERROR
                             }}
                           >
                             +{guess.score}
@@ -634,7 +636,7 @@ const Game: React.FC = () => {
                 
                 <Stack spacing={1}>
                   {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-                    const showWord = guessedWords.has(entry.word.toLowerCase()) || gameState.is_completed
+                    const showWord = gameState?.guessed_words.has(entry.word.toLowerCase()) || gameState.is_completed
                     return (
                       <Paper
                         key={entry.word}
