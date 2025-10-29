@@ -283,13 +283,6 @@ const Game: React.FC = () => {
         ...updatedGameState
       } : null)
 
-      let { guesses: _, ...updatedGame } = updatedGameState
-      
-      // @ts-ignore
-      updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
-
-      await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
-
       setCurrentGuess('')
 
       if (foundWord) {
@@ -301,10 +294,18 @@ const Game: React.FC = () => {
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
       if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, is_completed: true } : null)
+        updatedGameState.is_completed = true
         setTimeout(() => {
           endGame()
         }, 2000)
       }
+
+      let { guesses: _, ...updatedGame } = updatedGameState
+      
+      // @ts-ignore
+      updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
+
+      await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)      
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
