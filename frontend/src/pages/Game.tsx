@@ -285,6 +285,7 @@ const Game: React.FC = () => {
 
       let { guesses: _, ...updatedGame } = updatedGameState
       
+      // @ts-ignore
       updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
 
       await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
