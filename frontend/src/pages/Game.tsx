@@ -309,6 +309,8 @@ const Game: React.FC = () => {
       
       // @ts-ignore
       updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
+      // @ts-ignore
+      updatedGame.completed_at = new Date().toISOString()
 
       if (!isTestMode) {
         await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
