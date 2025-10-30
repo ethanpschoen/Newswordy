@@ -37,7 +37,7 @@ def setup_schedule():
     
     logger.info("Scheduler setup completed")
     logger.info("Jobs scheduled:")
-    logger.info("- Scraping: Every 6 hours, 6:00 AM, 6:00 PM")
+    logger.info("- Scraping: 6AM, 6PM")
 
 def run_scheduler():
     """Run the scheduler continuously"""
