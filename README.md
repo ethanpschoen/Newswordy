@@ -8,11 +8,10 @@ Players select a time range (past day, week, month, year, etc.) and try to guess
 
 ## Tech Stack
 
-- **Frontend**: React + TypeScript + Tailwind CSS
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Frontend**: React + Node.js + Express + TypeScript + Tailwind CSS
+- **Database**: Supabase using PostgreSQL
 - **Scraping**: Python with BeautifulSoup/Scrapy
-- **Deployment**: Vercel (frontend) + Railway (backend)
+- **Deployment**: Vercel
 - **Authentication**: Auth0
 
 ## Project Structure
@@ -20,10 +19,7 @@ Players select a time range (past day, week, month, year, etc.) and try to guess
 ```
 newswordy/
 ├── frontend/          # React application
-├── backend/           # Node.js API server
-├── scraper/           # Python news scraping scripts
-├── database/          # Database schemas and migrations
-└── deployment/        # Deployment configurations
+└── scraper/           # Python news scraping scripts
 ```
 
 ## Development Setup
@@ -39,18 +35,17 @@ newswordy/
 2. Set up environment variables
 3. Install dependencies for each component
 4. Run the scraper to collect initial data
-5. Start the backend API
 6. Start the frontend development server
 
 ## Features
 
-- [ ] News headline scraping from major sources
-- [ ] Word frequency analysis by time period
-- [ ] Interactive word guessing game
-- [ ] Real-time scoring system
-- [ ] User authentication and profiles
+- [x] News headline scraping from major sources
+- [x] Word frequency analysis by time period
+- [x] Interactive word guessing game
+- [x] Real-time scoring system
+- [x] User authentication and profiles
 - [ ] Global and personal leaderboards
-- [ ] Customizable game settings
+- [x] Customizable game settings
 
 ## Contributing
 
