@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig, TIME_PERIODS, TimePeriod } from '../types'
+import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig } from '../types'
 import { 
   Box,
   Button,
@@ -126,73 +126,7 @@ const Game: React.FC = () => {
         setGameState(gameState)
         setScoreboard(scoreboard)
       } else {
-        // TODO: validate user with game?
-        const fetchGame = (gameId: string) => {
-          return supabase
-            .from('games')
-            .select(`
-              *,
-              guesses(*)
-            `)
-            .eq('id', gameId)
-            .maybeSingle()
-        }
-
-        const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) => {
-          referenceDate.setHours(0)
-          referenceDate.setMinutes(0)
-          referenceDate.setSeconds(0)
-          referenceDate.setMilliseconds(0)
-          let start_date = new Date(referenceDate)
-          let end_date = new Date(referenceDate)
-          switch (timePeriod) {
-            case TIME_PERIODS.PAST_DAY:
-              start_date.setDate(referenceDate.getDate() - 1)
-              break
-            case TIME_PERIODS.PAST_WEEK:
-              start_date.setDate(referenceDate.getDate() - 7)
-              break
-            case TIME_PERIODS.PAST_MONTH:
-              start_date.setMonth(referenceDate.getMonth() - 1)
-              break
-            case TIME_PERIODS.PAST_YEAR:
-              start_date.setFullYear(referenceDate.getFullYear() - 1)
-              break
-            case TIME_PERIODS.LAST_WEEK:
-              const day = referenceDate.getDay() - 1
-              end_date.setDate(referenceDate.getDate() - (day !== -1 ? day : 6))
-              start_date.setDate(referenceDate.getDate() - 7 - (day !== -1 ? day : 6))
-              break
-            case TIME_PERIODS.LAST_MONTH:
-              end_date.setDate(1)
-              start_date.setMonth(referenceDate.getMonth() - 1)
-              start_date.setDate(1)
-              break
-            case TIME_PERIODS.LAST_YEAR:
-              end_date.setMonth(0)
-              end_date.setDate(1)
-              start_date.setFullYear(referenceDate.getFullYear() - 1)
-              start_date.setMonth(0)
-              start_date.setDate(1)
-              break
-          }
-          return { start_date: start_date.toISOString(), end_date: end_date.toISOString() }
-        }
-
-        const fetchScoreboard = (timePeriod: TimePeriod, sources: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
-          const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
-
-          return supabase
-            .rpc('get_top_words_scoreboard', {
-              start_date,
-              end_date,
-              sources,
-              size: scoreboardSize
-            })
-            .select('*')
-        }
-
-        const gameResponse = await fetchGame(gameId!)
+        const gameResponse = await gameAPI.getGameState(gameId!)
 
         if (gameResponse.error) {
           console.error('Failed to load game:', gameResponse.error)
@@ -202,7 +136,7 @@ const Game: React.FC = () => {
         game.guessed_words = new Set(game.guessed_words)
         setGameState(game)
 
-        const scoreboardResponse = await fetchScoreboard(game.time_period, game.sources, game.scoreboard_size, new Date(game.created_at))
+        const scoreboardResponse = await gameAPI.getScoreboard(game.time_period, game.sources, game.scoreboard_size, new Date(game.created_at))
 
         if (scoreboardResponse.error) {
           console.error('Failed to fetch scoreboard', scoreboardResponse.error)
@@ -296,21 +230,20 @@ const Game: React.FC = () => {
       if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.size) {
         setGameState(prev => prev ? { ...prev, is_completed: true } : null)
         updatedGameState.is_completed = true
-        setTimeout(() => {
-          endGame()
-        }, 2000)
       }
 
       if (!isTestMode) {
-        await supabase.from('guesses').insert(newGuess)
+        await gameAPI.submitGuess(newGuess)
       }
 
       let { guesses: _, ...updatedGame } = updatedGameState
       
       // @ts-ignore
       updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
-      // @ts-ignore
-      updatedGame.completed_at = new Date().toISOString()
+      if (updatedGame.is_completed) {
+        // @ts-ignore
+        updatedGame.completed_at = new Date().toISOString()
+      }
 
       if (!isTestMode) {
         await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
@@ -319,16 +252,6 @@ const Game: React.FC = () => {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
       setSubmitting(false)
-    }
-  }
-
-  const endGame = async () => {
-    if (!gameId) return
-    
-    try {
-      await gameAPI.endGame(gameId)
-    } catch (error) {
-      console.error('Failed to end game:', error)
     }
   }
 

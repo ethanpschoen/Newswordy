@@ -1,15 +1,16 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { 
-  ApiResponse, 
-  User, 
-  Game, 
-  GameState, 
-  ScoreboardEntry, 
-  CreateGameRequest, 
-  SubmitGuessRequest,
+  ApiResponse,
+  User,
+  Game,
+  Guess,
   LeaderboardEntry,
-  UserStats
+  UserStats,
+  TimePeriod,
+  NewsSource,
+  TIME_PERIODS
 } from '../types'
+import { supabase } from './supabaseClient'
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -29,20 +30,6 @@ const clearSessionId = (): void => {
   localStorage.removeItem('newswordy_session_id')
 }
 
-// Response interceptor to handle errors
-api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear session ID on authentication error
-      clearSessionId()
-      // Redirect to home on authentication error
-      window.location.href = '/'
-    }
-    return Promise.reject(error)
-  }
-)
-
 // Helper function to set Auth0 token
 export const setAuthToken = (token: string | null) => {
   if (token) {
@@ -61,49 +48,84 @@ export const setAnonymousSession = (sessionId: string) => {
   api.defaults.headers.common['x-session-id'] = sessionId
 }
 
-// Auth API - only profile endpoint since Auth0 handles login/register
-export const authAPI = {
-  getProfile: async (): Promise<ApiResponse<{ user: User }>> => {
-    const response = await api.get('/auth/profile')
-    return response.data
-  },
+export const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) => {
+  referenceDate.setHours(0)
+  referenceDate.setMinutes(0)
+  referenceDate.setSeconds(0)
+  referenceDate.setMilliseconds(0)
+  let start_date = new Date(referenceDate)
+  let end_date = new Date(referenceDate)
+  switch (timePeriod) {
+    case TIME_PERIODS.PAST_DAY:
+      start_date.setDate(referenceDate.getDate() - 1)
+      break
+    case TIME_PERIODS.PAST_WEEK:
+      start_date.setDate(referenceDate.getDate() - 7)
+      break
+    case TIME_PERIODS.PAST_MONTH:
+      start_date.setMonth(referenceDate.getMonth() - 1)
+      break
+    case TIME_PERIODS.PAST_YEAR:
+      start_date.setFullYear(referenceDate.getFullYear() - 1)
+      break
+    case TIME_PERIODS.LAST_WEEK:
+      const day = referenceDate.getDay() - 1
+      end_date.setDate(referenceDate.getDate() - (day !== -1 ? day : 6))
+      start_date.setDate(referenceDate.getDate() - 7 - (day !== -1 ? day : 6))
+      break
+    case TIME_PERIODS.LAST_MONTH:
+      end_date.setDate(1)
+      start_date.setMonth(referenceDate.getMonth() - 1)
+      start_date.setDate(1)
+      break
+    case TIME_PERIODS.LAST_YEAR:
+      end_date.setMonth(0)
+      end_date.setDate(1)
+      start_date.setFullYear(referenceDate.getFullYear() - 1)
+      start_date.setMonth(0)
+      start_date.setDate(1)
+      break
+  }
+  return { start_date: start_date.toISOString(), end_date: end_date.toISOString() }
 }
 
 // Game API
 export const gameAPI = {
-  createGame: async (data: CreateGameRequest): Promise<ApiResponse<{ game: Game }>> => {
-    const response = await api.post('/game/create', data)
-    
-    // If this is an anonymous game, store the session ID
-    if (response.data.success && response.data.data?.game?.session_id) {
-      setAnonymousSession(response.data.data.game.session_id)
-    }
-    
-    return response.data
+  createGame: async (game: Game) => {
+    return await supabase
+      .from('games')
+      .insert([game])
+      .select('id')
+      .single()
   },
 
-  getGameState: async (gameId: string): Promise<ApiResponse<GameState>> => {
-    const response = await api.get(`/game/${gameId}`)
-    return response.data
+  // TODO: validate user with game?
+  getGameState: async (gameId: string) => {
+    return await supabase
+      .from('games')
+      .select(`
+        *,
+        guesses(*)
+      `)
+      .eq('id', gameId)
+      .maybeSingle()
   },
 
-  submitGuess: async (gameId: string, data: SubmitGuessRequest): Promise<ApiResponse<{
-    guess: any
-    newScore: number
-    remainingGuesses: number
-  }>> => {
-    const response = await api.post(`/game/${gameId}/guess`, data)
-    return response.data
+  submitGuess: async (data: Guess) => {
+    return await supabase.from('guesses').insert(data)
   },
 
-  getScoreboard: async (gameId: string): Promise<ApiResponse<{ scoreboard: ScoreboardEntry[] }>> => {
-    const response = await api.get(`/game/${gameId}/scoreboard`)
-    return response.data
-  },
+  getScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
+    const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
-  endGame: async (gameId: string): Promise<ApiResponse<{ game: Game }>> => {
-    const response = await api.post(`/game/${gameId}/end`)
-    return response.data
+    return await supabase
+      .rpc('get_top_words_scoreboard', {
+        start_date,
+        end_date,
+        sources,
+        size: scoreboardSize
+      })
+      .select('*')
   },
 }
 

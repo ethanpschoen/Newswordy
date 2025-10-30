@@ -138,16 +138,16 @@ export interface User {
 }
 
 export interface Game {
-  id: string
+  id?: string
   time_period: string
-  sources: NewsSource[]
+  sources?: NewsSource[]
   score: number
-  guessed_words: Set<string>
+  guessed_words: Set<string> | string[]
   remaining_guesses: number
   is_completed: boolean
   max_guesses: number
   scoreboard_size: number
-  user_id: string
+  user_id?: string
   completed_at?: string
   created_at: string
 }

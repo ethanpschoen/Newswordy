@@ -47,7 +47,7 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
-    # TODO: they stopped updating feed, remove from game
+    # TODO: they stopped updating feed
     'cnn': {
         'name': 'CNN',
         'url': 'https://www.cnn.com',

@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { supabase } from '../services/supabaseClient'
-import { TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
+import { gameAPI } from '../services/api'
+import { Game, TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
 import {
   Box,
   Button,
@@ -75,22 +76,19 @@ const Home: React.FC = () => {
   const handleStartGame = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('games')
-        .insert([{
-          score: 0,
-          created_at: new Date().toISOString(),
-          max_guesses: maxGuesses || DEFAULT_MAX_GUESSES,
-          scoreboard_size: scoreboardSize || DEFAULT_SCOREBOARD_SIZE,
-          time_period: selectedTimePeriod || TIME_PERIODS.PAST_WEEK,
-          sources: selectedSources.length === 0 ? null : selectedSources,
-          guessed_words: [],
-          remaining_guesses: maxGuesses,
-          is_completed: false,
-          user_id: user?.sub
-        }])
-        .select('id')
-        .single()
+      const game: Game = {
+        score: 0,
+        created_at: new Date().toISOString(),
+        max_guesses: maxGuesses || DEFAULT_MAX_GUESSES,
+        scoreboard_size: scoreboardSize || DEFAULT_SCOREBOARD_SIZE,
+        time_period: selectedTimePeriod || TIME_PERIODS.PAST_WEEK,
+        sources: selectedSources.length === 0 ? undefined : selectedSources,
+        guessed_words: [],
+        remaining_guesses: maxGuesses,
+        is_completed: false,
+        user_id: user?.sub
+      }
+      const { data, error } = await gameAPI.createGame(game)
 
       if (error) {
         console.error('Error creating game:', error);
