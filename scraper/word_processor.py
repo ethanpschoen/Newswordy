@@ -43,8 +43,8 @@ class WordProcessor:
             'new', 'news', 'breaking', 'update', 'latest', 'report', 'reports',
             'reported', 'says', 'said', 'according', 'official', 'officials', 'government',
             'announced', 'announcement', 'statement', 'comment', 'comments', 'response',
-            'responded', 'saying', 'told', 'tells', 'telling', 'speaking', 'spoke',
-            'address', 'addressed', 'meeting', 'meet', 'met', 'conference', 'press',
+            'responded', 'saying', 'told', 'tells', 'telling', 'speaking', 'spoke', 'watch',
+            'address', 'addressed', 'meeting', 'meet', 'met', 'conference', 'press', 'say',
         }
         
         # Add news-specific words to excluded words
