@@ -268,10 +268,6 @@ const Game: React.FC = () => {
         created_at: new Date().toISOString()
       }
 
-      if (!isTestMode) {
-        await supabase.from('guesses').insert(newGuess)
-      }
-
       const updatedGuesses = [...gameState?.guesses || [], newGuess]
 
       const updatedGameState = {
@@ -303,6 +299,10 @@ const Game: React.FC = () => {
         setTimeout(() => {
           endGame()
         }, 2000)
+      }
+
+      if (!isTestMode) {
+        await supabase.from('guesses').insert(newGuess)
       }
 
       let { guesses: _, ...updatedGame } = updatedGameState
