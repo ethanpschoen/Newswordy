@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { supabase } from '../services/supabaseClient'
@@ -43,6 +43,28 @@ const Home: React.FC = () => {
     user,
   } = useAuth0();
 
+  const upsertUser = async () => {
+    if (!isAuthenticated) return
+
+    const isUserInDatabase = await supabase.from('users').select('*').eq('id', user?.sub)
+
+    if (!isUserInDatabase.data?.length) {
+      await supabase.from('users').insert({
+        email: user?.email,
+        username: user?.nickname,
+        id: user?.sub,
+        average_score: 0,
+        best_score: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        total_games: 0,
+        total_score: 0
+      })
+    }
+  }
+
+  useMemo(upsertUser, [])
+
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_WEEK)
@@ -64,7 +86,8 @@ const Home: React.FC = () => {
           sources: selectedSources.length === 0 ? null : selectedSources,
           guessed_words: [],
           remaining_guesses: maxGuesses,
-          is_completed: false
+          is_completed: false,
+          user_id: user?.sub
         }])
         .select('id')
         .single()

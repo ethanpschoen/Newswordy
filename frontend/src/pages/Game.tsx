@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
 import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig, TIME_PERIODS, TimePeriod } from '../types'
 import { 
@@ -34,6 +35,8 @@ import { supabase } from '../services/supabaseClient'
 const TEST_DATA: ScoreboardEntry[] = testData[0].results
 
 const Game: React.FC = () => {
+  const { isAuthenticated, user } = useAuth0()
+
   const { gameId } = useParams<{ gameId: string }>()
 
   const navigate = useNavigate()
@@ -123,6 +126,7 @@ const Game: React.FC = () => {
         setGameState(gameState)
         setScoreboard(scoreboard)
       } else {
+        // TODO: validate user with game?
         const fetchGame = (gameId: string) => {
           return supabase
             .from('games')
@@ -256,7 +260,7 @@ const Game: React.FC = () => {
       const newGuess: Guess = {
         id: `${Date.now()}`,
         game_id: gameId,
-        user_id: 'test-user',
+        user_id: user?.sub || '',
         word: guessWord,
         frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,

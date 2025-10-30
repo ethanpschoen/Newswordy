@@ -129,7 +129,6 @@ export interface User {
   id: string
   email: string
   username: string
-  auth0_id: string
   created_at: string
   updated_at: string
   total_games: number
