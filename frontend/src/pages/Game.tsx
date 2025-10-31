@@ -709,7 +709,7 @@ const Game: React.FC = () => {
                             <Box sx={{ flex: 1, minWidth: 0 }}>
                               <Typography
                                 component="a"
-                                href={article.url}
+                                href={`${article.url}?utm_source=newswordy`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="body2"
