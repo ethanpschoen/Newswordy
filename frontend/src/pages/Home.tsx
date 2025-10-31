@@ -132,6 +132,7 @@ const Home: React.FC = () => {
     { name: 'Average Score', value: user?.averageScore?.toFixed(1) || '0.0', icon: UserIcon, color: 'success.main' },
   ]
 
+  // TODO: different layout for mobile / narrow screen
   return (
     <Container maxWidth="lg">
       {/* Authentication Status */}
