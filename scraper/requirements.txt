@@ -1,11 +1,11 @@
-requests==2.31.0
+requests==2.32.4
 beautifulsoup4==4.12.2
 lxml==4.9.3
 python-dotenv==1.0.0
 psycopg2-binary==2.9.7
 sqlalchemy==2.0.21
 pandas==2.1.1
-nltk==3.8.1
+nltk==3.9
 newspaper3k==0.2.8
 feedparser==6.0.10
 schedule==1.2.0
