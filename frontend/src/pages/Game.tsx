@@ -243,6 +243,19 @@ const Game: React.FC = () => {
       if (updatedGame.is_completed) {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
+
+        if (isAuthenticated) {
+          const userStats = await supabase.from('users').select('*').eq('id', user?.sub).single()
+          const stats = userStats.data
+          const newStats = structuredClone(stats)
+
+          newStats.total_score += updatedGame.score
+          newStats.total_games += 1
+          newStats.average_score = newStats.total_score / newStats.total_games
+          newStats.best_score = Math.max(newStats.best_score, updatedGame.score)
+
+          await supabase.from('users').update(newStats).eq('id', user?.sub)
+        }
       }
 
       if (!isTestMode) {
