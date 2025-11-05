@@ -36,6 +36,13 @@ import {
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 
+interface Stat {
+  name: string
+  value: number
+  icon: any
+  color: string
+}
+
 const Home: React.FC = () => {
   const {
     isLoading,
@@ -64,7 +71,24 @@ const Home: React.FC = () => {
     }
   }
 
+  const getUserStats = async () => {
+    if (!isAuthenticated) return
+
+    const account = await supabase.from('users').select('*').eq('id', user?.sub).single()
+    const history = account.data
+
+    const userStats: Stat[] = [
+      { name: 'Total Games', value: history?.total_games || 0, icon: PlayIcon, color: 'primary.main' },
+      { name: 'Best Score', value: history?.best_score || 0, icon: TrophyIcon, color: 'warning.main' },
+      { name: 'Average Score', value: history?.average_score?.toFixed(1) || '0.0', icon: UserIcon, color: 'success.main' },
+    ]
+
+    setStats(userStats)
+  }
+
   useMemo(upsertUser, [])
+
+  useMemo(getUserStats, [])
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -72,6 +96,7 @@ const Home: React.FC = () => {
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
+  const [stats, setStats] = useState<Stat[]>([])
 
   const handleStartGame = async () => {
     setLoading(true)
@@ -125,12 +150,6 @@ const Home: React.FC = () => {
   const handleClearSources = () => {
     setSelectedSources([])
   }
-
-  const stats = [
-    { name: 'Total Games', value: user?.totalGames || 0, icon: PlayIcon, color: 'primary.main' },
-    { name: 'Best Score', value: user?.bestScore || 0, icon: TrophyIcon, color: 'warning.main' },
-    { name: 'Average Score', value: user?.averageScore?.toFixed(1) || '0.0', icon: UserIcon, color: 'success.main' },
-  ]
 
   // TODO: different layout for mobile / narrow screen
   return (
