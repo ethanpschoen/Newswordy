@@ -152,7 +152,6 @@ const Home: React.FC = () => {
     setSelectedSources([])
   }
 
-  // TODO: different layout for mobile / narrow screen
   return (
     <Container maxWidth="lg">
       {/* Authentication Status */}

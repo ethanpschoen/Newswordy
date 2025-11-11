@@ -338,6 +338,7 @@ const Game: React.FC = () => {
     )
   }
 
+  // TODO: different layout for mobile / narrow screen
   return (
     <Container maxWidth="xl">
       {/* Main 3-Column Layout */}
