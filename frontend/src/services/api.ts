@@ -135,14 +135,20 @@ export const gameAPI = {
 
 // User API
 export const userAPI = {
-  getUserStats: async (): Promise<ApiResponse<UserStats>> => {
-    const response = await api.get('/user/stats')
-    return response.data
+  createUser: async (user: User) => {
+    return await supabase.from('users').insert(user)
   },
 
-  updateProfile: async (username: string): Promise<ApiResponse<{ user: User }>> => {
-    const response = await api.put('/user/profile', { username })
-    return response.data
+  getUser: async (userId: string) => {
+    return await supabase.from('users').select('*').eq('id', userId)
+  },
+
+  getSingleUser: async (userId: string) => {
+    return await supabase.from('users').select('*').eq('id', userId).single()
+  },
+
+  updateUser: async (user: User, userId: string) => {
+    return await supabase.from('users').update(user).eq('id', userId)
   },
 }
 

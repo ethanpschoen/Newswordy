@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { supabase } from '../services/supabaseClient'
-import { gameAPI } from '../services/api'
+import { gameAPI, userAPI } from '../services/api'
 import { Game, TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
 import {
   Box,
@@ -54,27 +53,29 @@ const Home: React.FC = () => {
   const upsertUser = async () => {
     if (!isAuthenticated) return
 
-    const isUserInDatabase = await supabase.from('users').select('*').eq('id', user?.sub)
+    const isUserInDatabase = await userAPI.getUser(user?.sub || '')
 
     if (!isUserInDatabase.data?.length) {
-      await supabase.from('users').insert({
-        email: user?.email,
-        username: user?.nickname,
-        id: user?.sub,
+      const newUser = {
+        email: user?.email || '',
+        username: user?.nickname || '',
+        id: user?.sub || '',
         average_score: 0,
         best_score: 0,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         total_games: 0,
         total_score: 0
-      })
+      }
+      
+      await userAPI.createUser(newUser)
     }
   }
 
   const getUserStats = async () => {
     if (!isAuthenticated) return
 
-    const account = await supabase.from('users').select('*').eq('id', user?.sub).single()
+    const account = await userAPI.getSingleUser(user?.sub || '')
     const history = account.data
 
     const userStats: Stat[] = [

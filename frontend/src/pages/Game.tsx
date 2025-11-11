@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { gameAPI } from '../services/api'
+import { gameAPI, userAPI } from '../services/api'
 import { Color, GameState, Guess, ScoreboardEntry, TIME_PERIOD_NAMES, NewsSourceConfig } from '../types'
 import { 
   Box,
@@ -28,7 +28,6 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner'
 
 import testData from '../components/test_data.json'
-import { supabase } from '../services/supabaseClient'
 
 // Extract the test data from the JSON file with proper typing
 // @ts-ignore
@@ -245,7 +244,7 @@ const Game: React.FC = () => {
         updatedGame.completed_at = new Date().toISOString()
 
         if (isAuthenticated) {
-          const userStats = await supabase.from('users').select('*').eq('id', user?.sub).single()
+          const userStats = await userAPI.getSingleUser(user?.sub || '')
           const stats = userStats.data
           const newStats = structuredClone(stats)
 
@@ -253,8 +252,9 @@ const Game: React.FC = () => {
           newStats.total_games += 1
           newStats.average_score = newStats.total_score / newStats.total_games
           newStats.best_score = Math.max(newStats.best_score, updatedGame.score)
+          newStats.updated_at = new Date().toISOString()
 
-          await supabase.from('users').update(newStats).eq('id', user?.sub)
+          await userAPI.updateUser(newStats, user?.sub || '')
         }
       }
 
