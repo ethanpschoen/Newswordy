@@ -87,9 +87,9 @@ const Home: React.FC = () => {
     setStats(userStats)
   }
 
-  useMemo(upsertUser, [isAuthenticated, user?.sub, user?.email, user?.nickname])
+  useMemo(upsertUser, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useMemo(getUserStats, [isAuthenticated, user?.sub])
+  useMemo(getUserStats, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)

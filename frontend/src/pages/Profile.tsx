@@ -38,7 +38,7 @@ const Profile: React.FC = () => {
     setStats(userStats)
   }
 
-  useMemo(getUserStats, [user?.sub])
+  useMemo(getUserStats, []) // eslint-disable-line react-hooks/exhaustive-deps
   
   const [stats, setStats] = useState<Stat[]>([])
 
