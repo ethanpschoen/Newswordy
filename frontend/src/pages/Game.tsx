@@ -25,7 +25,7 @@ import ArticleInfo from './components/ArticleInfo'
 
 import testData from '../components/test_data.json'
 
-// Extract the test data from the JSON file with proper typing
+// Extract the test data from the JSON file
 // @ts-ignore
 const TEST_DATA: ScoreboardEntry[] = testData[0].results
 
@@ -97,6 +97,7 @@ const Game: React.FC = () => {
     try {
       setLoading(true)
 
+      // If in test mode, use hard-coded test data
       if (isTestMode) {
         const gameState: GameState = {
           id: 'test',
@@ -116,6 +117,7 @@ const Game: React.FC = () => {
         setGameState(gameState)
         setScoreboard(scoreboard)
       } else {
+        // Get game state from database
         const gameResponse = await gameAPI.getGameState(gameId || '')
 
         if (gameResponse.error) {
@@ -126,6 +128,7 @@ const Game: React.FC = () => {
         game.guessed_words = new Set(game.guessed_words)
         setGameState(game)
 
+        // Get top words from database
         const scoreboardResponse = await gameAPI.getScoreboard(game.time_period, game.sources, game.scoreboard_size, new Date(game.created_at))
 
         if (scoreboardResponse.error) {
@@ -234,6 +237,7 @@ const Game: React.FC = () => {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
 
+        // Update user stats
         if (isAuthenticated && !isTestMode) {
           const userStats = await userAPI.getSingleUser(user?.sub || '')
           const stats = userStats.data
@@ -260,7 +264,7 @@ const Game: React.FC = () => {
   }
 
   const handleWordClick = (word: string) => {
-    // Find the word data from TEST_DATA
+    // Find the word data from scoreboard
     const wordData = scoreboard.find(item => item.word.toLowerCase() === word.toLowerCase())
     if (wordData) {
       setSelectedWordData(wordData)

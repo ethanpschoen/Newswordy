@@ -55,6 +55,7 @@ const Home: React.FC = () => {
 
     const isUserInDatabase = await userAPI.getUser(user?.sub || '')
 
+    // If no users with that ID, create a new user
     if (!isUserInDatabase.data?.length) {
       const newUser = {
         email: user?.email || '',
@@ -125,7 +126,6 @@ const Home: React.FC = () => {
       navigate(`/game/${gameId}`)
     } catch (error) {
       console.error('Failed to create game:', error)
-      // You could add a toast notification here
     } finally {
       setLoading(false)
     }

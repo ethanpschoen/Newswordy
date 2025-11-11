@@ -47,37 +47,48 @@ export const setAnonymousSession = (sessionId: string) => {
   api.defaults.headers.common['x-session-id'] = sessionId
 }
 
+// Helper function to define time period
 export const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) => {
+  // Get start of reference date
   referenceDate.setHours(0)
   referenceDate.setMinutes(0)
   referenceDate.setSeconds(0)
   referenceDate.setMilliseconds(0)
+  
   let start_date = new Date(referenceDate)
   let end_date = new Date(referenceDate)
+
   switch (timePeriod) {
     case TIME_PERIODS.PAST_DAY:
+      // Set start date to one day before reference date
       start_date.setDate(referenceDate.getDate() - 1)
       break
     case TIME_PERIODS.PAST_WEEK:
+      // Set start date to 7 days before reference date
       start_date.setDate(referenceDate.getDate() - 7)
       break
     case TIME_PERIODS.PAST_MONTH:
+      // Set start date to one month before reference date
       start_date.setMonth(referenceDate.getMonth() - 1)
       break
     case TIME_PERIODS.PAST_YEAR:
+      // Set start date to one year before reference date
       start_date.setFullYear(referenceDate.getFullYear() - 1)
       break
     case TIME_PERIODS.LAST_WEEK:
+      // Set date range to last full week before reference date
       const day = referenceDate.getDay() - 1
       end_date.setDate(referenceDate.getDate() - (day !== -1 ? day : 6))
       start_date.setDate(referenceDate.getDate() - 7 - (day !== -1 ? day : 6))
       break
     case TIME_PERIODS.LAST_MONTH:
+      // Set date range to last full month before reference date
       end_date.setDate(1)
       start_date.setMonth(referenceDate.getMonth() - 1)
       start_date.setDate(1)
       break
     case TIME_PERIODS.LAST_YEAR:
+      // Set date range to last full year before reference date
       end_date.setMonth(0)
       end_date.setDate(1)
       start_date.setFullYear(referenceDate.getFullYear() - 1)
