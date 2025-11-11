@@ -126,7 +126,7 @@ const Game: React.FC = () => {
         setGameState(gameState)
         setScoreboard(scoreboard)
       } else {
-        const gameResponse = await gameAPI.getGameState(gameId!)
+        const gameResponse = await gameAPI.getGameState(gameId || '')
 
         if (gameResponse.error) {
           console.error('Failed to load game:', gameResponse.error)
@@ -194,7 +194,7 @@ const Game: React.FC = () => {
       const newGuess: Guess = {
         id: `${Date.now()}`,
         game_id: gameId,
-        user_id: user?.sub || '',
+        user_id: user?.sub || 'anonymous',
         word: guessWord,
         frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,
@@ -205,7 +205,7 @@ const Game: React.FC = () => {
       const updatedGuesses = [...gameState?.guesses || [], newGuess]
 
       const updatedGameState = {
-        ...gameState,
+        ...gameState!,
         score: updatedScore,
         guesses: updatedGuesses,
         guessed_words: updatedGuessedWords,
@@ -259,7 +259,7 @@ const Game: React.FC = () => {
       }
 
       if (!isTestMode) {
-        await supabase.from('games').update(updatedGame).eq('id', updatedGame.id)
+        await gameAPI.updateGameState(updatedGame, updatedGame.id)
       }
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')

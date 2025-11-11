@@ -149,7 +149,7 @@ export interface Game {
   scoreboard_size: number
   user_id?: string
   completed_at?: string
-  created_at: string
+  created_at?: string
 }
 
 export interface Guess {

@@ -5,7 +5,6 @@ import {
   Game,
   Guess,
   LeaderboardEntry,
-  UserStats,
   TimePeriod,
   NewsSource,
   TIME_PERIODS
@@ -109,6 +108,11 @@ export const gameAPI = {
       `)
       .eq('id', gameId)
       .maybeSingle()
+  },
+
+  // TODO: validate user with game?
+  updateGameState: async (game: Game, gameId: string) => {
+    return await supabase.from('games').update(game).eq('id', gameId)
   },
 
   submitGuess: async (data: Guess) => {
