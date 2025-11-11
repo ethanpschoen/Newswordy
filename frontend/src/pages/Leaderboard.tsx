@@ -1,12 +1,13 @@
 import React from 'react'
 import { Color } from '../types'
+import { Box, Typography } from '@mui/material'
 
 const Leaderboard: React.FC = () => {
   return (
-    <div className="text-center py-12">
-      <h1 className="text-2xl font-bold mb-4" style={{ color: Color.TEXT_PRIMARY }}>Leaderboard Page</h1>
-      <p style={{ color: Color.TEXT_SECONDARY }}>Leaderboard functionality coming soon!</p>
-    </div>
+    <Box sx={{ textAlign: 'center', py: 12 }}>
+      <Typography variant="h3" component="h3" sx={{ fontWeight: 'bold', mb: 4, color: Color.TEXT_PRIMARY }}>Leaderboard Page</Typography>
+      <Typography variant="body1" sx={{ color: Color.TEXT_SECONDARY }}>Leaderboard functionality coming soon!</Typography>
+    </Box>
   )
 }
 
