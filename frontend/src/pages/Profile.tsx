@@ -38,7 +38,7 @@ const Profile: React.FC = () => {
     setStats(userStats)
   }
 
-  useMemo(getUserStats, [])
+  useMemo(getUserStats, [user?.sub])
   
   const [stats, setStats] = useState<Stat[]>([])
 

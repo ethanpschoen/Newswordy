@@ -87,9 +87,9 @@ const Home: React.FC = () => {
     setStats(userStats)
   }
 
-  useMemo(upsertUser, [])
+  useMemo(upsertUser, [isAuthenticated, user?.sub, user?.email, user?.nickname])
 
-  useMemo(getUserStats, [])
+  useMemo(getUserStats, [isAuthenticated, user?.sub])
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
