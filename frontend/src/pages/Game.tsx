@@ -160,6 +160,7 @@ const Game: React.FC = () => {
       // If the word has already been guessed, don't count it
       if (gameState!.guesses.some(guess => guess.word === guessWord)) {
         setError(`"${currentGuess}" has already been guessed`)
+        setSubmitting(false)
         return
       }
 

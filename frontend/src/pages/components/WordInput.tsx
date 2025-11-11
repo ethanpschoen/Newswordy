@@ -4,6 +4,7 @@ import { PlayIcon } from "@heroicons/react/24/outline"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import { useNavigate } from "react-router-dom"
 import { Color, GameState } from "../../types"
+import { useRef, useEffect } from "react"
 
 interface Props {
   gameState: GameState
@@ -17,6 +18,19 @@ interface Props {
 
 const WordInput = ({ gameState, handleSubmitGuess, currentGuess, setCurrentGuess, submitting, error, success }: Props) => {
   const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const prevSubmittingRef = useRef<boolean>(false)
+
+  // Refocus input after submission completes (when submitting changes from true to false)
+  useEffect(() => {
+    if (prevSubmittingRef.current && !submitting && !gameState.is_completed) {
+      // Use setTimeout to ensure the DOM has updated
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 0)
+    }
+    prevSubmittingRef.current = submitting
+  }, [submitting, gameState.is_completed])
 
   return (
     <Card>
@@ -47,6 +61,7 @@ const WordInput = ({ gameState, handleSubmitGuess, currentGuess, setCurrentGuess
         ) : (
           <Box component="form" onSubmit={handleSubmitGuess} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <TextField
+              inputRef={inputRef}
               fullWidth
               label="Enter a word that appears in news headlines:"
               value={currentGuess}
