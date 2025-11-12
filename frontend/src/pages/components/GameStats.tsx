@@ -40,7 +40,7 @@ const GameStats = ({ gameState }: Props) => {
 							{gameState.guessed_words.size}
 						</Typography>
 						<Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-							Word{gameState.guessed_words.size === 1 ? null : 's'} Guessed
+							Word{gameState.guessed_words.size === 1 ? null : 's'} Found
 						</Typography>
 					</Paper>
 					<Paper 
