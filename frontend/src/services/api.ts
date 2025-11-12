@@ -142,6 +142,49 @@ export const gameAPI = {
       })
       .select('*')
   },
+
+  getComparativeScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
+    const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
+
+    return await supabase
+      .rpc('test_get_comparative_words_scoreboard', {
+        start_date,
+        end_date,
+        sources_group_a,
+        sources_group_b,
+        size: scoreboardSize
+      })
+      .select('*')
+  },
+
+  getAssociatedScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
+    const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
+
+    return await supabase
+      .rpc('get_associated_words_scoreboard', {
+        start_date,
+        end_date,
+        sources,
+        search_term,
+        size: scoreboardSize
+      })
+      .select('*')
+  },
+
+  getComparativeAssociatedScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
+    const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
+
+    return await supabase
+      .rpc('get_comparative_associated_words_scoreboard', {
+        start_date,
+        end_date,
+        sources_group_a,
+        sources_group_b,
+        search_term,
+        size: scoreboardSize
+      })
+      .select('*')
+  },
 }
 
 // User API
