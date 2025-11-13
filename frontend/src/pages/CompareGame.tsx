@@ -354,26 +354,36 @@ const CompareGame: React.FC = () => {
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
           </Grid>
 
-          {/* Scoreboard */}
+          {/* Group A Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
           </Grid>
 
+					{/* Group B Scoreboard */}
+          <Grid size={{ xs: 12 }} sx={{ order: 4 }} ref={scoreboardRef}>
+            <Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
+          </Grid>
+
           {/* Game Stats */}
-          <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
-            <GameStats guessedWords={gameState.guessed_words_group_a} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
+          <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+            <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
           {gameState.compare_guesses.length > 0 && (
-            <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+            <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
               <GuessList guesses={gameState.compare_guesses} />
             </Grid>
           )}
 
-          {/* Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
+          {/* Group A Article Info */}
+          <Grid size={{ xs: 12 }} sx={{ order: 7 }}>
             <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} />
+          </Grid>
+
+					{/* Group B Article Info */}
+          <Grid size={{ xs: 12 }} sx={{ order: 8 }}>
+            <ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} />
           </Grid>
         </Grid>
       </Container>
@@ -384,7 +394,7 @@ const CompareGame: React.FC = () => {
     <Container maxWidth="xl">
       {/* Main 3-Column Layout */}
       <Grid container spacing={3}>
-        {/* Left Column - Header Info, Game Stats & Recent Guesses */}
+        {/* Left Column - Header Info, Game Stats & Group A Article Info */}
         <Grid size={{ xs: 12, lg: 2.5 }}>
           <Stack spacing={2} sx={{ 
             height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
@@ -396,11 +406,12 @@ const CompareGame: React.FC = () => {
             {/* Game Stats */}
             <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
 
+					{/* Group A Article Info */}
 						<ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
           </Stack>
         </Grid>
 
-        {/* Middle Column - Word Input & Scoreboard */}
+        {/* Middle Column - Word Input & Scoreboards */}
         <Grid size={{ xs: 12, lg: 7 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
@@ -408,18 +419,20 @@ const CompareGame: React.FC = () => {
 
             {/* Scoreboard Section */}
 						<Grid container spacing={2}>
+							{/* Group A Scoreboard */}
 							<Grid size={{ xs: 12, lg: 6 }}>
 								<Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
 							</Grid>
+
+							{/* Group B Scoreboard */}
 							<Grid size={{ xs: 12, lg: 6 }}>
 								<Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
 							</Grid>
 						</Grid>
-            
           </Stack>
         </Grid>
 
-        {/* Right Column - Article Info */}
+        {/* Right Column - Recent Guesses & Group B Article Info */}
         <Grid size={{ xs: 12, lg: 2.5 }}>
 					<Stack spacing={2} sx={{ 
             height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
@@ -428,6 +441,7 @@ const CompareGame: React.FC = () => {
 						{/* Recent Guesses */}
 						<GuessList guesses={gameState.compare_guesses} />
 
+						{/* Group B Article Info */}
 						<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
 					</Stack>
 				</Grid>
