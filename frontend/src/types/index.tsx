@@ -152,6 +152,19 @@ export interface Game {
   created_at?: string
 }
 
+export interface GameState {
+  id: string
+  time_period: string
+  sources: NewsSource[]
+  score: number
+  guesses: Guess[]
+  guessed_words: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+}
+
 export interface Guess {
   id: string
   game_id: string
@@ -170,28 +183,11 @@ export interface ScoreboardEntry {
   articles: Article[]
 }
 
-export interface GameState {
-  id: string
-  time_period: string
-  sources: NewsSource[]
-  score: number
-  guesses: Guess[]
-  guessed_words: string[]
-  remaining_guesses: number
-  is_completed: boolean
-  max_guesses: number
-  scoreboard_size: number
-}
-
-export interface CreateGameRequest {
-  timePeriod: string
-  sources: NewsSource[]
-  maxGuesses?: number
-  scoreboardSize?: number
-}
-
-export interface SubmitGuessRequest {
-  word: string
+export interface Article {
+  url: string
+  source: NewsSource
+  headline: string
+  published_date: string
 }
 
 export interface ApiResponse<T = any> {
@@ -206,14 +202,6 @@ export interface LeaderboardEntry {
   username: string
   score: number
   rank: number
-}
-
-export interface UserStats {
-  totalGames: number
-  totalScore: number
-  averageScore: number
-  bestScore: number
-  recentGames: Game[]
 }
 
 // Time periods
@@ -283,12 +271,4 @@ export const NewsSourceConfig: Record<NewsSource, { name: string, logo: React.Re
   [NewsSource.WALL_STREET_JOURNAL]: {name: 'The Wall Street Journal', logo: <WallStreetJournalLogo />},
   [NewsSource.WASHINGTON_POST]: {name: 'The Washington Post', logo: <WashingtonPostLogo />},
   [NewsSource.YAHOO]: {name: 'Yahoo News', logo: <YahooNewsLogo />}
-}
-
-// Test data types
-export interface Article {
-  url: string
-  source: NewsSource
-  headline: string
-  published_date: string
 }
