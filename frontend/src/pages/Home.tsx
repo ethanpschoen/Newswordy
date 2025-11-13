@@ -266,7 +266,6 @@ const Home: React.FC = () => {
                       variant="outlined"
                       size="large"
                       onClick={handleTestGame}
-                      startIcon={<PlayIcon />}
                       sx={{ 
                         px: 4, 
                         py: 1.5, 
