@@ -385,7 +385,7 @@ const CompareGame: React.FC = () => {
       {/* Main 3-Column Layout */}
       <Grid container spacing={3}>
         {/* Left Column - Header Info, Game Stats & Recent Guesses */}
-        <Grid size={{ xs: 12, lg: 3 }}>
+        <Grid size={{ xs: 12, lg: 2.5 }}>
           <Stack spacing={2} sx={{ 
             height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
             maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
@@ -394,33 +394,43 @@ const CompareGame: React.FC = () => {
             <GameInfo timePeriod={gameState.time_period} />
 
             {/* Game Stats */}
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_a} />
-						<GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_b} />
+            <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
 
-            {/* Recent Guesses */}
-            {gameState.compare_guesses.length > 0 && (
-              <GuessList guesses={gameState.compare_guesses} />
-            )}
+						<ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
           </Stack>
         </Grid>
 
         {/* Middle Column - Word Input & Scoreboard */}
-        <Grid size={{ xs: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 
             {/* Scoreboard Section */}
-            <Scoreboard scoreboard={scoreboardGroupA} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
-						<Scoreboard scoreboard={scoreboardGroupB} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
+						<Grid container spacing={2}>
+							<Grid size={{ xs: 12, lg: 6 }}>
+								<Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
+							</Grid>
+							<Grid size={{ xs: 12, lg: 6 }}>
+								<Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
+							</Grid>
+						</Grid>
+            
           </Stack>
         </Grid>
 
         {/* Right Column - Article Info */}
-        <Grid size={{ xs: 12, lg: 3 }}>
-          <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
-					<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
-        </Grid>
+        <Grid size={{ xs: 12, lg: 2.5 }}>
+					<Stack spacing={2} sx={{ 
+            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
+          }}>
+						{/* Recent Guesses */}
+						<GuessList guesses={gameState.compare_guesses} />
+
+						<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+					</Stack>
+				</Grid>
       </Grid>
     </Container>
   )
