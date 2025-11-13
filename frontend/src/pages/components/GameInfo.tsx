@@ -7,9 +7,10 @@ import { TIME_PERIOD_NAMES, TimePeriod } from "../../types"
 interface Props {
   isTestMode?: boolean
   timePeriod: TimePeriod
+  backPage?: string
 }
 
-const GameInfo = ({ isTestMode = false, timePeriod }: Props) => {
+const GameInfo = ({ isTestMode = false, timePeriod, backPage = '/' }: Props) => {
   const navigate = useNavigate()
 
   return (
@@ -19,13 +20,13 @@ const GameInfo = ({ isTestMode = false, timePeriod }: Props) => {
           {/* Navigation and Title */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(backPage)}
               variant="outlined"
               size="small"
               startIcon={<ArrowLeftIcon className="w-4 h-4" />}
               sx={{ textTransform: 'none' }}
             >
-              Back to Home
+              Back
             </Button>
             <Typography variant="h6" component="h1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
               Newswordy
