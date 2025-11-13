@@ -160,7 +160,7 @@ const CompareGame: React.FC = () => {
 					index -= gameState!.scoreboard_size
 				}
 
-        wordScore = calculateScore(index, scoreboard.length)
+        wordScore = calculateScore(index, scoreboard.length / 2)
         updatedScore += wordScore
       } else {
         index = undefined
