@@ -356,7 +356,7 @@ const CompareGame: React.FC = () => {
 
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboardGroupA} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}

@@ -344,7 +344,7 @@ const Game: React.FC = () => {
 
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboard} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
@@ -401,7 +401,7 @@ const Game: React.FC = () => {
             <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
 
             {/* Scoreboard Section */}
-            <Scoreboard scoreboard={scoreboard} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Stack>
         </Grid>
 
