@@ -1,11 +1,11 @@
 import { Box, Card, CardContent, Chip, Paper, Stack, Typography } from "@mui/material"
-import { GameState, Color } from "../../types"
+import { Color, Guess } from "../../types"
 
 interface Props {
-  gameState: GameState
+  guesses: Guess[]
 }
 
-const GuessList = ({ gameState }: Props) => {
+const GuessList = ({ guesses }: Props) => {
   return (
     <Card sx={{ 
 			display: 'flex', 
@@ -18,7 +18,7 @@ const GuessList = ({ gameState }: Props) => {
 				</Typography>
 				<Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
 					<Stack spacing={1}>
-						{gameState.guesses.map((guess) => (
+						{guesses.map(guess => (
 							<Paper
 								key={guess.id}
 								elevation={1}

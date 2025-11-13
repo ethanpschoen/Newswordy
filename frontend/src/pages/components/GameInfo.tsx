@@ -2,14 +2,14 @@ import { Box, Typography, Card, Stack, CardContent } from "@mui/material"
 import { Button } from "@mui/material"
 import { ArrowLeftIcon } from "@heroicons/react/24/outline"
 import { useNavigate } from "react-router-dom"
-import { GameState, TIME_PERIOD_NAMES } from "../../types"
+import { GameState, CompareGameState, TIME_PERIOD_NAMES } from "../../types"
 
 interface Props {
-  isTestMode: boolean
-  gameState: GameState
+  isTestMode?: boolean
+  gameState: GameState | CompareGameState
 }
 
-const GameInfo = ({ isTestMode, gameState }: Props) => {
+const GameInfo = ({ isTestMode = false, gameState }: Props) => {
   const navigate = useNavigate()
 
   return (

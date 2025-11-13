@@ -1,11 +1,12 @@
 import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar } from "@mui/material"
-import { GameState, ScoreboardEntry, Color } from "../../types"
+import { GameState, ScoreboardEntry, Color, CompareGameState, ComparativeScoreboardEntry } from "../../types"
 
 interface Props {
-  scoreboard: ScoreboardEntry[]
+  scoreboard: ScoreboardEntry[] | ComparativeScoreboardEntry[]
   showScoreboard: boolean
   setShowScoreboard: (show: boolean) => void
-  gameState: GameState
+  gameState: GameState | CompareGameState
+  guessedWords: string[]
 	handleWordClick: (word: string) => void
 }
 
@@ -20,8 +21,8 @@ export const getRankColor = (rank: number) => {
 	return Color.RANK_DEFAULT_BG
 }
 
-const Scoreboard = ({ scoreboard, showScoreboard, setShowScoreboard, gameState, handleWordClick }: Props) => {
-  return (
+const Scoreboard = ({ scoreboard, showScoreboard, setShowScoreboard, gameState, guessedWords, handleWordClick }: Props) => {
+	return (
     <Card>
 			<CardContent>
 				<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -42,7 +43,7 @@ const Scoreboard = ({ scoreboard, showScoreboard, setShowScoreboard, gameState, 
 				<Stack spacing={1}>
 					{scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
 						const gameCompleted = gameState.is_completed
-						const wordGuessed = gameState.guessed_words.includes(entry.word.toLowerCase())
+						const wordGuessed = guessedWords.includes(entry.word.toLowerCase())
 						const showWord = wordGuessed || gameCompleted
 						return (
 							<Paper
@@ -100,13 +101,15 @@ const Scoreboard = ({ scoreboard, showScoreboard, setShowScoreboard, gameState, 
 									>
 										{calculateScore(index, scoreboard.length)}
 									</Typography>
-									<Typography 
-										variant="caption" 
-										color={showWord ? 'text.secondary' : 'text.disabled'}
-										sx={{ minWidth: '90px', textAlign: 'right' }}
-									>
-										{`${showWord ? entry.frequency.toLocaleString() : '???'} mentions`}
-									</Typography>
+									{(entry as ScoreboardEntry).frequency && (
+										<Typography 
+											variant="caption" 
+											color={showWord ? 'text.secondary' : 'text.disabled'}
+											sx={{ minWidth: '90px', textAlign: 'right' }}
+										>
+											{`${showWord ? (entry as ScoreboardEntry).frequency?.toLocaleString() : '???'} mentions`}
+										</Typography>
+									)}
 								</Box>
 							</Paper>
 						)

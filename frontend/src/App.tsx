@@ -9,6 +9,12 @@ import Leaderboard from './pages/Leaderboard'
 import LoadingSpinner from './components/LoadingSpinner'
 import { useAuth0 } from '@auth0/auth0-react'
 import { setAuthToken, setAnonymousSession } from './services/api'
+import Associate from './pages/Associate'
+import AssociateGame from './pages/AssociateGame'
+import Compare from './pages/Compare'
+import CompareGame from './pages/CompareGame'
+import CompareAssociate from './pages/CompareAssociate'
+import CompareAssociateGame from './pages/CompareAssociateGame'
 
 // Create a custom theme
 const theme = createTheme({
@@ -86,6 +92,12 @@ const AppContent: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game/:gameId" element={<Game />} />
+            <Route path="/compare" element={<Compare />} />
+            <Route path="/compare/:compareId" element={<CompareGame />} />
+            <Route path="/associate" element={<Associate />} />
+            <Route path="/associate/:associateId" element={<AssociateGame />} />
+            <Route path="/compare-associate" element={<CompareAssociate />} />
+            <Route path="/compare-associate/:compareAssociateId" element={<CompareAssociateGame />} />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />

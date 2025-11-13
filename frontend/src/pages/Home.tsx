@@ -37,7 +37,7 @@ import {
   ExpandLess as ExpandLessIcon,
   CompareArrows as CompareIcon,
   Search as SearchIcon,
-  Storage as DatabaseIcon
+  Compare as CompareAssociateIcon
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 
@@ -440,27 +440,48 @@ const Home: React.FC = () => {
       {/* Other Game Modes */}
       <Box sx={{ mb: 4 }}>
         <Grid container spacing={3}>
-          {/* Source Comparison Mode - Coming Soon */}
+          {/* Source Comparison Mode */}
           <Grid size={{ xs: 12, sm: 6 }}>
             <Card 
               sx={{ 
                 p: 3, 
                 textAlign: 'center',
                 height: '100%',
-                opacity: 0.6,
-                border: '2px dashed',
-                borderColor: 'grey.300'
+                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                color: 'white',
+                borderRadius: '20px',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  transition: 'transform 0.2s',
+                  boxShadow: 6
+                }
               }}
             >
               <CardContent>
-                <CompareIcon sx={{ fontSize: 50, mb: 2, color: 'text.secondary' }} />
-                <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <CompareIcon sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                   Source Comparison
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Compare word usage between two groups of sources
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.95 }}>
+                  Compare word usage between two groups of sources. Organize sources into groups and see how their language differs.
                 </Typography>
-                <Chip label="Coming Soon" color="default" size="small" />
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate('/compare')}
+                  sx={{ 
+                    px: 4, 
+                    py: 1.5, 
+                    fontSize: '1.1rem',
+                    bgcolor: 'white',
+                    color: 'secondary.main',
+                    '&:hover': {
+                      bgcolor: 'grey.100'
+                    }
+                  }}
+                >
+                  Start Comparison
+                </Button>
               </CardContent>
             </Card>
           </Grid>
@@ -490,7 +511,7 @@ const Home: React.FC = () => {
             </Card>
           </Grid>
 
-          {/* Database Querying System - Coming Soon (Less Priority) */}
+          {/* Comparative Association Mode - Coming Soon */}
           <Grid size={{ xs: 12 }}>
             <Card 
               sx={{ 
@@ -503,12 +524,12 @@ const Home: React.FC = () => {
               }}
             >
               <CardContent>
-                <DatabaseIcon sx={{ fontSize: 40, mb: 1.5, color: 'text.secondary' }} />
+                <CompareAssociateIcon sx={{ fontSize: 40, mb: 1.5, color: 'text.secondary' }} />
                 <Typography variant="h6" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  Database Querying System
+                  Comparative Association
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  Explore and query the news database with custom filters and analytics
+                  Compare word usage between two groups of sources and see how their language differs with a selected word.
                 </Typography>
                 <Chip label="Coming Soon" color="default" size="small" />
               </CardContent>

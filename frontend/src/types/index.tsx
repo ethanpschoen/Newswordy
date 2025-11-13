@@ -178,7 +178,7 @@ export interface Guess {
 
 export interface ScoreboardEntry {
   word: string
-  frequency: number
+  frequency?: number
   rank: number
   articles: Article[]
 }
@@ -188,6 +188,53 @@ export interface Article {
   source: NewsSource
   headline: string
   published_date: string
+}
+
+export interface CompareGame {
+  id?: string
+  time_period: string
+  sources_group_a?: NewsSource[]
+  sources_group_b?: NewsSource[]
+  score: number
+  guessed_words_group_a: string[]
+  guessed_words_group_b: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+  user_id?: string
+  completed_at?: string
+  created_at?: string
+}
+
+export interface CompareGameState {
+  id: string
+  time_period: string
+  sources_group_a: NewsSource[]
+  sources_group_b: NewsSource[]
+  score: number
+  compare_guesses: Guess[]
+  guessed_words_group_a: string[]
+  guessed_words_group_b: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+}
+
+export interface ComparativeScoreboardEntry {
+  group_name: ComparativeGroup
+  word: string
+  avg_rank_group_a: number
+  avg_rank_group_b: number
+  leaderboard_rank: number
+  articles_group_a: Article[]
+  articles_group_b: Article[]
+}
+
+export enum ComparativeGroup {
+  GROUP_A = 'Group A',
+  GROUP_B = 'Group B'
 }
 
 export interface ApiResponse<T = any> {

@@ -3,6 +3,7 @@ import {
   ApiResponse,
   User,
   Game,
+  CompareGame,
   Guess,
   LeaderboardEntry,
   TimePeriod,
@@ -143,11 +144,36 @@ export const gameAPI = {
       .select('*')
   },
 
+  createComparativeGame: async (game: CompareGame) => {
+    return await supabase.from('compare_games').insert(game).select('id').single()
+  },
+
+  // TODO: validate user with game?
+  getComparativeGameState: async (gameId: string) => {
+    return await supabase
+      .from('compare_games')
+      .select(`
+        *,
+        compare_guesses(*)
+      `)
+      .eq('id', gameId)
+      .maybeSingle()
+  },
+
+  // TODO: validate user with game?
+  updateComparativeGameState: async (game: CompareGame, gameId: string) => {
+    return await supabase.from('compare_games').update(game).eq('id', gameId)
+  },
+
+  submitComparativeGuess: async (data: Guess) => {
+    return await supabase.from('compare_guesses').insert(data)
+  },
+
   getComparativeScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
     return await supabase
-      .rpc('test_get_comparative_words_scoreboard', {
+      .rpc('get_comparative_words_scoreboard', {
         start_date,
         end_date,
         sources_group_a,

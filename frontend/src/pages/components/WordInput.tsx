@@ -3,11 +3,11 @@ import { Box, Button, Card, CardContent, TextField, Typography, Alert } from "@m
 import { PlayIcon } from "@heroicons/react/24/outline"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import { useNavigate } from "react-router-dom"
-import { Color, GameState } from "../../types"
+import { Color, GameState, CompareGameState } from "../../types"
 import { useRef, useEffect } from "react"
 
 interface Props {
-  gameState: GameState
+  gameState: GameState | CompareGameState
   handleSubmitGuess: (e: React.FormEvent<HTMLFormElement>) => void
   currentGuess: string
   setCurrentGuess: (guess: string) => void

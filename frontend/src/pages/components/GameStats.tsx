@@ -1,11 +1,12 @@
 import { Card, CardContent, Paper, Stack, Typography } from "@mui/material"
-import { Color, GameState } from "../../types"
+import { Color, GameState, CompareGameState } from "../../types"
 
 interface Props {
-  gameState: GameState
+  gameState: GameState | CompareGameState
+  guessedWords: string[]
 }
 
-const GameStats = ({ gameState }: Props) => {
+const GameStats = ({ gameState, guessedWords }: Props) => {
   return (
     <Card>
 			<CardContent sx={{ py: 2 }}>
@@ -37,10 +38,10 @@ const GameStats = ({ gameState }: Props) => {
 						}}
 					>
 						<Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'success.main', mb: 0.5 }}>
-							{gameState.guessed_words.length}
+							{guessedWords.length}
 						</Typography>
 						<Typography variant="body2" color="success.main" sx={{ fontWeight: 'medium' }}>
-							Word{gameState.guessed_words.length === 1 ? null : 's'} Found
+							Word{guessedWords.length === 1 ? null : 's'} Found
 						</Typography>
 					</Paper>
 					<Paper 

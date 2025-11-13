@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { GameState, Guess, ScoreboardEntry } from '../types'
+import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup } from '../types'
 import { 
   Box,
   Button,
@@ -23,25 +23,18 @@ import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
 
-import testData from '../components/test_data.json'
-
-// Extract the test data from the JSON file
-// @ts-ignore
-const TEST_DATA: ScoreboardEntry[] = testData[0].results
-
-const Game: React.FC = () => {
+const CompareGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
 
-  const { gameId } = useParams<{ gameId: string }>()
+  const { compareId: gameId } = useParams<{ compareId: string }>()
 
   const navigate = useNavigate()
-  
-  // Check if this is test mode
-  const isTestMode = gameId === 'test'
-  
+
   // Game state variables
-  const [gameState, setGameState] = useState<GameState | null>(null)
-  const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
+  const [gameState, setGameState] = useState<CompareGameState | null>(null)
+	const [scoreboard, setScoreboard] = useState<ComparativeScoreboardEntry[]>([])
+  const [scoreboardGroupA, setScoreboardGroupA] = useState<ComparativeScoreboardEntry[]>([])
+  const [scoreboardGroupB, setScoreboardGroupB] = useState<ComparativeScoreboardEntry[]>([])
   
   // Action state variables
   const [loading, setLoading] = useState(true)
@@ -49,10 +42,12 @@ const Game: React.FC = () => {
   const [currentGuess, setCurrentGuess] = useState('')
   const [error, setError] = useState('') // Incorrect guess message
   const [success, setSuccess] = useState('') // Correct guess message
-  
+
   // Article panel state
-  const [selectedWordData, setSelectedWordData] = useState<ScoreboardEntry | null>(null)
-  const [currentPage, setCurrentPage] = useState(0) // Pagination state
+  const [selectedWordDataGroupA, setSelectedWordDataGroupA] = useState<ScoreboardEntry | null>(null)
+	const [selectedWordDataGroupB, setSelectedWordDataGroupB] = useState<ScoreboardEntry | null>(null)
+  const [currentPageGroupA, setCurrentPageGroupA] = useState(0)
+  const [currentPageGroupB, setCurrentPageGroupB] = useState(0)
   const articlesPerPage = 10
   
   // Refs and state for height management
@@ -91,52 +86,33 @@ const Game: React.FC = () => {
       resizeObserver.disconnect()
       clearTimeout(timeoutId)
     }
-  }, [scoreboard, showScoreboard, gameState?.guesses])
+  }, [scoreboardGroupA, showScoreboard, gameState?.compare_guesses])
 
   const loadGame = async () => {
     try {
       setLoading(true)
 
-      // If in test mode, use hard-coded test data
-      if (isTestMode) {
-        const gameState: GameState = {
-          id: 'test',
-          time_period: 'past_week',
-          sources: [],
-          score: 0,
-          guesses: [],
-          guessed_words: [],
-          remaining_guesses: 3,
-          is_completed: false,
-          max_guesses: 3,
-          scoreboard_size: 10
-        }
+      // Get game state from database
+			const gameResponse = await gameAPI.getComparativeGameState(gameId || '')
 
-        const scoreboard: ScoreboardEntry[] = TEST_DATA
+			if (gameResponse.error) {
+				console.error('Failed to load game:', gameResponse.error)
+			}
 
-        setGameState(gameState)
-        setScoreboard(scoreboard)
-      } else {
-        // Get game state from database
-        const gameResponse = await gameAPI.getGameState(gameId || '')
+			const game = gameResponse.data
+			setGameState(game)
 
-        if (gameResponse.error) {
-          console.error('Failed to load game:', gameResponse.error)
-        }
+			// Get top words from database
+			const scoreboardResponse = await gameAPI.getComparativeScoreboard(game.time_period, game.sources_group_a, game.sources_group_b, game.scoreboard_size, new Date(game.created_at))
 
-        const game = gameResponse.data
-        setGameState(game)
+			if (scoreboardResponse.error) {
+				console.error('Failed to fetch scoreboard', scoreboardResponse.error)
+			}
 
-        // Get top words from database
-        const scoreboardResponse = await gameAPI.getScoreboard(game.time_period, game.sources, game.scoreboard_size, new Date(game.created_at))
-
-        if (scoreboardResponse.error) {
-          console.error('Failed to fetch scoreboard', scoreboardResponse.error)
-        }
-
-        const board = scoreboardResponse.data
-        setScoreboard(board)
-      }
+			const board = scoreboardResponse.data
+			setScoreboard(board)
+			setScoreboardGroupA(board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_A))
+			setScoreboardGroupB(board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_B))
     } catch (error) {
       console.error('Failed to load game:', error)
       setError('Failed to load game')
@@ -157,7 +133,7 @@ const Game: React.FC = () => {
       const guessWord = currentGuess.trim().toLowerCase()
 
       // If the word has already been guessed, don't count it
-      if (gameState!.guesses.some(guess => guess.word === guessWord)) {
+      if (gameState!.compare_guesses.some(guess => guess.word === guessWord)) {
         setError(`"${currentGuess}" has already been guessed`)
         setSubmitting(false)
         return
@@ -165,18 +141,27 @@ const Game: React.FC = () => {
 
       const foundWord = scoreboard.find(entry => entry.word === guessWord)
 
+			console.log('foundWord', foundWord)
+
       let index: number | undefined
       let wordScore: number
       let updatedScore = gameState?.score || 0
-      let updatedGuessedWords = gameState?.guessed_words || []
+      let updatedGuessedWordsGroupA = gameState?.guessed_words_group_a || []
+      let updatedGuessedWordsGroupB = gameState?.guessed_words_group_b || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
       
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
-        wordScore = calculateScore(index, scoreboard.length)
 
+				if (foundWord.group_name === ComparativeGroup.GROUP_A) {
+					updatedGuessedWordsGroupA.push(guessWord)
+				} else {
+					updatedGuessedWordsGroupB.push(guessWord)
+					index -= gameState!.scoreboard_size
+				}
+
+        wordScore = calculateScore(index, scoreboard.length)
         updatedScore += wordScore
-        updatedGuessedWords.push(guessWord)
       } else {
         index = undefined
         wordScore = 0
@@ -189,19 +174,19 @@ const Game: React.FC = () => {
         game_id: gameId,
         user_id: user?.sub || 'anonymous',
         word: guessWord,
-        frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,
         rank: index !== undefined ? index + 1 : undefined,
         created_at: new Date().toISOString()
       }
 
-      const updatedGuesses = [...gameState?.guesses || [], newGuess]
+      const updatedGuesses = [...gameState?.compare_guesses || [], newGuess]
 
       const updatedGameState = {
         ...gameState!,
         score: updatedScore,
-        guesses: updatedGuesses,
-        guessed_words: updatedGuessedWords,
+        compare_guesses: updatedGuesses,
+        guessed_words_group_a: updatedGuessedWordsGroupA,
+        guessed_words_group_b: updatedGuessedWordsGroupB,
         remaining_guesses: updatedRemainingGuesses
       }
 
@@ -220,23 +205,21 @@ const Game: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.length) {
+      if (updatedRemainingGuesses <= 0 || 2 * gameState!.scoreboard_size <= updatedGuessedWordsGroupA.length + updatedGuessedWordsGroupB.length) {
         setGameState(prev => prev ? { ...prev, is_completed: true } : null)
         updatedGameState.is_completed = true
       }
 
-      if (!isTestMode) {
-        await gameAPI.submitGuess(newGuess)
-      }
+      await gameAPI.submitComparativeGuess(newGuess)
 
-      let { guesses: _, ...updatedGame } = updatedGameState
+      let { compare_guesses: _, ...updatedGame } = updatedGameState
       
       if (updatedGame.is_completed) {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
 
         // Update user stats
-        if (isAuthenticated && !isTestMode) {
+        if (isAuthenticated) {
           const userStats = await userAPI.getSingleUser(user?.sub || '')
           const stats = userStats.data
           const newStats = structuredClone(stats)
@@ -251,9 +234,8 @@ const Game: React.FC = () => {
         }
       }
 
-      if (!isTestMode) {
-        await gameAPI.updateGameState(updatedGame, updatedGame.id)
-      }
+      
+			await gameAPI.updateComparativeGameState(updatedGame, updatedGame.id)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
@@ -263,15 +245,45 @@ const Game: React.FC = () => {
 
   const handleWordClick = (word: string) => {
     // Find the word data from scoreboard
-    const wordData = scoreboard.find(item => item.word.toLowerCase() === word.toLowerCase())
-    if (wordData) {
-      setSelectedWordData(wordData)
-      setCurrentPage(0) // Reset to first page when selecting a new word
+		let condensedWordDataGroupA: ScoreboardEntry | null = null
+		let condensedWordDataGroupB: ScoreboardEntry | null = null
+    const wordDataGroupA = scoreboardGroupA.find(item => item.word.toLowerCase() === word.toLowerCase())
+    const wordDataGroupB = scoreboardGroupB.find(item => item.word.toLowerCase() === word.toLowerCase())
+		if (wordDataGroupA) {
+			condensedWordDataGroupA = {
+				word: wordDataGroupA.word,
+				rank: wordDataGroupA.avg_rank_group_a,
+				articles: wordDataGroupA.articles_group_a
+			}
+			condensedWordDataGroupB = {
+				word: wordDataGroupA.word,
+				rank: wordDataGroupA.avg_rank_group_b,
+				articles: wordDataGroupA.articles_group_b
+			}
+		}
+		if (wordDataGroupB) {
+			condensedWordDataGroupB = {
+				word: wordDataGroupB.word,
+				rank: wordDataGroupB.avg_rank_group_b,
+				articles: wordDataGroupB.articles_group_b
+			}
+			condensedWordDataGroupA = {
+				word: wordDataGroupB.word,
+				rank: wordDataGroupB.avg_rank_group_a,
+				articles: wordDataGroupB.articles_group_a
+			}
+		}
+    if (condensedWordDataGroupA && condensedWordDataGroupB) {
+      setSelectedWordDataGroupA(condensedWordDataGroupA)
+			setSelectedWordDataGroupB(condensedWordDataGroupB)
+      setCurrentPageGroupA(0)
+      setCurrentPageGroupB(0)
     }
   }
 
   const closeArticlePanel = () => {
-    setSelectedWordData(null)
+    setSelectedWordDataGroupA(null)
+    setSelectedWordDataGroupB(null)
   }
 
   const theme = useTheme()
@@ -334,7 +346,7 @@ const Game: React.FC = () => {
         <Grid container spacing={3}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
-            <GameInfo isTestMode={isTestMode} gameState={gameState} />
+            <GameInfo gameState={gameState} />
           </Grid>
 
           {/* Word Guess */}
@@ -344,24 +356,24 @@ const Game: React.FC = () => {
 
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboard} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboardGroupA} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
           <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words} />
+            <GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_a} />
           </Grid>
 
           {/* Recent Guesses */}
-          {gameState.guesses.length > 0 && (
+          {gameState.compare_guesses.length > 0 && (
             <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
-              <GuessList guesses={gameState.guesses} />
+              <GuessList guesses={gameState.compare_guesses} />
             </Grid>
           )}
 
           {/* Article Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
-            <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} />
+            <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} />
           </Grid>
         </Grid>
       </Container>
@@ -380,16 +392,16 @@ const Game: React.FC = () => {
           }}>
             {/* Game Information */}
             <GameInfo
-              isTestMode={isTestMode}
               gameState={gameState}
             />
 
             {/* Game Stats */}
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words} />
+            <GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_a} />
+						<GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_b} />
 
             {/* Recent Guesses */}
-            {gameState.guesses.length > 0 && (
-              <GuessList guesses={gameState.guesses} />
+            {gameState.compare_guesses.length > 0 && (
+              <GuessList guesses={gameState.compare_guesses} />
             )}
           </Stack>
         </Grid>
@@ -401,17 +413,19 @@ const Game: React.FC = () => {
             <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
 
             {/* Scoreboard Section */}
-            <Scoreboard scoreboard={scoreboard} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboardGroupA} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
+						<Scoreboard scoreboard={scoreboardGroupB} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
           </Stack>
         </Grid>
 
         {/* Right Column - Article Info */}
         <Grid size={{ xs: 12, lg: 3 }}>
-          <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+          <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+					<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
         </Grid>
       </Grid>
     </Container>
   )
 }
 
-export default Game
+export default CompareGame
