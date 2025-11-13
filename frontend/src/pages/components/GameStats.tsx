@@ -1,12 +1,13 @@
 import { Card, CardContent, Paper, Stack, Typography } from "@mui/material"
-import { Color, GameState, CompareGameState } from "../../types"
+import { Color } from "../../types"
 
 interface Props {
-  gameState: GameState | CompareGameState
   guessedWords: string[]
+  score: number
+  remainingGuesses: number
 }
 
-const GameStats = ({ gameState, guessedWords }: Props) => {
+const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
   return (
     <Card>
 			<CardContent sx={{ py: 2 }}>
@@ -23,7 +24,7 @@ const GameStats = ({ gameState, guessedWords }: Props) => {
 						}}
 					>
 						<Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5 }}>
-							{gameState.score}
+							{score}
 						</Typography>
 						<Typography variant="body2" color="primary.main" sx={{ fontWeight: 'medium' }}>
 							Total Score
@@ -53,10 +54,10 @@ const GameStats = ({ gameState, guessedWords }: Props) => {
 						}}
 					>
 						<Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 0.5 }}>
-							{gameState.remaining_guesses}
+							{remainingGuesses}
 						</Typography>
 						<Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-							Wrong Guess{gameState.remaining_guesses === 1 ? null : 'es'} Left
+							Wrong Guess{remainingGuesses === 1 ? null : 'es'} Left
 						</Typography>
 					</Paper>
 				</Stack>

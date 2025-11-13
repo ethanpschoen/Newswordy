@@ -3,34 +3,35 @@ import { Box, Button, Card, CardContent, TextField, Typography, Alert } from "@m
 import { PlayIcon } from "@heroicons/react/24/outline"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import { useNavigate } from "react-router-dom"
-import { Color, GameState, CompareGameState } from "../../types"
+import { Color } from "../../types"
 import { useRef, useEffect } from "react"
 
 interface Props {
-  gameState: GameState | CompareGameState
   handleSubmitGuess: (e: React.FormEvent<HTMLFormElement>) => void
   currentGuess: string
   setCurrentGuess: (guess: string) => void
   submitting: boolean
   error: string
   success: string
+  isCompleted: boolean
+  score: number
 }
 
-const WordInput = ({ gameState, handleSubmitGuess, currentGuess, setCurrentGuess, submitting, error, success }: Props) => {
+const WordInput = ({ handleSubmitGuess, currentGuess, setCurrentGuess, submitting, error, success, isCompleted, score }: Props) => {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
   const prevSubmittingRef = useRef<boolean>(false)
 
   // Refocus input after submission completes (when submitting changes from true to false)
   useEffect(() => {
-    if (prevSubmittingRef.current && !submitting && !gameState.is_completed) {
+    if (prevSubmittingRef.current && !submitting && !isCompleted) {
       // Use setTimeout to ensure the DOM has updated
       setTimeout(() => {
         inputRef.current?.focus()
       }, 0)
     }
     prevSubmittingRef.current = submitting
-  }, [submitting, gameState.is_completed])
+  }, [submitting, isCompleted])
 
   return (
     <Card>
@@ -39,14 +40,14 @@ const WordInput = ({ gameState, handleSubmitGuess, currentGuess, setCurrentGuess
           Guess a Word
         </Typography>
     
-        {gameState.is_completed ? (
+        {isCompleted ? (
           <Box sx={{ textAlign: 'center', py: 3 }}>
             <TrophyIcon className="w-12 h-12 mx-auto mb-3" style={{ color: Color.TROPHY }} />
             <Typography variant="h5" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
               Game Complete!
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Final Score: {gameState.score} points
+              Final Score: {score} points
             </Typography>
             <Button
               onClick={() => navigate('/')}

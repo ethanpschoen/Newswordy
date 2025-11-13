@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { GameState, Guess, ScoreboardEntry } from '../types'
+import { GameState, Guess, NewsSource, ScoreboardEntry } from '../types'
 import { 
   Box,
   Button,
@@ -102,7 +102,7 @@ const Game: React.FC = () => {
         const gameState: GameState = {
           id: 'test',
           time_period: 'past_week',
-          sources: [],
+          sources: Object.values(NewsSource),
           score: 0,
           guesses: [],
           guessed_words: [],
@@ -334,12 +334,12 @@ const Game: React.FC = () => {
         <Grid container spacing={3}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
-            <GameInfo isTestMode={isTestMode} gameState={gameState} />
+            <GameInfo isTestMode={isTestMode} timePeriod={gameState.time_period} />
           </Grid>
 
           {/* Word Guess */}
           <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
-            <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
           </Grid>
 
           {/* Scoreboard */}
@@ -349,7 +349,7 @@ const Game: React.FC = () => {
 
           {/* Game Stats */}
           <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words} />
+            <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
@@ -379,18 +379,13 @@ const Game: React.FC = () => {
             maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
           }}>
             {/* Game Information */}
-            <GameInfo
-              isTestMode={isTestMode}
-              gameState={gameState}
-            />
+            <GameInfo isTestMode={isTestMode} timePeriod={gameState.time_period} />
 
             {/* Game Stats */}
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words} />
+            <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
 
             {/* Recent Guesses */}
-            {gameState.guesses.length > 0 && (
-              <GuessList guesses={gameState.guesses} />
-            )}
+            <GuessList guesses={gameState.guesses} />
           </Stack>
         </Grid>
 
@@ -398,7 +393,7 @@ const Game: React.FC = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
-            <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 
             {/* Scoreboard Section */}
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />

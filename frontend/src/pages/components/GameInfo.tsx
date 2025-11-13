@@ -2,14 +2,14 @@ import { Box, Typography, Card, Stack, CardContent } from "@mui/material"
 import { Button } from "@mui/material"
 import { ArrowLeftIcon } from "@heroicons/react/24/outline"
 import { useNavigate } from "react-router-dom"
-import { GameState, CompareGameState, TIME_PERIOD_NAMES } from "../../types"
+import { TIME_PERIOD_NAMES, TimePeriod } from "../../types"
 
 interface Props {
   isTestMode?: boolean
-  gameState: GameState | CompareGameState
+  timePeriod: TimePeriod
 }
 
-const GameInfo = ({ isTestMode = false, gameState }: Props) => {
+const GameInfo = ({ isTestMode = false, timePeriod }: Props) => {
   const navigate = useNavigate()
 
   return (
@@ -44,7 +44,7 @@ const GameInfo = ({ isTestMode = false, gameState }: Props) => {
               Selected Time Period
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 'semibold', color: 'text.primary' }}>
-              {isTestMode ? 'September 2nd - September 8th' : TIME_PERIOD_NAMES[gameState.time_period as keyof typeof TIME_PERIOD_NAMES]}
+              {isTestMode ? 'September 2nd - September 8th' : TIME_PERIOD_NAMES[timePeriod]}
             </Typography>
           </Box>
         </Stack>

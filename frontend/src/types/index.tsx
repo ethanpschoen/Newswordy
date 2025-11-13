@@ -139,7 +139,7 @@ export interface User {
 
 export interface Game {
   id?: string
-  time_period: string
+  time_period: TimePeriod
   sources?: NewsSource[]
   score: number
   guessed_words: string[]
@@ -154,7 +154,7 @@ export interface Game {
 
 export interface GameState {
   id: string
-  time_period: string
+  time_period: TimePeriod
   sources: NewsSource[]
   score: number
   guesses: Guess[]
@@ -192,7 +192,7 @@ export interface Article {
 
 export interface CompareGame {
   id?: string
-  time_period: string
+  time_period: TimePeriod
   sources_group_a?: NewsSource[]
   sources_group_b?: NewsSource[]
   score: number
@@ -209,7 +209,7 @@ export interface CompareGame {
 
 export interface CompareGameState {
   id: string
-  time_period: string
+  time_period: TimePeriod
   sources_group_a: NewsSource[]
   sources_group_b: NewsSource[]
   score: number

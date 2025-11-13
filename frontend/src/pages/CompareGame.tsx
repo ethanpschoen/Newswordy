@@ -346,12 +346,12 @@ const CompareGame: React.FC = () => {
         <Grid container spacing={3}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
-            <GameInfo gameState={gameState} />
+            <GameInfo timePeriod={gameState.time_period} />
           </Grid>
 
           {/* Word Guess */}
           <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
-            <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
           </Grid>
 
           {/* Scoreboard */}
@@ -361,7 +361,7 @@ const CompareGame: React.FC = () => {
 
           {/* Game Stats */}
           <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
-            <GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_a} />
+            <GameStats guessedWords={gameState.guessed_words_group_a} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
@@ -391,9 +391,7 @@ const CompareGame: React.FC = () => {
             maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
           }}>
             {/* Game Information */}
-            <GameInfo
-              gameState={gameState}
-            />
+            <GameInfo timePeriod={gameState.time_period} />
 
             {/* Game Stats */}
             <GameStats gameState={gameState} guessedWords={gameState.guessed_words_group_a} />
@@ -410,7 +408,7 @@ const CompareGame: React.FC = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
-            <WordInput gameState={gameState} handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 
             {/* Scoreboard Section */}
             <Scoreboard scoreboard={scoreboardGroupA} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
