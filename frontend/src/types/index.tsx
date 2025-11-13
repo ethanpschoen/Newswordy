@@ -142,7 +142,7 @@ export interface Game {
   time_period: string
   sources?: NewsSource[]
   score: number
-  guessed_words: Set<string> | string[]
+  guessed_words: string[]
   remaining_guesses: number
   is_completed: boolean
   max_guesses: number
@@ -176,7 +176,7 @@ export interface GameState {
   sources: NewsSource[]
   score: number
   guesses: Guess[]
-  guessed_words: Set<string>
+  guessed_words: string[]
   remaining_guesses: number
   is_completed: boolean
   max_guesses: number

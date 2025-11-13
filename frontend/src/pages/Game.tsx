@@ -105,7 +105,7 @@ const Game: React.FC = () => {
           sources: [],
           score: 0,
           guesses: [],
-          guessed_words: new Set(),
+          guessed_words: [],
           remaining_guesses: 3,
           is_completed: false,
           max_guesses: 3,
@@ -169,7 +169,7 @@ const Game: React.FC = () => {
       let index: number | undefined
       let wordScore: number
       let updatedScore = gameState?.score || 0
-      let updatedGuessedWords = new Set<string>(Array.from(gameState?.guessed_words || new Set()))
+      let updatedGuessedWords = gameState?.guessed_words || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
       
       if (foundWord) {
@@ -177,7 +177,7 @@ const Game: React.FC = () => {
         wordScore = calculateScore(index, scoreboard.length)
 
         updatedScore += wordScore
-        updatedGuessedWords.add(guessWord)
+        updatedGuessedWords.push(guessWord)
       } else {
         index = undefined
         wordScore = 0
@@ -221,7 +221,7 @@ const Game: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.size) {
+      if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.length) {
         setGameState(prev => prev ? { ...prev, is_completed: true } : null)
         updatedGameState.is_completed = true
       }
@@ -232,8 +232,6 @@ const Game: React.FC = () => {
 
       let { guesses: _, ...updatedGame } = updatedGameState
       
-      // @ts-ignore
-      updatedGame.guessed_words = Array.from(updatedGame.guessed_words)
       if (updatedGame.is_completed) {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()

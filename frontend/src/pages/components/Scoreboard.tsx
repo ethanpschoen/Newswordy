@@ -42,7 +42,7 @@ const Scoreboard = ({ scoreboard, showScoreboard, setShowScoreboard, gameState, 
 				<Stack spacing={1}>
 					{scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
 						const gameCompleted = gameState.is_completed
-						const wordGuessed = gameState.guessed_words.has(entry.word.toLowerCase())
+						const wordGuessed = gameState.guessed_words.includes(entry.word.toLowerCase())
 						const showWord = wordGuessed || gameCompleted
 						return (
 							<Paper
