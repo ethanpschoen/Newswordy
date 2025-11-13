@@ -10,13 +10,14 @@ const GuessList = ({ guesses }: Props) => {
     <Card sx={{ 
 			display: 'flex', 
 			flexDirection: 'column', 
-			minHeight: 0 
+			minHeight: '300px'
 		}}>
 			<CardContent sx={{ py: 2, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
 				<Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5, flexShrink: 0 }}>
 					Your Guesses
 				</Typography>
 				<Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          {guesses.length > 0 ? (
 					<Stack spacing={1}>
 						{guesses.map(guess => (
 							<Paper
@@ -43,9 +44,14 @@ const GuessList = ({ guesses }: Props) => {
 								>
 									+{guess.score}
 								</Typography>
-							</Paper>
-						))}
-					</Stack>
+								</Paper>
+							))}
+						</Stack>
+					) : (
+						<Typography variant="body2" sx={{ textAlign: 'center', color: 'text.secondary', py: 2 }}>
+							No guesses yet
+						</Typography>
+					)}
 				</Box>
 			</CardContent>
 		</Card>

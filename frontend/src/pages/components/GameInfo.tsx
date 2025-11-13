@@ -13,7 +13,7 @@ const GameInfo = ({ isTestMode = false, timePeriod }: Props) => {
   const navigate = useNavigate()
 
   return (
-    <Card>
+    <Card sx={{ minHeight: '150px' }}>
       <CardContent sx={{ py: 2 }}>
         <Stack spacing={2}>
           {/* Navigation and Title */}

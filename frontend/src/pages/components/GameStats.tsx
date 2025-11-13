@@ -9,7 +9,7 @@ interface Props {
 
 const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
   return (
-    <Card>
+    <Card sx={{ minHeight: '340px' }}>
 			<CardContent sx={{ py: 2 }}>
 				<Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
 					Game Statistics
