@@ -486,27 +486,48 @@ const Home: React.FC = () => {
             </Card>
           </Grid>
 
-          {/* Word Association Mode - Coming Soon */}
+          {/* Word Association Mode */}
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Card 
+          <Card 
               sx={{ 
                 p: 3, 
                 textAlign: 'center',
                 height: '100%',
-                opacity: 0.6,
-                border: '2px dashed',
-                borderColor: 'grey.300'
+                background: 'linear-gradient(135deg, #CCFFCB 0%, #29E0AF 100%)',
+                color: 'white',
+                borderRadius: '20px',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  transition: 'transform 0.2s',
+                  boxShadow: 6
+                }
               }}
             >
               <CardContent>
-                <SearchIcon sx={{ fontSize: 50, mb: 2, color: 'text.secondary' }} />
-                <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <SearchIcon sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                   Word Association
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.95 }}>
                   Guess words that commonly appear with a selected word
                 </Typography>
-                <Chip label="Coming Soon" color="default" size="small" />
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate('/associate')}
+                  sx={{ 
+                    px: 4, 
+                    py: 1.5, 
+                    fontSize: '1.1rem',
+                    bgcolor: 'white',
+                    color: 'rgb(76, 230, 189)',
+                    '&:hover': {
+                      bgcolor: 'grey.100'
+                    }
+                  }}
+                >
+                  Start Association
+                </Button>
               </CardContent>
             </Card>
           </Grid>
