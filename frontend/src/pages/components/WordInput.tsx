@@ -1,5 +1,5 @@
 import { TrophyIcon } from "@heroicons/react/24/outline"
-import { Box, Button, Card, CardContent, TextField, Typography, Alert } from "@mui/material"
+import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme } from "@mui/material"
 import { PlayIcon } from "@heroicons/react/24/outline"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import { useNavigate } from "react-router-dom"
@@ -15,10 +15,23 @@ interface Props {
   success: string
   isCompleted: boolean
   score: number
+  isOverlayOpen?: boolean
 }
 
-const WordInput = ({ handleSubmitGuess, currentGuess, setCurrentGuess, submitting, error, success, isCompleted, score }: Props) => {
+const WordInput = ({
+  handleSubmitGuess,
+  currentGuess,
+  setCurrentGuess,
+  submitting,
+  error,
+  success,
+  isCompleted,
+  score,
+  isOverlayOpen = false
+}: Props) => {
   const navigate = useNavigate()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
   const inputRef = useRef<HTMLInputElement>(null)
   const prevSubmittingRef = useRef<boolean>(false)
 
@@ -33,9 +46,31 @@ const WordInput = ({ handleSubmitGuess, currentGuess, setCurrentGuess, submittin
     prevSubmittingRef.current = submitting
   }, [submitting, isCompleted])
 
+  if (isMobile && isOverlayOpen) {
+    return null
+  }
+
   return (
-    <Card>
-      <CardContent sx={{ py: 2 }}>
+    <Card sx={isMobile ? {
+      position: 'fixed',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: 0,
+      zIndex: theme.zIndex.drawer + 1,
+      boxShadow: '0 -8px 24px rgba(15, 23, 42, 0.25)',
+      borderTop: `1px solid ${theme.palette.divider}`,
+      backgroundColor: theme.palette.background.paper
+    } : {}}>
+      <CardContent
+        sx={{
+          py: 2,
+          px: { xs: 2.25, sm: 3 },
+          width: '100%',
+          maxWidth: 720,
+          mx: isMobile ? 'auto' : 0
+        }}
+      >
         <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
           Guess a Word
         </Typography>

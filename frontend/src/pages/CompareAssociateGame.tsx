@@ -348,9 +348,9 @@ const CompareAssociateGame: React.FC = () => {
             <GameInfo timePeriod={gameState.time_period} backPage={'/compare-associate'} />
           </Grid>
 
-          {/* Word Guess */}
+          {/* Associating Word Display */}
           <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
+            <AssociatingWordCard word={gameState.word} />
           </Grid>
 
           {/* Group A Scoreboard */}
@@ -375,14 +375,19 @@ const CompareAssociateGame: React.FC = () => {
             </Grid>
           )}
 
-          {/* Group A Article Info */}
+          {/* Word Guess - Fixed bar */}
           <Grid size={{ xs: 12 }} sx={{ order: 7 }}>
-            <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} />
-          </Grid>
-
-					{/* Group B Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 8 }}>
-            <ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} />
+            <WordInput
+              handleSubmitGuess={handleSubmitGuess}
+              currentGuess={currentGuess}
+              setCurrentGuess={setCurrentGuess}
+              submitting={submitting}
+              error={error}
+              success={success}
+              isCompleted={gameState.is_completed}
+              score={gameState.score}
+              isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+            />
           </Grid>
         </Grid>
       </Container>
@@ -416,7 +421,17 @@ const CompareAssociateGame: React.FC = () => {
             {/* Associating Word Display */}
             <AssociatingWordCard word={gameState.word} />
             {/* Word Input Section */}
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
+            <WordInput
+              handleSubmitGuess={handleSubmitGuess}
+              currentGuess={currentGuess}
+              setCurrentGuess={setCurrentGuess}
+              submitting={submitting}
+              error={error}
+              success={success}
+              isCompleted={gameState.is_completed}
+              score={gameState.score}
+              isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+            />
 
             {/* Scoreboard Section */}
 						<Grid container spacing={2}>

@@ -337,11 +337,6 @@ const Game: React.FC = () => {
             <GameInfo isTestMode={isTestMode} timePeriod={gameState.time_period} />
           </Grid>
 
-          {/* Word Guess */}
-          <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
-          </Grid>
-
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
@@ -358,6 +353,11 @@ const Game: React.FC = () => {
               <GuessList guesses={gameState.guesses} />
             </Grid>
           )}
+
+          {/* Word Guess - Fixed bar */}
+          <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordData)} />
+          </Grid>
 
           {/* Article Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
@@ -393,7 +393,7 @@ const Game: React.FC = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordData)} />
 
             {/* Scoreboard Section */}
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />

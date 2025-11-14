@@ -347,11 +347,6 @@ const CompareGame: React.FC = () => {
             <GameInfo timePeriod={gameState.time_period} backPage={'/compare'} />
           </Grid>
 
-          {/* Word Guess */}
-          <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
-          </Grid>
-
           {/* Group A Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
@@ -374,14 +369,9 @@ const CompareGame: React.FC = () => {
             </Grid>
           )}
 
-          {/* Group A Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 7 }}>
-            <ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} />
-          </Grid>
-
-					{/* Group B Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 8 }}>
-            <ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} />
+          {/* Word Guess - Fixed bar */}
+          <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)} />
           </Grid>
         </Grid>
       </Container>
@@ -413,7 +403,7 @@ const CompareGame: React.FC = () => {
         <Grid size={{ xs: 12, lg: 7 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)} />
 
             {/* Scoreboard Section */}
 						<Grid container spacing={2}>
