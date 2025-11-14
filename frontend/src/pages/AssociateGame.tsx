@@ -300,7 +300,7 @@ const AssociateGame: React.FC = () => {
         <Grid container spacing={3}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
-            <GameInfo timePeriod={gameState.time_period} />
+            <GameInfo timePeriod={gameState.time_period} backPage={'/associate'} />
           </Grid>
 
           {/* Word Guess */}
@@ -345,7 +345,7 @@ const AssociateGame: React.FC = () => {
             maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
           }}>
             {/* Game Information */}
-            <GameInfo timePeriod={gameState.time_period} />
+            <GameInfo timePeriod={gameState.time_period} backPage={'/associate'} />
 
             {/* Game Stats */}
             <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
