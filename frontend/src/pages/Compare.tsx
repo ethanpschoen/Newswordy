@@ -101,12 +101,8 @@ const Compare: React.FC = () => {
         is_completed: false,
         user_id: user?.sub
       }
-
-      console.log('game', game)
       
       const { data, error } = await gameAPI.createComparativeGame(game)
-
-      console.log('data', data)
 
       if (error) {
         console.error('Error creating game:', error)
@@ -114,7 +110,7 @@ const Compare: React.FC = () => {
       }
     
       const gameId = data.id
-      // Navigate to compare game - you may need to pass group info via state or query params
+      // Navigate to compare game
       navigate(`/compare/${gameId}`)
     } catch (error) {
       console.error('Failed to create game:', error)

@@ -141,8 +141,6 @@ const CompareGame: React.FC = () => {
 
       const foundWord = scoreboard.find(entry => entry.word === guessWord)
 
-			console.log('foundWord', foundWord)
-
       let index: number | undefined
       let wordScore: number
       let updatedScore = gameState?.score || 0
