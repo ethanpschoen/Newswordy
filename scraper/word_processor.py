@@ -45,7 +45,7 @@ class WordProcessor:
         
         # Common news-specific words to exclude
         self.news_words = {
-            'new', 'news', 'breaking', 'update', 'latest', 'report', 'reports',
+            'new', 'news', 'breaking', 'update', 'latest', 'report', 'reports', 'opinion',
             'reported', 'says', 'said', 'according', 'official', 'officials', 'government',
             'announced', 'announcement', 'statement', 'comment', 'comments', 'response',
             'responded', 'saying', 'told', 'tells', 'telling', 'speaking', 'spoke', 'watch',
