@@ -212,7 +212,7 @@ export interface AssociateGameState {
   sources: NewsSource[]
   word: string
   score: number
-  guesses: Guess[]
+  associate_guesses: Guess[]
   guessed_words: string[]
   remaining_guesses: number
   is_completed: boolean

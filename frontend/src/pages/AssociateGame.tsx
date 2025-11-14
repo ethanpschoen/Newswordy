@@ -82,7 +82,7 @@ const AssociateGame: React.FC = () => {
       resizeObserver.disconnect()
       clearTimeout(timeoutId)
     }
-  }, [scoreboard, showScoreboard, gameState?.guesses])
+  }, [scoreboard, showScoreboard, gameState?.associate_guesses])
 
   const loadGame = async () => {
     try {
@@ -127,7 +127,7 @@ const AssociateGame: React.FC = () => {
       const guessWord = currentGuess.trim().toLowerCase()
 
       // If the word has already been guessed, don't count it
-      if (gameState!.guesses.some(guess => guess.word === guessWord)) {
+      if (gameState!.associate_guesses.some(guess => guess.word === guessWord)) {
         setError(`"${currentGuess}" has already been guessed`)
         setSubmitting(false)
         return
@@ -165,12 +165,12 @@ const AssociateGame: React.FC = () => {
         created_at: new Date().toISOString()
       }
 
-      const updatedGuesses = [...gameState?.guesses || [], newGuess]
+      const updatedGuesses = [...gameState?.associate_guesses || [], newGuess]
 
       const updatedGameState = {
         ...gameState!,
         score: updatedScore,
-        guesses: updatedGuesses,
+        associate_guesses: updatedGuesses,
         guessed_words: updatedGuessedWords,
         remaining_guesses: updatedRemainingGuesses
       }
@@ -195,9 +195,9 @@ const AssociateGame: React.FC = () => {
         updatedGameState.is_completed = true
       }
 
-      await gameAPI.submitGuess(newGuess)
+      await gameAPI.submitAssociateGuess(newGuess)
 
-      let { guesses: _, ...updatedGame } = updatedGameState
+      let { associate_guesses: _, ...updatedGame } = updatedGameState
       
       if (updatedGame.is_completed) {
         // @ts-ignore
@@ -219,7 +219,7 @@ const AssociateGame: React.FC = () => {
         }
       }
 
-      await gameAPI.updateGameState(updatedGame, updatedGame.id)
+      await gameAPI.updateAssociateGameState(updatedGame, updatedGame.id)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
@@ -310,7 +310,7 @@ const AssociateGame: React.FC = () => {
 
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
@@ -319,9 +319,9 @@ const AssociateGame: React.FC = () => {
           </Grid>
 
           {/* Recent Guesses */}
-          {gameState.guesses.length > 0 && (
+          {gameState.associate_guesses.length > 0 && (
             <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
-              <GuessList guesses={gameState.guesses} />
+              <GuessList guesses={gameState.associate_guesses} />
             </Grid>
           )}
 
@@ -351,7 +351,7 @@ const AssociateGame: React.FC = () => {
             <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
 
             {/* Recent Guesses */}
-            <GuessList guesses={gameState.guesses} />
+            <GuessList guesses={gameState.associate_guesses} />
           </Stack>
         </Grid>
 
@@ -365,7 +365,7 @@ const AssociateGame: React.FC = () => {
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 
             {/* Scoreboard Section */}
-            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} gameState={gameState} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Stack>
         </Grid>
 

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar } from "@mui/material"
-import { GameState, ScoreboardEntry, Color, CompareGameState, ComparativeScoreboardEntry, NewsSource } from "../../types"
+import { ScoreboardEntry, Color, ComparativeScoreboardEntry, NewsSource } from "../../types"
 import SourcesModal from "./SourcesModal"
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   sources: NewsSource[]
   showScoreboard: boolean
   setShowScoreboard: (show: boolean) => void
-  gameState: GameState | CompareGameState
+  isCompleted: boolean
   guessedWords: string[]
 	handleWordClick: (word: string) => void
 }
@@ -24,7 +24,7 @@ export const getRankColor = (rank: number) => {
 	return Color.RANK_DEFAULT_BG
 }
 
-const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, gameState, guessedWords, handleWordClick }: Props) => {
+const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, isCompleted, guessedWords, handleWordClick }: Props) => {
   const [showSourcesModal, setShowSourcesModal] = useState(false)
   
   const handleViewSources = () => {
@@ -60,7 +60,7 @@ const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, ga
           
           <Stack spacing={1}>
             {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
-              const gameCompleted = gameState.is_completed
+              const gameCompleted = isCompleted
               const wordGuessed = guessedWords.includes(entry.word.toLowerCase())
               const showWord = wordGuessed || gameCompleted
               return (
