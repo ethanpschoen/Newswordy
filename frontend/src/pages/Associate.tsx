@@ -41,7 +41,7 @@ const Associate: React.FC = () => {
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_WEEK)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_MONTH)
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
