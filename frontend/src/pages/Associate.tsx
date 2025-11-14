@@ -37,10 +37,7 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const Associate: React.FC = () => {
-  const {
-    isLoading,
-    user,
-  } = useAuth0();
+  const { isLoading, user } = useAuth0();
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -364,7 +361,7 @@ const Associate: React.FC = () => {
           variant="contained"
           size="large"
           onClick={handleStartGame}
-          disabled={loading || isLoading || selectedWord.length === 0}
+          disabled={loading || isLoading || selectedWord.length === 0 || wordCount === null || wordCount === undefined}
           startIcon={loading ? <LoadingSpinner size="sm" /> : <PlayIcon />}
           sx={{
             px: 6,
@@ -380,11 +377,11 @@ const Associate: React.FC = () => {
             }
           }}
         >
-          {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start Comparison Game'}
+          {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start Association Game'}
         </Button>
-        {(selectedWord.length === 0) && (
+        {(selectedWord.length === 0 || wordCount === null || wordCount === undefined) && (
           <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            Please type a word to start
+            Please type a word and verify its frequency to start
           </Typography>
         )}
       </Box>
