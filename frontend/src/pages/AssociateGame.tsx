@@ -298,8 +298,8 @@ const AssociateGame: React.FC = () => {
   if (isNarrowScreen) {
     // Narrow screen layout: stacked in order
     return (
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
+      <Container maxWidth="xl" sx={{ pb: 18 }}>
+        <Grid container spacing={2}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
             <GameInfo timePeriod={gameState.time_period} backPage={'/associate'} />
@@ -333,9 +333,7 @@ const AssociateGame: React.FC = () => {
           </Grid>
 
           {/* Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 7 }}>
-            <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} />
-          </Grid>
+          <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} />
         </Grid>
       </Container>
     )

@@ -343,8 +343,8 @@ const CompareAssociateGame: React.FC = () => {
   if (isNarrowScreen) {
     // Narrow screen layout: stacked in order
     return (
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
+      <Container maxWidth="xl" sx={{ pb: 18 }}>
+        <Grid container spacing={2}>
           {/* Game Info */}
           <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
             <GameInfo timePeriod={gameState.time_period} backPage={'/compare-associate'} />
@@ -413,7 +413,7 @@ const CompareAssociateGame: React.FC = () => {
             <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
 
 					{/* Group A Article Info */}
-						<ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+						<ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
           </Stack>
         </Grid>
 
@@ -460,7 +460,7 @@ const CompareAssociateGame: React.FC = () => {
 						<GuessList guesses={gameState.compare_associate_guesses} />
 
 						{/* Group B Article Info */}
-						<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+						<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
 					</Stack>
 				</Grid>
       </Grid>
