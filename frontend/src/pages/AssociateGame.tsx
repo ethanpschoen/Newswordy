@@ -22,6 +22,8 @@ import Scoreboard, { calculateScore } from './components/Scoreboard'
 import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
+import AssociatingWordCard from './components/AssociatingWordCard'
+
 
 const AssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -303,30 +305,35 @@ const AssociateGame: React.FC = () => {
             <GameInfo timePeriod={gameState.time_period} backPage={'/associate'} />
           </Grid>
 
-          {/* Word Guess */}
+          {/* Associating Word Display */}
           <Grid size={{ xs: 12 }} sx={{ order: 2 }}>
+            <AssociatingWordCard word={gameState.word} />
+          </Grid>
+
+          {/* Word Guess */}
+          <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
           </Grid>
 
           {/* Scoreboard */}
-          <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
+          <Grid size={{ xs: 12 }} sx={{ order: 4 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
-          <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
+          <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
             <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
           {gameState.associate_guesses.length > 0 && (
-            <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+            <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
               <GuessList guesses={gameState.associate_guesses} />
             </Grid>
           )}
 
           {/* Article Info */}
-          <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
+          <Grid size={{ xs: 12 }} sx={{ order: 7 }}>
             <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} />
           </Grid>
         </Grid>
@@ -358,9 +365,8 @@ const AssociateGame: React.FC = () => {
         {/* Middle Column - Word Input & Scoreboard */}
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack spacing={3} ref={scoreboardRef}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {gameState.word}
-            </Typography>
+            {/* Associating Word Display */}
+            <AssociatingWordCard word={gameState.word} />
             {/* Word Input Section */}
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 

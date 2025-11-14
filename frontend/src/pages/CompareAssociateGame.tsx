@@ -22,6 +22,7 @@ import Scoreboard, { calculateScore } from './components/Scoreboard'
 import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
+import AssociatingWordCard from './components/AssociatingWordCard'
 
 const CompareAssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -412,9 +413,8 @@ const CompareAssociateGame: React.FC = () => {
         {/* Middle Column - Word Input & Scoreboards */}
         <Grid size={{ xs: 12, lg: 7 }}>
           <Stack spacing={3} ref={scoreboardRef}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {gameState.word}
-            </Typography>
+            {/* Associating Word Display */}
+            <AssociatingWordCard word={gameState.word} />
             {/* Word Input Section */}
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
 
