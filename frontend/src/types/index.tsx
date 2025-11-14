@@ -252,6 +252,40 @@ export interface CompareGameState {
   scoreboard_size: number
 }
 
+export interface CompareAssociateGame {
+  id?: string
+  time_period: TimePeriod
+  sources_group_a?: NewsSource[]
+  sources_group_b?: NewsSource[]
+  word: string
+  score: number
+  guessed_words_group_a: string[]
+  guessed_words_group_b: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+  user_id?: string
+  completed_at?: string
+  created_at?: string
+}
+
+export interface CompareAssociateGameState {
+  id: string
+  time_period: TimePeriod
+  sources_group_a: NewsSource[]
+  sources_group_b: NewsSource[]
+  word: string
+  score: number
+  compare_associate_guesses: Guess[]
+  guessed_words_group_a: string[]
+  guessed_words_group_b: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+}
+
 export interface ComparativeScoreboardEntry {
   group_name: ComparativeGroup
   word: string

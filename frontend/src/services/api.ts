@@ -9,7 +9,8 @@ import {
   TimePeriod,
   NewsSource,
   TIME_PERIODS,
-  AssociateGame
+  AssociateGame,
+  CompareAssociateGame
 } from '../types'
 import { supabase } from './supabaseClient'
 
@@ -234,6 +235,31 @@ export const gameAPI = {
         size: scoreboardSize
       })
       .select('*')
+  },
+
+  createComparativeAssociatedGame: async (game: CompareAssociateGame) => {
+    return await supabase.from('compare_associate_games').insert(game).select('id').single()
+  },
+
+  // TODO: validate user with game?
+  getComparativeAssociatedGameState: async (gameId: string) => {
+    return await supabase
+      .from('compare_associate_games')
+      .select(`
+        *,
+        compare_associate_guesses(*)
+      `)
+      .eq('id', gameId)
+      .maybeSingle()
+  },
+
+  // TODO: validate user with game?
+  updateComparativeAssociatedGameState: async (game: CompareAssociateGame, gameId: string) => {
+    return await supabase.from('compare_associate_games').update(game).eq('id', gameId)
+  },
+
+  submitComparativeAssociatedGuess: async (data: Guess) => {
+    return await supabase.from('compare_associate_guesses').insert(data)
   },
 
   getComparativeAssociatedScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
