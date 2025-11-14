@@ -183,6 +183,19 @@ export const gameAPI = {
       .select('*')
   },
 
+  getWordCount: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, referenceDate: Date) => {
+    const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
+
+    return await supabase
+      .rpc('get_word_count', {
+        start_date,
+        end_date,
+        sources,
+        search_term
+      })
+      .select('*')
+  },
+
   getAssociatedScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
