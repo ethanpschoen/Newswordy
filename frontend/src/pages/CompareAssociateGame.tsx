@@ -23,6 +23,7 @@ import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
 import AssociatingWordCard from './components/AssociatingWordCard'
+import ComparativeArticleDrawer from './components/ComparativeArticleDrawer'
 
 const CompareAssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -392,6 +393,21 @@ const CompareAssociateGame: React.FC = () => {
             />
           </Grid>
         </Grid>
+        <ComparativeArticleDrawer
+          open={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+          onClose={closeArticlePanel}
+          groupAData={selectedWordDataGroupA}
+          groupBData={selectedWordDataGroupB}
+          groupALabel="Source Group A"
+          groupBLabel="Source Group B"
+          groupAAccentColor={groupAccentColor}
+          groupBAccentColor={groupBAccentColor}
+          currentPageGroupA={currentPageGroupA}
+          currentPageGroupB={currentPageGroupB}
+          setCurrentPageGroupA={setCurrentPageGroupA}
+          setCurrentPageGroupB={setCurrentPageGroupB}
+          articlesPerPage={articlesPerPage}
+        />
       </Container>
     )
   }

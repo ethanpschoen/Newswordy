@@ -22,6 +22,7 @@ import Scoreboard, { calculateScore } from './components/Scoreboard'
 import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
+import ComparativeArticleDrawer from './components/ComparativeArticleDrawer'
 
 const CompareGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -376,6 +377,21 @@ const CompareGame: React.FC = () => {
             <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)} />
           </Grid>
         </Grid>
+        <ComparativeArticleDrawer
+          open={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+          onClose={closeArticlePanel}
+          groupAData={selectedWordDataGroupA}
+          groupBData={selectedWordDataGroupB}
+          groupALabel="Source Group A"
+          groupBLabel="Source Group B"
+          groupAAccentColor={groupAAccentColor}
+          groupBAccentColor={groupBAccentColor}
+          currentPageGroupA={currentPageGroupA}
+          currentPageGroupB={currentPageGroupB}
+          setCurrentPageGroupA={setCurrentPageGroupA}
+          setCurrentPageGroupB={setCurrentPageGroupB}
+          articlesPerPage={articlesPerPage}
+        />
       </Container>
     )
   }
