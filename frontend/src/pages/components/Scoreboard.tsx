@@ -115,7 +115,7 @@ const Scoreboard = ({
                   }}
                   onClick={showWord ? () => handleWordClick(entry.word) : undefined}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                     <Avatar
                       sx={{
                         width: 20,
@@ -123,7 +123,8 @@ const Scoreboard = ({
                         fontSize: '0.7rem',
                         fontWeight: 'bold',
                         bgcolor: getRankColor(index + 1),
-                        color: 'black'
+                        color: 'black',
+                        flexShrink: 0
                       }}
                     >
                       {index + 1}
@@ -133,13 +134,17 @@ const Scoreboard = ({
                       sx={{ 
                         fontWeight: 'medium',
                         color: showWord ? 'text.primary' : 'text.disabled',
-                        minWidth: '120px'
+                        minWidth: '120px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        flex: 1
                       }}
                     >
                       {showWord ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                     <Typography 
                       variant="body1" 
                       sx={{ 
