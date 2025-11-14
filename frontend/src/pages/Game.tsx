@@ -338,18 +338,18 @@ const Game: React.FC = () => {
           </Grid>
 
           {/* Scoreboard */}
-          <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
+          <Grid size={{ xs: 12 }} sx={{ order: 2 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
-          <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
+          <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
             <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
           {gameState.guesses.length > 0 && (
-            <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+            <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
               <GuessList guesses={gameState.guesses} />
             </Grid>
           )}

@@ -311,18 +311,18 @@ const AssociateGame: React.FC = () => {
           </Grid>
 
           {/* Scoreboard */}
-          <Grid size={{ xs: 12 }} sx={{ order: 4 }} ref={scoreboardRef}>
+          <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
           </Grid>
 
           {/* Game Stats */}
-          <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
+          <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
             <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
           </Grid>
 
           {/* Recent Guesses */}
           {gameState.associate_guesses.length > 0 && (
-            <Grid size={{ xs: 12 }} sx={{ order: 6 }}>
+            <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
               <GuessList guesses={gameState.associate_guesses} />
             </Grid>
           )}
@@ -368,7 +368,7 @@ const AssociateGame: React.FC = () => {
             {/* Associating Word Display */}
             <AssociatingWordCard word={gameState.word} />
             {/* Word Input Section */}
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} />
+            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordData)} />
 
             {/* Scoreboard Section */}
             <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />

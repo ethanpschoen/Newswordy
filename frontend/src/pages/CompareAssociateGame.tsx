@@ -287,6 +287,8 @@ const CompareAssociateGame: React.FC = () => {
 
   const theme = useTheme()
   const isNarrowScreen = useMediaQuery(theme.breakpoints.down('lg'))
+  const groupAccentColor = theme.palette.primary.main
+  const groupBAccentColor = theme.palette.secondary.main || theme.palette.info.main
 
   if (loading) {
     return (
@@ -355,12 +357,12 @@ const CompareAssociateGame: React.FC = () => {
 
           {/* Group A Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
           </Grid>
 
 					{/* Group B Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 4 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
+            <Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
           </Grid>
 
           {/* Game Stats */}
@@ -437,12 +439,12 @@ const CompareAssociateGame: React.FC = () => {
 						<Grid container spacing={2}>
 							{/* Group A Scoreboard */}
 							<Grid size={{ xs: 12, lg: 6 }}>
-								<Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} />
+								<Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
 							</Grid>
 
 							{/* Group B Scoreboard */}
 							<Grid size={{ xs: 12, lg: 6 }}>
-								<Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} />
+								<Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
 							</Grid>
 						</Grid>
           </Stack>

@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar } from "@mui/material"
+import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar, useMediaQuery } from "@mui/material"
+import { alpha, useTheme } from "@mui/material/styles"
 import { ScoreboardEntry, Color, ComparativeScoreboardEntry, NewsSource } from "../../types"
 import SourcesModal from "./SourcesModal"
 
@@ -11,6 +12,8 @@ interface Props {
   isCompleted: boolean
   guessedWords: string[]
 	handleWordClick: (word: string) => void
+	groupLabel?: string
+	groupAccentColor?: string
 }
 
 export const calculateScore = (index: number, totalLength: number): number => {
@@ -24,8 +27,26 @@ export const getRankColor = (rank: number) => {
 	return Color.RANK_DEFAULT_BG
 }
 
-const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, isCompleted, guessedWords, handleWordClick }: Props) => {
+const Scoreboard = ({
+  scoreboard,
+  sources,
+  showScoreboard,
+  setShowScoreboard,
+  isCompleted,
+  guessedWords,
+  handleWordClick,
+	groupLabel,
+	groupAccentColor
+}: Props) => {
   const [showSourcesModal, setShowSourcesModal] = useState(false)
+	const theme = useTheme()
+	const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+	const accentColor = groupAccentColor || theme.palette.primary.main
+	const cardStyles = groupLabel ? {
+		borderTop: `4px solid ${accentColor}`,
+		backgroundColor: alpha(accentColor, 0.03)
+	} : undefined
+	const defaultItemsToShow = isMobile ? 5 : 10
   
   const handleViewSources = () => {
     setShowSourcesModal(true)
@@ -33,33 +54,44 @@ const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, is
 
 	return (
     <>
-      <Card>
+      <Card sx={cardStyles}>
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
-              Top Words
-            </Typography>
-            <Button
-              onClick={handleViewSources}
-              variant="outlined"
-              size="small"
-              sx={{ textTransform: 'none' }}
-            >
-              View Sources
-            </Button>
-            {scoreboard.length > 10 && (
-              <Button
-                onClick={() => setShowScoreboard(!showScoreboard)}
-                size="small"
-                sx={{ textTransform: 'none' }}
-              >
-                {showScoreboard ? 'Hide' : 'Show'} Full List
-              </Button>
-            )}
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: 1.5, mb: 2 }}>
+						<Box sx={{ width: '100%' }}>
+							{groupLabel && (
+								<>
+									<Typography variant="overline" sx={{ fontWeight: 700, color: accentColor, letterSpacing: 1 }}>
+										{groupLabel}
+									</Typography>
+								</>
+							)}
+							<Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
+								Top Words
+							</Typography>
+						</Box>
+            <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', sm: 'auto' }, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+							<Button
+								onClick={handleViewSources}
+								variant="outlined"
+								size="small"
+								sx={{ textTransform: 'none', color: accentColor, borderColor: accentColor }}
+							>
+								View Sources
+							</Button>
+							{scoreboard.length > defaultItemsToShow && (
+								<Button
+									onClick={() => setShowScoreboard(!showScoreboard)}
+									size="small"
+									sx={{ textTransform: 'none' }}
+								>
+									{showScoreboard ? 'Hide' : 'Show'} Full List
+								</Button>
+							)}
+						</Stack>
           </Box>
           
           <Stack spacing={1}>
-            {scoreboard.slice(0, showScoreboard ? scoreboard.length : 10).map((entry, index) => {
+            {scoreboard.slice(0, showScoreboard ? scoreboard.length : defaultItemsToShow).map((entry, index) => {
               const gameCompleted = isCompleted
               const wordGuessed = guessedWords.includes(entry.word.toLowerCase())
               const showWord = wordGuessed || gameCompleted
@@ -134,13 +166,13 @@ const Scoreboard = ({ scoreboard, sources, showScoreboard, setShowScoreboard, is
             })}
           </Stack>
           
-          {!showScoreboard && scoreboard.length > 10 && (
+          {!showScoreboard && scoreboard.length > defaultItemsToShow && (
             <Button
               onClick={() => setShowScoreboard(true)}
               fullWidth
               sx={{ mt: 2, textTransform: 'none' }}
             >
-              Show {scoreboard.length - 10} more words...
+              Show {scoreboard.length - defaultItemsToShow} more words...
             </Button>
           )}
         </CardContent>
