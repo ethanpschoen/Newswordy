@@ -8,7 +8,8 @@ import {
   LeaderboardEntry,
   TimePeriod,
   NewsSource,
-  TIME_PERIODS
+  TIME_PERIODS,
+  AssociateGame
 } from '../types'
 import { supabase } from './supabaseClient'
 
@@ -194,6 +195,31 @@ export const gameAPI = {
         search_term
       })
       .select('*')
+  },
+
+  createAssociateGame: async (game: AssociateGame) => {
+    return await supabase.from('associate_games').insert(game).select('id').single()
+  },
+
+  // TODO: validate user with game?
+  getAssociateGameState: async (gameId: string) => {
+    return await supabase
+      .from('associate_games')
+      .select(`
+        *,
+        associate_guesses(*)
+      `)
+      .eq('id', gameId)
+      .maybeSingle()
+  },
+
+  // TODO: validate user with game?
+  updateAssociateGameState: async (game: AssociateGame, gameId: string) => {
+    return await supabase.from('associate_games').update(game).eq('id', gameId)
+  },
+
+  submitAssociateGuess: async (data: Guess) => {
+    return await supabase.from('associate_guesses').insert(data)
   },
 
   getAssociatedScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {

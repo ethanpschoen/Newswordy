@@ -190,6 +190,36 @@ export interface Article {
   published_date: string
 }
 
+export interface AssociateGame {
+  id?: string
+  time_period: TimePeriod
+  sources?: NewsSource[]
+  word: string
+  score: number
+  guessed_words: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+  user_id?: string
+  completed_at?: string
+  created_at?: string
+}
+
+export interface AssociateGameState {
+  id: string
+  time_period: TimePeriod
+  sources: NewsSource[]
+  word: string
+  score: number
+  guesses: Guess[]
+  guessed_words: string[]
+  remaining_guesses: number
+  is_completed: boolean
+  max_guesses: number
+  scoreboard_size: number
+}
+
 export interface CompareGame {
   id?: string
   time_period: TimePeriod
