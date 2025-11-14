@@ -488,12 +488,12 @@ const Home: React.FC = () => {
 
           {/* Word Association Mode */}
           <Grid size={{ xs: 12, sm: 6 }}>
-          <Card 
+            <Card 
               sx={{ 
                 p: 3, 
                 textAlign: 'center',
                 height: '100%',
-                background: 'linear-gradient(135deg, #CCFFCB 0%, #29E0AF 100%)',
+                background: 'linear-gradient(135deg, #51F588 0%, #099A39 100%)',
                 color: 'white',
                 borderRadius: '20px',
                 '&:hover': {
@@ -509,7 +509,7 @@ const Home: React.FC = () => {
                   Word Association
                 </Typography>
                 <Typography variant="body1" sx={{ mb: 3, opacity: 0.95 }}>
-                  Guess words that commonly appear with a selected word
+                  Choose a word commonly seen in news headlines, and guess words that frequently appear with that selected word.
                 </Typography>
                 <Button
                   variant="contained"
@@ -520,7 +520,7 @@ const Home: React.FC = () => {
                     py: 1.5, 
                     fontSize: '1.1rem',
                     bgcolor: 'white',
-                    color: 'rgb(76, 230, 189)',
+                    color: 'rgb(12, 202, 74)',
                     '&:hover': {
                       bgcolor: 'grey.100'
                     }
@@ -532,27 +532,48 @@ const Home: React.FC = () => {
             </Card>
           </Grid>
 
-          {/* Comparative Association Mode - Coming Soon */}
+          {/* Comparative Association Mode */}
           <Grid size={{ xs: 12 }}>
-            <Card 
+          <Card 
               sx={{ 
-                p: 2.5, 
+                p: 3, 
                 textAlign: 'center',
-                opacity: 0.5,
-                border: '2px dashed',
-                borderColor: 'grey.300',
-                bgcolor: 'grey.50'
+                height: '100%',
+                background: 'linear-gradient(135deg, #FAC748 0%, #B38205 100%)',
+                color: 'white',
+                borderRadius: '20px',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  transition: 'transform 0.2s',
+                  boxShadow: 6
+                }
               }}
             >
               <CardContent>
-                <CompareAssociateIcon sx={{ fontSize: 40, mb: 1.5, color: 'text.secondary' }} />
-                <Typography variant="h6" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <CompareAssociateIcon sx={{ fontSize: 50, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
                   Comparative Association
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.95 }}>
                   Compare word usage between two groups of sources and see how their language differs with a selected word.
                 </Typography>
-                <Chip label="Coming Soon" color="default" size="small" />
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate('/compare-associate')}
+                  sx={{ 
+                    px: 4, 
+                    py: 1.5, 
+                    fontSize: '1.1rem',
+                    bgcolor: 'white',
+                    color: 'rgb(249, 183, 16)',
+                    '&:hover': {
+                      bgcolor: 'grey.100'
+                    }
+                  }}
+                >
+                  Start Comparative Association
+                </Button>
               </CardContent>
             </Card>
           </Grid>
