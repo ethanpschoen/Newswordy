@@ -62,74 +62,91 @@ const ArticleInfo = ({
 					</Box>
 					<Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
 						<Stack spacing={1.5} sx={{ flex: 1 }}>
-							{selectedWordData.articles
-								.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage)
-								.map((article, index) => (
-								<Paper
-									key={currentPage * articlesPerPage + index}
-									elevation={1}
-									sx={{ p: 1.5, '&:hover': { elevation: 3 } }}
-								>
-									<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-										{/* Source Icon */}
-										<Box
-											sx={{
-												width: 24,
-												height: 24,
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												bgcolor: 'primary.light',
-												borderRadius: '50%',
-												overflow: 'hidden',
-												flexShrink: 0
-											}}
-										>
-											{NewsSourceConfig[article.source].logo}
-										</Box>
-										
-										{/* Article Content */}
-										<Box sx={{ flex: 1, minWidth: 0 }}>
-											<Typography
-												component="a"
-												href={`${article.url}?utm_source=newswordy`}
-												target="_blank"
-												rel="noopener noreferrer"
-												variant="body2"
-												sx={{
-													fontWeight: 'medium',
-													color: 'text.primary',
-													textDecoration: 'none',
-													display: '-webkit-box',
-													WebkitLineClamp: 3,
-													WebkitBoxOrient: 'vertical',
-													overflow: 'hidden',
-													fontSize: '0.8rem',
-													lineHeight: 1.3,
-													'&:hover': {
-														color: 'primary.main',
-														textDecoration: 'underline'
-													}
-												}}
-											>
-												{article.headline}
-											</Typography>
-											<Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block', fontSize: '0.7rem' }}>
-												{new Date(article.published_date).toLocaleDateString('en-US', {
-													month: 'short',
-													day: 'numeric',
-													year: 'numeric',
-													hour: '2-digit',
-													minute: '2-digit'
-												})}
-											</Typography>
-											<Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5, fontSize: '0.7rem' }}>
-												{NewsSourceConfig[article.source].name}
-											</Typography>
-										</Box>
-									</Box>
-								</Paper>
-							))}
+              {selectedWordData.articles.length > 0 ? (
+                <>
+                  {selectedWordData.articles
+                    .slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage)
+                    .map((article, index) => (
+                    <Paper
+                      key={currentPage * articlesPerPage + index}
+                      elevation={1}
+                      sx={{ p: 1.5, '&:hover': { elevation: 3 } }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                        {/* Source Icon */}
+                        <Box
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: 'primary.light',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                            flexShrink: 0
+                          }}
+                        >
+                          {NewsSourceConfig[article.source].logo}
+                        </Box>
+                        
+                        {/* Article Content */}
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            component="a"
+                            href={`${article.url}?utm_source=newswordy`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="body2"
+                            sx={{
+                              fontWeight: 'medium',
+                              color: 'text.primary',
+                              textDecoration: 'none',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              fontSize: '0.8rem',
+                              lineHeight: 1.3,
+                              '&:hover': {
+                                color: 'primary.main',
+                                textDecoration: 'underline'
+                              }
+                            }}
+                          >
+                            {article.headline}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block', fontSize: '0.7rem' }}>
+                            {new Date(article.published_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Typography>
+                          <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5, fontSize: '0.7rem' }}>
+                            {NewsSourceConfig[article.source].name}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Paper>
+                  ))}
+                </>
+              ) : (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  py: 4, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  minHeight: '200px'
+                }}>
+                  <Typography variant="body1" color="text.secondary">
+                    No articles found for "{selectedWordData.word.toUpperCase()}"
+                  </Typography>
+                </Box>
+              )}
 						</Stack>
 						
 						{/* Pagination Controls */}
@@ -185,7 +202,7 @@ const ArticleInfo = ({
 						)}
 					</Box>
 				</>
-			) : (
+      ) : (
 				<Box sx={{ 
 					textAlign: 'center', 
 					py: 4, 
