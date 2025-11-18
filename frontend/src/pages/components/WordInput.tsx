@@ -67,7 +67,6 @@ const WordInput = ({
           py: 2,
           px: { xs: 2.25, sm: 3 },
           width: '100%',
-          maxWidth: 720,
           mx: isMobile ? 'auto' : 0
         }}
       >
