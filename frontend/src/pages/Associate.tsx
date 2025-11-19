@@ -2,50 +2,35 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { AssociateGame, TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
+import { AssociateGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Checkbox,
   Chip,
   Container,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
   Stack,
   TextField,
   Typography,
-  Alert,
-  Collapse,
-  IconButton
+  Alert
 } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
-  Settings as SettingsIcon,
-  Schedule as ClockIcon,
-  Language as GlobeIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
   Search as SearchIcon
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
+import AdvancedSettings from './components/AdvancedSettings'
 
 const Associate: React.FC = () => {
   const { isLoading, user } = useAuth0();
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_MONTH)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_MONTH)
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
 
   const [selectedWord, setSelectedWord] = useState('')
   const [findingCount, setFindingCount] = useState(false)
@@ -107,22 +92,6 @@ const Associate: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     handleFindCount()
-  }
-
-  const handleSourceToggle = (source: NewsSource) => {
-    setSelectedSources(prev => 
-      prev.includes(source) 
-        ? prev.filter(s => s !== source)
-        : [...prev, source]
-    )
-  }
-
-  const handleSelectAllSources = () => {
-    setSelectedSources(Object.values(NewsSource))
-  }
-
-  const handleClearSources = () => {
-    setSelectedSources([])
   }
 
   return (
@@ -222,138 +191,22 @@ const Associate: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Advanced Settings - Collapsible */}
-      <Paper elevation={2} sx={{ mb: 4 }}>
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            p: 2,
-            cursor: 'pointer',
-            '&:hover': {
-              bgcolor: 'action.hover'
-            }
-          }}
-          onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <SettingsIcon sx={{ mr: 1, color: 'text.secondary' }} />
-            <Typography variant="h6">
-              Advanced Settings
-            </Typography>
-          </Box>
-          <IconButton>
-            {showAdvancedSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        </Box>
-
-        <Collapse in={showAdvancedSettings}>
-          <Box sx={{ p: 3, pt: 1 }}>
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-              {/* Time Period Selection */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <FormControl fullWidth>
-                  <InputLabel>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ClockIcon sx={{ mr: 1, fontSize: 20 }} />
-                      Time Period
-                    </Box>
-                  </InputLabel>
-                  <Select
-                    value={selectedTimePeriod}
-                    onChange={(e) => setSelectedTimePeriod(e.target.value as any)}
-                    label="Time Period"
-                  >
-                    {Object.entries(TIME_PERIOD_NAMES).map(([key, name]) => (
-                      <MenuItem key={key} value={key}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              {/* Max Guesses */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Wrong Guesses Allowed"
-                  type="number"
-                  value={maxGuesses}
-                  onChange={(e) => setMaxGuesses(parseInt(e.target.value))}
-                  inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
-                />
-              </Grid>
-
-              {/* Scoreboard Size */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Word Scoreboard Size"
-                  type="number"
-                  value={scoreboardSize}
-                  onChange={(e) => setScoreboardSize(parseInt(e.target.value))}
-                  inputProps={{ min: 5, max: MAX_SCOREBOARD_SIZE }}
-                />
-              </Grid>
-            </Grid>
-
-            {/* News Sources Selection */}
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <GlobeIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                <Typography variant="h6">
-                  News Sources
-                </Typography>
-              </Box>
-              
-              <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleSelectAllSources}
-                >
-                  Select All
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleClearSources}
-                >
-                  Clear All
-                </Button>
-              </Stack>
-
-              <Grid container spacing={2}>
-                {Object.entries(NewsSourceConfig).map(([key, config]) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={key}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selectedSources.includes(key as NewsSource)}
-                          onChange={() => handleSourceToggle(key as NewsSource)}
-                        />
-                      }
-                      label={config.name}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              
-              {selectedSources.length > 0 && (
-                <Box sx={{ mt: 2 }}>
-                  <Chip
-                    label={`Selected ${selectedSources.length} source${selectedSources.length !== 1 ? 's' : ''}`}
-                    color="primary"
-                    variant="outlined"
-                  />
-                </Box>
-              )}
-            </Box>
-          </Box>
-        </Collapse>
-      </Paper>
+      {/* Advanced Settings */}
+      <AdvancedSettings
+        selectedTimePeriod={selectedTimePeriod}
+        setSelectedTimePeriod={setSelectedTimePeriod}
+        maxGuesses={maxGuesses}
+        setMaxGuesses={setMaxGuesses}
+        scoreboardSize={scoreboardSize}
+        setScoreboardSize={setScoreboardSize}
+        selectedSources={selectedSources}
+        setSelectedSources={setSelectedSources}
+        handleStartGame={handleStartGame}
+        loading={loading}
+        isLoading={isLoading}
+        showSources={true}
+        showStartButton={false}
+      />
 
       {/* Start Game Button */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>

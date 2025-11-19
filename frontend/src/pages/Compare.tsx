@@ -2,20 +2,15 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { CompareGame, TIME_PERIODS, TIME_PERIOD_NAMES, DEFAULT_MAX_GUESSES, MAX_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, MAX_SCOREBOARD_SIZE } from '../types'
+import { CompareGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, TimePeriod } from '../types'
 import {
   Box,
   Button,
   Card,
   Container,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   Stack,
-  TextField,
   Typography,
   Chip,
   IconButton,
@@ -24,24 +19,20 @@ import {
 } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
-  Settings as SettingsIcon,
-  Schedule as ClockIcon,
   CompareArrows as CompareIcon,
   Add as AddIcon,
   Delete as DeleteIcon,
-  ExpandLess as ExpandLessIcon,
-  ExpandMore as ExpandMoreIcon
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
+import AdvancedSettings from './components/AdvancedSettings'
 
 const Compare: React.FC = () => {
   const { user, isLoading } = useAuth0()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState(TIME_PERIODS.PAST_WEEK)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_WEEK)
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
   
   // Two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
@@ -410,84 +401,19 @@ const Compare: React.FC = () => {
       </Paper>
 
       {/* Advanced Settings */}
-      <Paper elevation={2} sx={{ mb: 4 }}>
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            p: 2,
-            cursor: 'pointer',
-            '&:hover': {
-              bgcolor: 'action.hover'
-            }
-          }}
-          onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <SettingsIcon sx={{ mr: 1, color: 'text.secondary' }} />
-            <Typography variant="h6">
-              Advanced Settings
-            </Typography>
-          </Box>
-          <IconButton>
-            {showAdvancedSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        </Box>
-
-        {showAdvancedSettings && (
-          <Box sx={{ p: 3, pt: 1 }}>
-            <Grid container spacing={3}>
-              {/* Time Period Selection */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <FormControl fullWidth>
-                  <InputLabel>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ClockIcon sx={{ mr: 1, fontSize: 20 }} />
-                      Time Period
-                    </Box>
-                  </InputLabel>
-                  <Select
-                    value={selectedTimePeriod}
-                    onChange={(e) => setSelectedTimePeriod(e.target.value as any)}
-                    label="Time Period"
-                  >
-                    {Object.entries(TIME_PERIOD_NAMES).map(([key, name]) => (
-                      <MenuItem key={key} value={key}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              {/* Max Guesses */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Wrong Guesses Allowed"
-                  type="number"
-                  value={maxGuesses}
-                  onChange={(e) => setMaxGuesses(parseInt(e.target.value))}
-                  inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
-                />
-              </Grid>
-
-              {/* Scoreboard Size */}
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Word Scoreboard Size"
-                  type="number"
-                  value={scoreboardSize}
-                  onChange={(e) => setScoreboardSize(parseInt(e.target.value))}
-                  inputProps={{ min: 5, max: MAX_SCOREBOARD_SIZE }}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        )}
-      </Paper>
+      <AdvancedSettings
+        selectedTimePeriod={selectedTimePeriod}
+        setSelectedTimePeriod={setSelectedTimePeriod}
+        maxGuesses={maxGuesses}
+        setMaxGuesses={setMaxGuesses}
+        scoreboardSize={scoreboardSize}
+        setScoreboardSize={setScoreboardSize}
+        handleStartGame={handleStartGame}
+        loading={loading}
+        isLoading={isLoading}
+        showSources={false}
+        showStartButton={false}
+      />
 
       {/* Start Game Button */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
