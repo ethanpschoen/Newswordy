@@ -1,9 +1,9 @@
-import { TrophyIcon } from '@heroicons/react/24/outline'
-import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme } from '@mui/material'
+import { TrophyIcon, LightBulbIcon } from '@heroicons/react/24/outline'
+import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme, Stack } from '@mui/material'
 import { PlayIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { useNavigate } from 'react-router-dom'
-import { Color } from '../../types'
+import { Color, HintType } from '../../types'
 import { useRef, useEffect } from 'react'
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
   isCompleted: boolean
   score: number
   isOverlayOpen?: boolean
+  onShowHint?: (type: HintType) => void
 }
 
 const WordInput = ({
@@ -28,6 +29,7 @@ const WordInput = ({
   isCompleted,
   score,
   isOverlayOpen = false,
+  onShowHint,
 }: Props) => {
   const navigate = useNavigate()
   const theme = useTheme()
@@ -126,22 +128,36 @@ const WordInput = ({
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              variant="contained"
-              size="medium"
-              disabled={submitting || !currentGuess.trim()}
-              sx={{ textTransform: 'none', py: 1 }}
-            >
-              {submitting ? (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LoadingSpinner size="sm" />
-                  Submitting...
-                </Box>
-              ) : (
-                'Submit Guess'
+            <Stack direction="row" spacing={1}>
+              <Button
+                type="submit"
+                variant="contained"
+                size="medium"
+                disabled={submitting || !currentGuess.trim()}
+                sx={{ textTransform: 'none', py: 1, flex: 1 }}
+              >
+                {submitting ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <LoadingSpinner size="sm" />
+                    Submitting...
+                  </Box>
+                ) : (
+                  'Submit Guess'
+                )}
+              </Button>
+              {onShowHint && (
+                <Button
+                  variant="outlined"
+                  size="medium"
+                  disabled={isCompleted || submitting}
+                  onClick={() => onShowHint(HintType.FILL_BLANK)}
+                  startIcon={<LightBulbIcon className="w-4 h-4" />}
+                  sx={{ textTransform: 'none', py: 1 }}
+                >
+                  Hint
+                </Button>
               )}
-            </Button>
+            </Stack>
           </Box>
         )}
       </CardContent>

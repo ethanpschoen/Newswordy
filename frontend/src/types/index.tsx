@@ -397,3 +397,13 @@ export const GAME_MODE_NAMES: Record<GameMode, string> = {
   [GameMode.ASSOCIATE]: 'Associative',
   [GameMode.COMPARE_ASSOCIATE]: 'Comparative Associative',
 }
+
+export enum HintType {
+  FILL_BLANK = 'fill-blank',
+  FIRST_LETTER = 'first-letter',
+}
+
+export const HINT_TYPE_NAMES: Record<HintType, string> = {
+  [HintType.FILL_BLANK]: 'Fill in the Blank',
+  [HintType.FIRST_LETTER]: 'First Letter',
+}

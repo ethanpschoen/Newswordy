@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup } from '../types'
+import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup, HintType } from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -14,6 +14,7 @@ import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
 import ComparativeArticleDrawer from './components/ComparativeArticleDrawer'
+import HintModal from './components/HintModal'
 
 const CompareGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -46,6 +47,13 @@ const CompareGame: React.FC = () => {
   const [showScoreboard, setShowScoreboard] = useState(false)
   const scoreboardRef = useRef<HTMLDivElement>(null)
   const [scoreboardHeight, setScoreboardHeight] = useState<number>(0)
+
+  // Hint state
+  const [hintModalOpen, setHintModalOpen] = useState(false)
+  const [currentHintWord, setCurrentHintWord] = useState<ScoreboardEntry | null>(null)
+  const [hintType, setHintType] = useState<HintType>(HintType.FILL_BLANK)
+  const [hintedWordsGroupA, setHintedWordsGroupA] = useState<string[]>([])
+  const [hintedWordsGroupB, setHintedWordsGroupB] = useState<string[]>([])
 
   useEffect(() => {
     if (gameId) {
@@ -145,6 +153,7 @@ const CompareGame: React.FC = () => {
 
       let index: number | undefined
       let wordScore: number
+      let wasHinted: boolean = false
       let updatedScore = gameState?.score || 0
       let updatedGuessedWordsGroupA = gameState?.guessed_words_group_a || []
       let updatedGuessedWordsGroupB = gameState?.guessed_words_group_b || []
@@ -155,12 +164,15 @@ const CompareGame: React.FC = () => {
 
         if (foundWord.group_name === ComparativeGroup.GROUP_A) {
           updatedGuessedWordsGroupA.push(guessWord)
+          wasHinted = hintedWordsGroupA.includes(guessWord)
         } else {
           updatedGuessedWordsGroupB.push(guessWord)
           index -= gameState!.scoreboard_size
+          wasHinted = hintedWordsGroupB.includes(guessWord)
         }
 
-        wordScore = calculateScore(index, scoreboard.length / 2)
+        const baseScore = calculateScore(index, scoreboard.length / 2)
+        wordScore = wasHinted ? Math.round(baseScore / 2) : baseScore
         updatedScore += wordScore
       } else {
         index = undefined
@@ -203,7 +215,10 @@ const CompareGame: React.FC = () => {
       setCurrentGuess('')
 
       if (foundWord) {
-        setSuccess(`"${currentGuess}" found! +${wordScore} points`)
+        const message = wasHinted
+          ? `"${currentGuess}" found! +${wordScore} points (hint used)`
+          : `"${currentGuess}" found! +${wordScore} points`
+        setSuccess(message)
       } else {
         setError(`"${currentGuess}" not found in the word list`)
       }
@@ -287,9 +302,96 @@ const CompareGame: React.FC = () => {
     }
   }
 
+  const handleHintClick = (word: string) => {
+    const wordLower = word.toLowerCase()
+    let condensedWordDataGroupA: ScoreboardEntry | null = null
+    let condensedWordDataGroupB: ScoreboardEntry | null = null
+    const wordDataGroupA = scoreboardGroupA.find(item => item.word.toLowerCase() === wordLower)
+    const wordDataGroupB = scoreboardGroupB.find(item => item.word.toLowerCase() === wordLower)
+    if (!wordDataGroupA && !wordDataGroupB) return
+    if (wordDataGroupA) {
+      condensedWordDataGroupA = {
+        word: wordDataGroupA.word,
+        rank: wordDataGroupA.avg_rank_group_a,
+        articles: wordDataGroupA.articles_group_a,
+      }
+    }
+    if (wordDataGroupB) {
+      condensedWordDataGroupB = {
+        word: wordDataGroupB.word,
+        rank: wordDataGroupB.avg_rank_group_b,
+        articles: wordDataGroupB.articles_group_b,
+      }
+    }
+    setCurrentHintWord(condensedWordDataGroupA || condensedWordDataGroupB)
+    setHintModalOpen(true)
+  }
+
   const closeArticlePanel = () => {
     setSelectedWordDataGroupA(null)
     setSelectedWordDataGroupB(null)
+  }
+
+  // Select a hint word with equal probability (no weights)
+  const selectHintWord = (wordBoard: ComparativeScoreboardEntry[]): ScoreboardEntry | null => {
+    // Filter for unguessed words that haven't been hinted yet
+    const availableWords = wordBoard.filter(
+      entry => {
+        const wordLower = entry.word.toLowerCase()
+        return (
+          (!gameState?.guessed_words_group_a.includes(wordLower) &&
+          !hintedWordsGroupA.includes(wordLower)) &&
+          (!gameState?.guessed_words_group_b.includes(wordLower) &&
+          !hintedWordsGroupB.includes(wordLower))
+        )
+      }
+    )
+
+    if (availableWords.length === 0) {
+      return null
+    }
+
+    // Select random word with equal probability
+    const randomIndex = Math.floor(Math.random() * availableWords.length)
+    return {
+      word: availableWords[randomIndex].word,
+      rank: availableWords[randomIndex].avg_rank_group_a,
+      articles: availableWords[randomIndex].articles_group_a,
+    }
+  }
+
+  const handleShowHint = (type: HintType) => {
+    const hintWordA = selectHintWord(scoreboardGroupA)
+    const hintWordB = selectHintWord(scoreboardGroupB)
+    if (!hintWordA && !hintWordB) {
+      // No more hints are available
+      setError('No more hints are available. Select a hinted word to fill in the blank!')
+      return
+    }
+    if (hintWordA) {
+      setHintType(type)
+      // Add word to hinted words list when hint is shown
+      setHintedWordsGroupA(prev => {
+        if (!prev.includes(hintWordA.word.toLowerCase())) {
+          return [...prev, hintWordA.word.toLowerCase()]
+        }
+        return prev
+      })
+    }
+    if (hintWordB) {
+      setHintedWordsGroupB(prev => {
+        if (!prev.includes(hintWordB.word.toLowerCase())) {
+          return [...prev, hintWordB.word.toLowerCase()]
+        }
+        return prev
+      })
+    }
+    setCurrentHintWord(hintWordA || hintWordB)
+    setHintModalOpen(true)
+  }
+
+  const handleCloseHintModal = () => {
+    setHintModalOpen(false)
   }
 
   const theme = useTheme()
@@ -367,6 +469,8 @@ const CompareGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               guessedWords={gameState.guessed_words_group_a}
               handleWordClick={handleWordClick}
+              handleHintClick={handleHintClick}
+              hintedWords={hintedWordsGroupA}
               groupLabel="Source Group A"
               groupAccentColor={groupAAccentColor}
             />
@@ -382,6 +486,8 @@ const CompareGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               guessedWords={gameState.guessed_words_group_b}
               handleWordClick={handleWordClick}
+              handleHintClick={handleHintClick}
+              hintedWords={hintedWordsGroupB}
               groupLabel="Source Group B"
               groupAccentColor={groupBAccentColor}
             />
@@ -415,6 +521,7 @@ const CompareGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+              onShowHint={handleShowHint}
             />
           </Grid>
         </Grid>
@@ -432,6 +539,15 @@ const CompareGame: React.FC = () => {
           setCurrentPageGroupA={setCurrentPageGroupA}
           setCurrentPageGroupB={setCurrentPageGroupB}
           articlesPerPage={articlesPerPage}
+        />
+
+        {/* Hint Modal */}
+        <HintModal
+          open={hintModalOpen}
+          onClose={handleCloseHintModal}
+          hintWord={currentHintWord}
+          hintType={hintType}
+          onHintTypeChange={setHintType}
         />
       </Container>
     )
@@ -488,6 +604,7 @@ const CompareGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
+              onShowHint={handleShowHint}
             />
 
             {/* Scoreboard Section */}
@@ -502,6 +619,8 @@ const CompareGame: React.FC = () => {
                   isCompleted={gameState.is_completed}
                   guessedWords={gameState.guessed_words_group_a}
                   handleWordClick={handleWordClick}
+                  handleHintClick={handleHintClick}
+                  hintedWords={hintedWordsGroupA}
                   groupLabel="Source Group A"
                   groupAccentColor={groupAAccentColor}
                 />
@@ -517,6 +636,8 @@ const CompareGame: React.FC = () => {
                   isCompleted={gameState.is_completed}
                   guessedWords={gameState.guessed_words_group_b}
                   handleWordClick={handleWordClick}
+                  handleHintClick={handleHintClick}
+                  hintedWords={hintedWordsGroupB}
                   groupLabel="Source Group B"
                   groupAccentColor={groupBAccentColor}
                 />
@@ -551,6 +672,15 @@ const CompareGame: React.FC = () => {
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Hint Modal */}
+      <HintModal
+        open={hintModalOpen}
+        onClose={handleCloseHintModal}
+        hintWord={currentHintWord}
+        hintType={hintType}
+        onHintTypeChange={setHintType}
+      />
     </Container>
   )
 }

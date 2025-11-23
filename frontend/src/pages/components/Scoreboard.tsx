@@ -12,8 +12,10 @@ interface Props {
   isCompleted: boolean
   guessedWords: string[]
   handleWordClick: (word: string) => void
+  handleHintClick?: (word: string) => void
   groupLabel?: string
   groupAccentColor?: string
+  hintedWords?: string[]
 }
 
 export const calculateScore = (index: number, totalLength: number): number => {
@@ -35,8 +37,10 @@ const Scoreboard = ({
   isCompleted,
   guessedWords,
   handleWordClick,
+  handleHintClick,
   groupLabel,
   groupAccentColor,
+  hintedWords = [],
 }: Props) => {
   const [showSourcesModal, setShowSourcesModal] = useState(false)
   const theme = useTheme()
@@ -104,21 +108,35 @@ const Scoreboard = ({
           <Stack spacing={1}>
             {scoreboard.slice(0, showScoreboard ? scoreboard.length : defaultItemsToShow).map((entry, index) => {
               const gameCompleted = isCompleted
-              const wordGuessed = guessedWords.includes(entry.word.toLowerCase())
+              const wordLower = entry.word.toLowerCase()
+              const wordGuessed = guessedWords.includes(wordLower)
+              const wordHinted = hintedWords.includes(wordLower)
               const showWord = wordGuessed || gameCompleted
+              const showFirstLetter = wordHinted && !wordGuessed
+              
+              // Display text: full word if guessed/completed, first letter if hinted, ??? otherwise
+              const displayText = showWord
+                ? entry.word.toUpperCase()
+                : showFirstLetter
+                ? entry.word.charAt(0).toUpperCase() + ' _'.repeat(entry.word.length - 1)
+                : '???'.repeat(entry.word.length)
+              
+              // Make clickable if guessed, completed, or hinted
+              const isClickable = showWord || showFirstLetter
+              
               return (
                 <Paper
                   key={entry.word}
-                  elevation={showWord ? 2 : 1}
+                  elevation={isClickable ? 2 : 1}
                   sx={{
                     p: 2,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    cursor: showWord ? 'pointer' : 'default',
+                    cursor: isClickable ? 'pointer' : 'default',
                     minHeight: '48px',
                     backgroundColor: showWord && !wordGuessed ? '#fbe7e5' : null,
-                    '&:hover': showWord
+                    '&:hover': isClickable
                       ? {
                           backgroundColor: 'action.hover',
                           transform: 'translateY(-1px)',
@@ -126,7 +144,7 @@ const Scoreboard = ({
                         }
                       : {},
                   }}
-                  onClick={showWord ? () => handleWordClick(entry.word) : undefined}
+                  onClick={showWord ? () => handleWordClick(entry.word) : showFirstLetter ? () => handleHintClick?.(entry.word) : undefined}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                     <Avatar
@@ -146,7 +164,7 @@ const Scoreboard = ({
                       variant="body1"
                       sx={{
                         fontWeight: 'medium',
-                        color: showWord ? 'text.primary' : 'text.disabled',
+                        color: isClickable ? 'text.primary' : 'text.disabled',
                         minWidth: '120px',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -154,7 +172,7 @@ const Scoreboard = ({
                         flex: 1,
                       }}
                     >
-                      {showWord ? entry.word.toUpperCase() : '???'.repeat(entry.word.length)}
+                      {displayText}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>

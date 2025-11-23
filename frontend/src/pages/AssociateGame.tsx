@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { AssociateGameState, Guess, ScoreboardEntry } from '../types'
+import { AssociateGameState, Guess, ScoreboardEntry, HintType } from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -14,6 +14,7 @@ import GameStats from './components/GameStats'
 import GuessList from './components/GuessList'
 import ArticleInfo from './components/ArticleInfo'
 import AssociatingWordCard from './components/AssociatingWordCard'
+import HintModal from './components/HintModal'
 
 const AssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
@@ -42,6 +43,12 @@ const AssociateGame: React.FC = () => {
   const [showScoreboard, setShowScoreboard] = useState(false)
   const scoreboardRef = useRef<HTMLDivElement>(null)
   const [scoreboardHeight, setScoreboardHeight] = useState<number>(0)
+
+  // Hint state
+  const [hintModalOpen, setHintModalOpen] = useState(false)
+  const [currentHintWord, setCurrentHintWord] = useState<ScoreboardEntry | null>(null)
+  const [hintType, setHintType] = useState<HintType>(HintType.FILL_BLANK)
+  const [hintedWords, setHintedWords] = useState<string[]>([])
 
   useEffect(() => {
     if (gameId) {
@@ -135,13 +142,18 @@ const AssociateGame: React.FC = () => {
 
       let index: number | undefined
       let wordScore: number
+      let wasHinted: boolean = false
       let updatedScore = gameState?.score || 0
       let updatedGuessedWords = gameState?.guessed_words || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
 
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
-        wordScore = calculateScore(index, scoreboard.length)
+        const baseScore = calculateScore(index, scoreboard.length)
+        
+        // Check if word was hinted - if so, award half points
+        wasHinted = hintedWords.includes(guessWord)
+        wordScore = wasHinted ? Math.round(baseScore / 2) : baseScore
 
         updatedScore += wordScore
         updatedGuessedWords.push(guessWord)
@@ -186,7 +198,10 @@ const AssociateGame: React.FC = () => {
       setCurrentGuess('')
 
       if (foundWord) {
-        setSuccess(`"${currentGuess}" found! +${wordScore} points`)
+        const message = wasHinted
+          ? `"${currentGuess}" found! +${wordScore} points (hint used)`
+          : `"${currentGuess}" found! +${wordScore} points`
+        setSuccess(message)
       } else {
         setError(`"${currentGuess}" not found in the word list`)
       }
@@ -238,8 +253,61 @@ const AssociateGame: React.FC = () => {
     }
   }
 
+  const handleHintClick = (word: string) => {
+    const wordLower = word.toLowerCase()
+    const wordData = scoreboard.find(item => item.word.toLowerCase() === wordLower)
+    if (!wordData) return
+    setCurrentHintWord(wordData)
+    setHintModalOpen(true)
+  }
+
   const closeArticlePanel = () => {
     setSelectedWordData(null)
+  }
+
+  // Select a hint word with equal probability (no weights)
+  const selectHintWord = (): ScoreboardEntry | null => {
+    // Filter for unguessed words that haven't been hinted yet
+    const availableWords = scoreboard.filter(
+      entry => {
+        const wordLower = entry.word.toLowerCase()
+        return (
+          !gameState?.guessed_words.includes(wordLower) &&
+          !hintedWords.includes(wordLower)
+        )
+      }
+    )
+
+    if (availableWords.length === 0) {
+      return null
+    }
+
+    // Select random word with equal probability
+    const randomIndex = Math.floor(Math.random() * availableWords.length)
+    return availableWords[randomIndex]
+  }
+
+  const handleShowHint = (type: HintType) => {
+    const hintWord = selectHintWord()
+    if (hintWord) {
+      setCurrentHintWord(hintWord)
+      setHintType(type)
+      // Add word to hinted words list when hint is shown
+      setHintedWords(prev => {
+        if (!prev.includes(hintWord.word.toLowerCase())) {
+          return [...prev, hintWord.word.toLowerCase()]
+        }
+        return prev
+      })
+      setHintModalOpen(true)
+    } else {
+      // No more hints are available
+      setError('No more hints are available. Select a hinted word to fill in the blank!')
+    }
+  }
+
+  const handleCloseHintModal = () => {
+    setHintModalOpen(false)
   }
 
   const theme = useTheme()
@@ -320,6 +388,8 @@ const AssociateGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               guessedWords={gameState.guessed_words}
               handleWordClick={handleWordClick}
+              handleHintClick={handleHintClick}
+              hintedWords={hintedWords}
             />
           </Grid>
 
@@ -351,6 +421,7 @@ const AssociateGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordData)}
+              onShowHint={handleShowHint}
             />
           </Grid>
 
@@ -363,6 +434,15 @@ const AssociateGame: React.FC = () => {
             closeArticlePanel={closeArticlePanel}
           />
         </Grid>
+
+        {/* Hint Modal */}
+        <HintModal
+          open={hintModalOpen}
+          onClose={handleCloseHintModal}
+          hintWord={currentHintWord}
+          hintType={hintType}
+          onHintTypeChange={setHintType}
+        />
       </Container>
     )
   }
@@ -411,6 +491,7 @@ const AssociateGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordData)}
+              onShowHint={handleShowHint}
             />
 
             {/* Scoreboard Section */}
@@ -422,6 +503,8 @@ const AssociateGame: React.FC = () => {
               isCompleted={gameState.is_completed}
               guessedWords={gameState.guessed_words}
               handleWordClick={handleWordClick}
+              handleHintClick={handleHintClick}
+              hintedWords={hintedWords}
             />
           </Stack>
         </Grid>
@@ -438,6 +521,15 @@ const AssociateGame: React.FC = () => {
           />
         </Grid>
       </Grid>
+
+      {/* Hint Modal */}
+      <HintModal
+        open={hintModalOpen}
+        onClose={handleCloseHintModal}
+        hintWord={currentHintWord}
+        hintType={hintType}
+        onHintTypeChange={setHintType}
+      />
     </Container>
   )
 }
