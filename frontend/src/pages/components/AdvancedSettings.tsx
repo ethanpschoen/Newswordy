@@ -16,7 +16,7 @@ import {
   Typography,
   Divider,
   Collapse,
-  IconButton
+  IconButton,
 } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
@@ -24,9 +24,16 @@ import {
   Schedule as ClockIcon,
   Language as GlobeIcon,
   ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon
+  ExpandLess as ExpandLessIcon,
 } from '@mui/icons-material'
-import { TIME_PERIOD_NAMES, NewsSource, NewsSourceConfig, MAX_MAX_GUESSES, MAX_SCOREBOARD_SIZE, TimePeriod } from '../../types'
+import {
+  TIME_PERIOD_NAMES,
+  NewsSource,
+  NewsSourceConfig,
+  MAX_MAX_GUESSES,
+  MAX_SCOREBOARD_SIZE,
+  TimePeriod,
+} from '../../types'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
 interface Props {
@@ -45,16 +52,26 @@ interface Props {
   showStartButton: boolean
 }
 
-const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesses, setMaxGuesses, scoreboardSize, setScoreboardSize, selectedSources, setSelectedSources, handleStartGame, loading, isLoading, showSources, showStartButton }: Props) => {
+const AdvancedSettings = ({
+  selectedTimePeriod,
+  setSelectedTimePeriod,
+  maxGuesses,
+  setMaxGuesses,
+  scoreboardSize,
+  setScoreboardSize,
+  selectedSources,
+  setSelectedSources,
+  handleStartGame,
+  loading,
+  isLoading,
+  showSources,
+  showStartButton,
+}: Props) => {
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
 
   const handleSourceToggle = (source: NewsSource) => {
     if (!setSelectedSources) return
-    setSelectedSources(prev => 
-      prev.includes(source) 
-        ? prev.filter(s => s !== source)
-        : [...prev, source]
-    )
+    setSelectedSources(prev => (prev.includes(source) ? prev.filter(s => s !== source) : [...prev, source]))
   }
 
   const handleSelectAllSources = () => {
@@ -66,31 +83,27 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
     if (!setSelectedSources) return
     setSelectedSources([])
   }
-  
+
   return (
     <Paper elevation={2} sx={{ mb: 4 }}>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
           p: 2,
           cursor: 'pointer',
           '&:hover': {
-            bgcolor: 'action.hover'
-          }
+            bgcolor: 'action.hover',
+          },
         }}
         onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <SettingsIcon sx={{ mr: 1, color: 'text.secondary' }} />
-          <Typography variant="h6">
-            Advanced Settings
-          </Typography>
+          <Typography variant="h6">Advanced Settings</Typography>
         </Box>
-        <IconButton>
-          {showAdvancedSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        <IconButton>{showAdvancedSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
       </Box>
 
       <Collapse in={showAdvancedSettings}>
@@ -107,7 +120,7 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
                 </InputLabel>
                 <Select
                   value={selectedTimePeriod}
-                  onChange={(e) => setSelectedTimePeriod(e.target.value as any)}
+                  onChange={e => setSelectedTimePeriod(e.target.value as any)}
                   label="Time Period"
                 >
                   {Object.entries(TIME_PERIOD_NAMES).map(([key, name]) => (
@@ -126,7 +139,7 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
                 label="Wrong Guesses Allowed"
                 type="number"
                 value={maxGuesses}
-                onChange={(e) => setMaxGuesses(parseInt(e.target.value))}
+                onChange={e => setMaxGuesses(parseInt(e.target.value))}
                 inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
               />
             </Grid>
@@ -138,7 +151,7 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
                 label="Word Scoreboard Size"
                 type="number"
                 value={scoreboardSize}
-                onChange={(e) => setScoreboardSize(parseInt(e.target.value))}
+                onChange={e => setScoreboardSize(parseInt(e.target.value))}
                 inputProps={{ min: 5, max: MAX_SCOREBOARD_SIZE }}
               />
             </Grid>
@@ -149,24 +162,14 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <GlobeIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                <Typography variant="h6">
-                  News Sources
-                </Typography>
+                <Typography variant="h6">News Sources</Typography>
               </Box>
-              
+
               <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleSelectAllSources}
-                >
+                <Button variant="outlined" size="small" onClick={handleSelectAllSources}>
                   Select All
                 </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleClearSources}
-                >
+                <Button variant="outlined" size="small" onClick={handleClearSources}>
                   Clear All
                 </Button>
               </Stack>
@@ -186,7 +189,7 @@ const AdvancedSettings = ({ selectedTimePeriod, setSelectedTimePeriod, maxGuesse
                   </Grid>
                 ))}
               </Grid>
-              
+
               {selectedSources.length > 0 && (
                 <Box sx={{ mt: 2 }}>
                   <Chip

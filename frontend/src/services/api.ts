@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { 
+import {
   ApiResponse,
   User,
   Game,
@@ -10,7 +10,7 @@ import {
   NewsSource,
   TIME_PERIODS,
   AssociateGame,
-  CompareAssociateGame
+  CompareAssociateGame,
 } from '../types'
 import { supabase } from './supabaseClient'
 
@@ -57,7 +57,7 @@ export const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) =>
   referenceDate.setMinutes(0)
   referenceDate.setSeconds(0)
   referenceDate.setMilliseconds(0)
-  
+
   let start_date = new Date(referenceDate)
   let end_date = new Date(referenceDate)
 
@@ -105,21 +105,19 @@ export const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) =>
 // Game API
 export const gameAPI = {
   createGame: async (game: Game) => {
-    return await supabase
-      .from('games')
-      .insert([game])
-      .select('id')
-      .single()
+    return await supabase.from('games').insert([game]).select('id').single()
   },
 
   // TODO: validate user with game?
   getGameState: async (gameId: string) => {
     return await supabase
       .from('games')
-      .select(`
-        *,
-        guesses(*)
-      `)
+      .select(
+        `
+          *,
+          guesses(*)
+        `,
+      )
       .eq('id', gameId)
       .maybeSingle()
   },
@@ -141,7 +139,7 @@ export const gameAPI = {
         start_date,
         end_date,
         sources,
-        size: scoreboardSize
+        size: scoreboardSize,
       })
       .select('*')
   },
@@ -154,10 +152,12 @@ export const gameAPI = {
   getComparativeGameState: async (gameId: string) => {
     return await supabase
       .from('compare_games')
-      .select(`
-        *,
-        compare_guesses(*)
-      `)
+      .select(
+        `
+          *,
+          compare_guesses(*)
+        `,
+      )
       .eq('id', gameId)
       .maybeSingle()
   },
@@ -171,7 +171,13 @@ export const gameAPI = {
     return await supabase.from('compare_guesses').insert(data)
   },
 
-  getComparativeScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
+  getComparativeScoreboard: async (
+    timePeriod: TimePeriod,
+    sources_group_a: NewsSource[],
+    sources_group_b: NewsSource[],
+    scoreboardSize: number,
+    referenceDate: Date,
+  ) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
     return await supabase
@@ -180,7 +186,7 @@ export const gameAPI = {
         end_date,
         sources_group_a,
         sources_group_b,
-        size: scoreboardSize
+        size: scoreboardSize,
       })
       .select('*')
   },
@@ -193,7 +199,7 @@ export const gameAPI = {
         start_date,
         end_date,
         sources,
-        search_term
+        search_term,
       })
       .select('*')
   },
@@ -206,10 +212,12 @@ export const gameAPI = {
   getAssociateGameState: async (gameId: string) => {
     return await supabase
       .from('associate_games')
-      .select(`
-        *,
-        associate_guesses(*)
-      `)
+      .select(
+        `
+          *,
+          associate_guesses(*)
+        `,
+      )
       .eq('id', gameId)
       .maybeSingle()
   },
@@ -223,7 +231,13 @@ export const gameAPI = {
     return await supabase.from('associate_guesses').insert(data)
   },
 
-  getAssociatedScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
+  getAssociatedScoreboard: async (
+    timePeriod: TimePeriod,
+    sources: NewsSource[],
+    search_term: string,
+    scoreboardSize: number,
+    referenceDate: Date,
+  ) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
     return await supabase
@@ -232,7 +246,7 @@ export const gameAPI = {
         end_date,
         sources,
         search_term,
-        size: scoreboardSize
+        size: scoreboardSize,
       })
       .select('*')
   },
@@ -245,10 +259,12 @@ export const gameAPI = {
   getComparativeAssociatedGameState: async (gameId: string) => {
     return await supabase
       .from('compare_associate_games')
-      .select(`
-        *,
-        compare_associate_guesses(*)
-      `)
+      .select(
+        `
+          *,
+          compare_associate_guesses(*)
+        `,
+      )
       .eq('id', gameId)
       .maybeSingle()
   },
@@ -262,7 +278,14 @@ export const gameAPI = {
     return await supabase.from('compare_associate_guesses').insert(data)
   },
 
-  getComparativeAssociatedScoreboard: async (timePeriod: TimePeriod, sources_group_a: NewsSource[], sources_group_b: NewsSource[], search_term: string, scoreboardSize: number, referenceDate: Date) => {
+  getComparativeAssociatedScoreboard: async (
+    timePeriod: TimePeriod,
+    sources_group_a: NewsSource[],
+    sources_group_b: NewsSource[],
+    search_term: string,
+    scoreboardSize: number,
+    referenceDate: Date,
+  ) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
     return await supabase
@@ -272,7 +295,7 @@ export const gameAPI = {
         sources_group_a,
         sources_group_b,
         search_term,
-        size: scoreboardSize
+        size: scoreboardSize,
       })
       .select('*')
   },
@@ -315,21 +338,32 @@ export const userAPI = {
 
 // Leaderboard API
 export const leaderboardAPI = {
-  getGlobalLeaderboard: async (limit = 50, offset = 0): Promise<ApiResponse<{
-    leaderboard: LeaderboardEntry[]
-    userRank: number | null
-    total: number
-  }>> => {
+  getGlobalLeaderboard: async (
+    limit = 50,
+    offset = 0,
+  ): Promise<
+    ApiResponse<{
+      leaderboard: LeaderboardEntry[]
+      userRank: number | null
+      total: number
+    }>
+  > => {
     const response = await api.get(`/leaderboard/global?limit=${limit}&offset=${offset}`)
     return response.data
   },
 
-  getTimePeriodLeaderboard: async (timePeriod: string, limit = 50, offset = 0): Promise<ApiResponse<{
-    timePeriod: string
-    leaderboard: LeaderboardEntry[]
-    userRank: number | null
-    total: number
-  }>> => {
+  getTimePeriodLeaderboard: async (
+    timePeriod: string,
+    limit = 50,
+    offset = 0,
+  ): Promise<
+    ApiResponse<{
+      timePeriod: string
+      leaderboard: LeaderboardEntry[]
+      userRank: number | null
+      total: number
+    }>
+  > => {
     const response = await api.get(`/leaderboard/time-period/${timePeriod}?limit=${limit}&offset=${offset}`)
     return response.data
   },

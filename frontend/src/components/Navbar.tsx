@@ -15,14 +15,14 @@ import {
   ListItemText,
   Divider,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material'
 import {
   Home as HomeIcon,
   Person as UserIcon,
   EmojiEvents as TrophyIcon,
   Menu as MenuIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
 } from '@mui/icons-material'
 
 const Navbar: React.FC = () => {
@@ -47,10 +47,12 @@ const Navbar: React.FC = () => {
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
-    ...(isAuthenticated ? [
-      { name: 'Profile', href: '/profile', icon: UserIcon },
-      { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
-    ] : [])
+    ...(isAuthenticated
+      ? [
+          { name: 'Profile', href: '/profile', icon: UserIcon },
+          { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
+        ]
+      : []),
   ]
 
   const drawer = (
@@ -59,18 +61,13 @@ const Navbar: React.FC = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Newswordy
         </Typography>
-        <IconButton
-          color="inherit"
-          aria-label="close drawer"
-          edge="end"
-          onClick={handleDrawerToggle}
-        >
+        <IconButton color="inherit" aria-label="close drawer" edge="end" onClick={handleDrawerToggle}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
       <List>
-        {navigation.map((item) => (
+        {navigation.map(item => (
           <ListItem
             key={item.name}
             component={Link}
@@ -92,21 +89,12 @@ const Navbar: React.FC = () => {
             <Typography variant="body2" sx={{ mb: 1 }}>
               Welcome, <strong>{user?.nickname || user?.email}</strong>
             </Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              fullWidth
-              onClick={handleLogout}
-            >
+            <Button variant="outlined" color="error" fullWidth onClick={handleLogout}>
               Logout
             </Button>
           </Box>
         ) : (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleLogin}
-          >
+          <Button variant="contained" fullWidth onClick={handleLogin}>
             Sign In
           </Button>
         )}
@@ -127,7 +115,7 @@ const Navbar: React.FC = () => {
               textDecoration: 'none',
               color: 'inherit',
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <Box
@@ -139,7 +127,7 @@ const Navbar: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                mr: 1
+                mr: 1,
               }}
             >
               <Typography variant="h6" color="primary" fontWeight="bold">
@@ -152,7 +140,7 @@ const Navbar: React.FC = () => {
           {/* Desktop Navigation */}
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {navigation.map((item) => (
+              {navigation.map(item => (
                 <Button
                   key={item.name}
                   component={Link}
@@ -164,26 +152,18 @@ const Navbar: React.FC = () => {
                   {item.name}
                 </Button>
               ))}
-              
+
               {isAuthenticated ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Typography variant="body2">
                     Welcome, <strong>{user?.nickname || user?.email}</strong>
                   </Typography>
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    onClick={handleLogout}
-                  >
+                  <Button variant="outlined" color="inherit" onClick={handleLogout}>
                     Logout
                   </Button>
                 </Box>
               ) : (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleLogin}
-                >
+                <Button variant="contained" color="secondary" onClick={handleLogin}>
                   Sign In
                 </Button>
               )}
@@ -192,12 +172,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           {isMobile && (
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="end"
-              onClick={handleDrawerToggle}
-            >
+            <IconButton color="inherit" aria-label="open drawer" edge="end" onClick={handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
           )}

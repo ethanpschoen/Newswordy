@@ -2,28 +2,21 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { AssociateGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Container,
-  Stack,
-  TextField,
-  Typography,
-  Alert
-} from '@mui/material'
-import {
-  PlayArrow as PlayIcon,
-  Search as SearchIcon
-} from '@mui/icons-material'
+  AssociateGame,
+  TIME_PERIODS,
+  DEFAULT_MAX_GUESSES,
+  DEFAULT_SCOREBOARD_SIZE,
+  NewsSource,
+  TimePeriod,
+} from '../types'
+import { Box, Button, Card, CardContent, Chip, Container, Stack, TextField, Typography, Alert } from '@mui/material'
+import { PlayArrow as PlayIcon, Search as SearchIcon } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 
 const Associate: React.FC = () => {
-  const { isLoading, user } = useAuth0();
+  const { isLoading, user } = useAuth0()
 
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -50,16 +43,16 @@ const Associate: React.FC = () => {
         guessed_words: [],
         remaining_guesses: maxGuesses,
         is_completed: false,
-        user_id: user?.sub
+        user_id: user?.sub,
       }
-      
+
       const { data, error } = await gameAPI.createAssociateGame(game)
 
       if (error) {
         console.error('Error creating game:', error)
         return
       }
-    
+
       const gameId = data.id
       // Navigate to associate game
       navigate(`/associate/${gameId}`)
@@ -110,7 +103,8 @@ const Associate: React.FC = () => {
       {/* Instructions Alert */}
       <Alert severity="info" sx={{ mb: 4 }}>
         <Typography variant="body2">
-          <strong>How it works:</strong> Type a word in the input field, and verify it's frequency by pressing the 'Find Count' button. Once verified, press the 'Start Game' button to begin.
+          <strong>How it works:</strong> Type a word in the input field, and verify it's frequency by pressing the 'Find
+          Count' button. Once verified, press the 'Start Game' button to begin.
         </Typography>
       </Alert>
 
@@ -124,7 +118,7 @@ const Associate: React.FC = () => {
               <TextField
                 label="Enter a word that appears in news headlines"
                 value={selectedWord}
-                onChange={(e) => {
+                onChange={e => {
                   setSelectedWord(e.target.value)
                   setWordCount(null)
                 }}
@@ -133,29 +127,29 @@ const Associate: React.FC = () => {
                 fullWidth
                 disabled={findingCount}
                 InputProps={{
-                  startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                  startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
                 }}
-                sx={{ 
+                sx={{
                   '& .MuiInputBase-input': { fontSize: '1rem' },
-                  flex: 1
+                  flex: 1,
                 }}
               />
-              <Button 
-                variant="contained" 
+              <Button
+                variant="contained"
                 type="submit"
                 disabled={findingCount || !selectedWord.trim() || (wordCount !== undefined && wordCount !== null)}
-                sx={{ 
+                sx={{
                   minWidth: { xs: '100%', sm: 140 },
                   py: 1.5,
                   fontSize: '1rem',
-                  fontWeight: 600
+                  fontWeight: 600,
                 }}
               >
                 {findingCount ? 'Searching...' : 'Find Count'}
               </Button>
             </Stack>
           </Box>
-          
+
           {findingCount && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
               <LoadingSpinner size="sm" />
@@ -164,27 +158,28 @@ const Associate: React.FC = () => {
           )}
 
           {wordCount !== null && wordCount !== undefined && (
-            <Alert 
-              severity={wordCount > 0 ? "success" : "warning"} 
-              sx={{ 
+            <Alert
+              severity={wordCount > 0 ? 'success' : 'warning'}
+              sx={{
                 mt: 2,
                 '& .MuiAlert-message': {
-                  width: '100%'
-                }
+                  width: '100%',
+                },
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 1,
+                }}
+              >
                 <Typography variant="body1" sx={{ fontWeight: 600 }}>
                   <strong>{wordCount.toLocaleString()}</strong> instance{wordCount !== 1 ? 's' : ''} found
                 </Typography>
-                {wordCount > 0 && (
-                  <Chip 
-                    label="Ready to play" 
-                    color="success" 
-                    size="small"
-                    sx={{ fontWeight: 600 }}
-                  />
-                )}
+                {wordCount > 0 && <Chip label="Ready to play" color="success" size="small" sx={{ fontWeight: 600 }} />}
               </Box>
             </Alert>
           )}
@@ -226,8 +221,8 @@ const Associate: React.FC = () => {
               background: 'linear-gradient(135deg, #1870C9 0%, #CA0248 100%)',
             },
             '&:disabled': {
-              background: 'grey.300'
-            }
+              background: 'grey.300',
+            },
           }}
         >
           {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start Association Game'}

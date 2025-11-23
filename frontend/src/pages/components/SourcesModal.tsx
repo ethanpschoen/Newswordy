@@ -1,5 +1,5 @@
-import { Box, Card, CardContent, Dialog, DialogContent, DialogTitle, Grid, Typography } from "@mui/material"
-import { NewsSource, NewsSourceConfig } from "../../types"
+import { Box, Card, CardContent, Dialog, DialogContent, DialogTitle, Grid, Typography } from '@mui/material'
+import { NewsSource, NewsSourceConfig } from '../../types'
 
 interface Props {
   open: boolean
@@ -13,12 +13,14 @@ const SourcesModal = ({ open, onClose, sources }: Props) => {
       <DialogTitle>News Sources</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          {sources.map((source) => (
+          {sources.map(source => (
             <Grid size={{ xs: 12 }} key={source}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Box
+                      sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
                       {NewsSourceConfig[source].logo}
                     </Box>
                     <Typography variant="body1" fontWeight="medium">

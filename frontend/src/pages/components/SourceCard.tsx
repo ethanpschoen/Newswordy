@@ -1,6 +1,6 @@
-import { Box, Card, Typography, Stack, IconButton } from "@mui/material"
-import { CompareArrows as CompareIcon, Delete as DeleteIcon } from "@mui/icons-material"
-import { NewsSource, NewsSourceConfig } from "../../types"
+import { Box, Card, Typography, Stack, IconButton } from '@mui/material'
+import { CompareArrows as CompareIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import { NewsSource, NewsSourceConfig } from '../../types'
 
 interface Props {
   source: NewsSource
@@ -24,8 +24,8 @@ const SourceCard: React.FC<Props> = ({ source, onRemove, onMoveToOther, groupLab
         '&:hover': {
           boxShadow: 3,
           transform: 'translateY(-2px)',
-          transition: 'all 0.2s'
-        }
+          transition: 'all 0.2s',
+        },
       }}
     >
       <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -47,11 +47,7 @@ const SourceCard: React.FC<Props> = ({ source, onRemove, onMoveToOther, groupLab
           </IconButton>
         )}
         {onRemove && (
-          <IconButton
-            size="small"
-            onClick={onRemove}
-            title="Remove from group"
-          >
+          <IconButton size="small" onClick={onRemove} title="Remove from group">
             <DeleteIcon fontSize="small" />
           </IconButton>
         )}

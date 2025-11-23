@@ -1,6 +1,6 @@
-import { Box, Card, Typography, Stack, IconButton } from "@mui/material"
-import { Add as AddIcon } from "@mui/icons-material"
-import { NewsSource, NewsSourceConfig } from "../../types"
+import { Box, Card, Typography, Stack, IconButton } from '@mui/material'
+import { Add as AddIcon } from '@mui/icons-material'
+import { NewsSource, NewsSourceConfig } from '../../types'
 
 interface Props {
   source: NewsSource
@@ -24,8 +24,8 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
           borderColor: '#23CE6B',
           bgcolor: 'rgba(35, 206, 107, 0.1)',
           transform: 'translateY(-2px)',
-          transition: 'all 0.2s'
-        }
+          transition: 'all 0.2s',
+        },
       }}
     >
       <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -39,7 +39,7 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
       <Stack direction="row" spacing={0.5}>
         <IconButton
           size="small"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation()
             handleAddToGroupA(source)
           }}
@@ -47,8 +47,8 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
             bgcolor: 'primary.main',
             color: 'white',
             '&:hover': {
-              bgcolor: 'primary.dark'
-            }
+              bgcolor: 'primary.dark',
+            },
           }}
           title="Add to Group A"
         >
@@ -56,7 +56,7 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
         </IconButton>
         <IconButton
           size="small"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation()
             handleAddToGroupB(source)
           }}
@@ -64,8 +64,8 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
             bgcolor: 'secondary.main',
             color: 'white',
             '&:hover': {
-              bgcolor: 'secondary.dark'
-            }
+              bgcolor: 'secondary.dark',
+            },
           }}
           title="Add to Group B"
         >

@@ -98,16 +98,22 @@ const AppContent: React.FC = () => {
             <Route path="/associate/:associateId" element={<AssociateGame />} />
             <Route path="/compare-associate" element={<CompareAssociate />} />
             <Route path="/compare-associate/:compareAssociateId" element={<CompareAssociateGame />} />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/leaderboard" element={
-              <ProtectedRoute>
-                <Leaderboard />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leaderboard"
+              element={
+                <ProtectedRoute>
+                  <Leaderboard />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>

@@ -1,20 +1,8 @@
 import React, { useState, useMemo } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { userAPI } from '../services/api'
-import {
-  Box,
-  Card,
-  CardContent,
-  Container,
-  Divider,
-  Grid,
-  Typography
-} from '@mui/material'
-import {
-  PlayArrow as PlayIcon,
-  EmojiEvents as TrophyIcon,
-  Person as UserIcon
-} from '@mui/icons-material'
+import { Box, Card, CardContent, Container, Divider, Grid, Typography } from '@mui/material'
+import { PlayArrow as PlayIcon, EmojiEvents as TrophyIcon, Person as UserIcon } from '@mui/icons-material'
 import GamesList from './components/GamesList'
 import { AssociateGame, CompareAssociateGame, CompareGame, Game, GameMode } from '../types'
 
@@ -26,16 +14,31 @@ interface Stat {
 }
 
 const Profile: React.FC = () => {
-  const { user } = useAuth0();
+  const { user } = useAuth0()
 
   const getUserStats = async () => {
     const account = await userAPI.getSingleUser(user?.sub || '')
     const history = account.data
 
     const userStats: Stat[] = [
-      { name: 'Total Completed Games', value: history?.total_games || 0, icon: PlayIcon, color: 'primary.main' },
-      { name: 'Best Score', value: history?.best_score || 0, icon: TrophyIcon, color: 'warning.main' },
-      { name: 'Average Score', value: history?.average_score?.toFixed(1) || '0.0', icon: UserIcon, color: 'success.main' },
+      {
+        name: 'Total Completed Games',
+        value: history?.total_games || 0,
+        icon: PlayIcon,
+        color: 'primary.main',
+      },
+      {
+        name: 'Best Score',
+        value: history?.best_score || 0,
+        icon: TrophyIcon,
+        color: 'warning.main',
+      },
+      {
+        name: 'Average Score',
+        value: history?.average_score?.toFixed(1) || '0.0',
+        icon: UserIcon,
+        color: 'success.main',
+      },
     ]
 
     setStats(userStats)
@@ -52,7 +55,7 @@ const Profile: React.FC = () => {
   }
 
   useMemo(getUserStats, []) // eslint-disable-line react-hooks/exhaustive-deps
-  
+
   const [stats, setStats] = useState<Stat[]>([])
   const [games, setGames] = useState<Game[]>([])
   const [comparativeGames, setComparativeGames] = useState<CompareGame[]>([])
@@ -62,7 +65,7 @@ const Profile: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat) => (
+        {stats.map(stat => (
           <Grid size={{ xs: 12, md: 4 }} key={stat.name}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>

@@ -2,17 +2,14 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { CompareAssociateGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup } from '../types'
-import { 
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Stack,
-  Container,
-  useMediaQuery,
-  useTheme
-} from '@mui/material'
+import {
+  CompareAssociateGameState,
+  Guess,
+  ScoreboardEntry,
+  ComparativeScoreboardEntry,
+  ComparativeGroup,
+} from '../types'
+import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
 
@@ -34,10 +31,10 @@ const CompareAssociateGame: React.FC = () => {
 
   // Game state variables
   const [gameState, setGameState] = useState<CompareAssociateGameState | null>(null)
-	const [scoreboard, setScoreboard] = useState<ComparativeScoreboardEntry[]>([])
+  const [scoreboard, setScoreboard] = useState<ComparativeScoreboardEntry[]>([])
   const [scoreboardGroupA, setScoreboardGroupA] = useState<ComparativeScoreboardEntry[]>([])
   const [scoreboardGroupB, setScoreboardGroupB] = useState<ComparativeScoreboardEntry[]>([])
-  
+
   // Action state variables
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -47,11 +44,11 @@ const CompareAssociateGame: React.FC = () => {
 
   // Article panel state
   const [selectedWordDataGroupA, setSelectedWordDataGroupA] = useState<ScoreboardEntry | null>(null)
-	const [selectedWordDataGroupB, setSelectedWordDataGroupB] = useState<ScoreboardEntry | null>(null)
+  const [selectedWordDataGroupB, setSelectedWordDataGroupB] = useState<ScoreboardEntry | null>(null)
   const [currentPageGroupA, setCurrentPageGroupA] = useState(0)
   const [currentPageGroupB, setCurrentPageGroupB] = useState(0)
   const articlesPerPage = 10
-  
+
   // Refs and state for height management
   const [showScoreboard, setShowScoreboard] = useState(false)
   const scoreboardRef = useRef<HTMLDivElement>(null)
@@ -95,26 +92,37 @@ const CompareAssociateGame: React.FC = () => {
       setLoading(true)
 
       // Get game state from database
-			const gameResponse = await gameAPI.getComparativeAssociatedGameState(gameId || '')
+      const gameResponse = await gameAPI.getComparativeAssociatedGameState(gameId || '')
 
-			if (gameResponse.error) {
-				console.error('Failed to load game:', gameResponse.error)
-			}
+      if (gameResponse.error) {
+        console.error('Failed to load game:', gameResponse.error)
+      }
 
-			const game = gameResponse.data
-			setGameState(game)
+      const game = gameResponse.data
+      setGameState(game)
 
-			// Get top words from database
-			const scoreboardResponse = await gameAPI.getComparativeAssociatedScoreboard(game.time_period, game.sources_group_a, game.sources_group_b, game.word, game.scoreboard_size, new Date(game.created_at))
+      // Get top words from database
+      const scoreboardResponse = await gameAPI.getComparativeAssociatedScoreboard(
+        game.time_period,
+        game.sources_group_a,
+        game.sources_group_b,
+        game.word,
+        game.scoreboard_size,
+        new Date(game.created_at),
+      )
 
-			if (scoreboardResponse.error) {
-				console.error('Failed to fetch scoreboard', scoreboardResponse.error)
-			}
+      if (scoreboardResponse.error) {
+        console.error('Failed to fetch scoreboard', scoreboardResponse.error)
+      }
 
-			const board = scoreboardResponse.data
-			setScoreboard(board)
-			setScoreboardGroupA(board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_A))
-			setScoreboardGroupB(board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_B))
+      const board = scoreboardResponse.data
+      setScoreboard(board)
+      setScoreboardGroupA(
+        board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_A),
+      )
+      setScoreboardGroupB(
+        board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_B),
+      )
     } catch (error) {
       console.error('Failed to load game:', error)
       setError('Failed to load game')
@@ -149,16 +157,16 @@ const CompareAssociateGame: React.FC = () => {
       let updatedGuessedWordsGroupA = gameState?.guessed_words_group_a || []
       let updatedGuessedWordsGroupB = gameState?.guessed_words_group_b || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
-      
+
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
 
-				if (foundWord.group_name === ComparativeGroup.GROUP_A) {
-					updatedGuessedWordsGroupA.push(guessWord)
-				} else {
-					updatedGuessedWordsGroupB.push(guessWord)
-					index -= gameState!.scoreboard_size
-				}
+        if (foundWord.group_name === ComparativeGroup.GROUP_A) {
+          updatedGuessedWordsGroupA.push(guessWord)
+        } else {
+          updatedGuessedWordsGroupB.push(guessWord)
+          index -= gameState!.scoreboard_size
+        }
 
         wordScore = calculateScore(index, scoreboard.length / 2)
         updatedScore += wordScore
@@ -176,10 +184,10 @@ const CompareAssociateGame: React.FC = () => {
         word: guessWord,
         score: wordScore,
         rank: index !== undefined ? index + 1 : undefined,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }
 
-      const updatedGuesses = [...gameState?.compare_associate_guesses || [], newGuess]
+      const updatedGuesses = [...(gameState?.compare_associate_guesses || []), newGuess]
 
       const updatedGameState = {
         ...gameState!,
@@ -187,14 +195,18 @@ const CompareAssociateGame: React.FC = () => {
         compare_associate_guesses: updatedGuesses,
         guessed_words_group_a: updatedGuessedWordsGroupA,
         guessed_words_group_b: updatedGuessedWordsGroupB,
-        remaining_guesses: updatedRemainingGuesses
+        remaining_guesses: updatedRemainingGuesses,
       }
 
       // Update gameState through setGameState to trigger re-render
-      setGameState(prev => prev ? {
-        ...prev,
-        ...updatedGameState
-      } : null)
+      setGameState(prev =>
+        prev
+          ? {
+              ...prev,
+              ...updatedGameState,
+            }
+          : null,
+      )
 
       setCurrentGuess('')
 
@@ -205,15 +217,18 @@ const CompareAssociateGame: React.FC = () => {
       }
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (updatedRemainingGuesses <= 0 || 2 * gameState!.scoreboard_size <= updatedGuessedWordsGroupA.length + updatedGuessedWordsGroupB.length) {
-        setGameState(prev => prev ? { ...prev, is_completed: true } : null)
+      if (
+        updatedRemainingGuesses <= 0 ||
+        2 * gameState!.scoreboard_size <= updatedGuessedWordsGroupA.length + updatedGuessedWordsGroupB.length
+      ) {
+        setGameState(prev => (prev ? { ...prev, is_completed: true } : null))
         updatedGameState.is_completed = true
       }
 
       await gameAPI.submitComparativeAssociatedGuess(newGuess)
 
       let { compare_associate_guesses: _, ...updatedGame } = updatedGameState
-      
+
       if (updatedGame.is_completed) {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
@@ -234,8 +249,7 @@ const CompareAssociateGame: React.FC = () => {
         }
       }
 
-      
-			await gameAPI.updateComparativeAssociatedGameState(updatedGame, updatedGame.id)
+      await gameAPI.updateComparativeAssociatedGameState(updatedGame, updatedGame.id)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
     } finally {
@@ -245,37 +259,37 @@ const CompareAssociateGame: React.FC = () => {
 
   const handleWordClick = (word: string) => {
     // Find the word data from scoreboard
-		let condensedWordDataGroupA: ScoreboardEntry | null = null
-		let condensedWordDataGroupB: ScoreboardEntry | null = null
+    let condensedWordDataGroupA: ScoreboardEntry | null = null
+    let condensedWordDataGroupB: ScoreboardEntry | null = null
     const wordDataGroupA = scoreboardGroupA.find(item => item.word.toLowerCase() === word.toLowerCase())
     const wordDataGroupB = scoreboardGroupB.find(item => item.word.toLowerCase() === word.toLowerCase())
-		if (wordDataGroupA) {
-			condensedWordDataGroupA = {
-				word: wordDataGroupA.word,
-				rank: wordDataGroupA.avg_rank_group_a,
-				articles: wordDataGroupA.articles_group_a
-			}
-			condensedWordDataGroupB = {
-				word: wordDataGroupA.word,
-				rank: wordDataGroupA.avg_rank_group_b,
-				articles: wordDataGroupA.articles_group_b
-			}
-		}
-		if (wordDataGroupB) {
-			condensedWordDataGroupB = {
-				word: wordDataGroupB.word,
-				rank: wordDataGroupB.avg_rank_group_b,
-				articles: wordDataGroupB.articles_group_b
-			}
-			condensedWordDataGroupA = {
-				word: wordDataGroupB.word,
-				rank: wordDataGroupB.avg_rank_group_a,
-				articles: wordDataGroupB.articles_group_a
-			}
-		}
+    if (wordDataGroupA) {
+      condensedWordDataGroupA = {
+        word: wordDataGroupA.word,
+        rank: wordDataGroupA.avg_rank_group_a,
+        articles: wordDataGroupA.articles_group_a,
+      }
+      condensedWordDataGroupB = {
+        word: wordDataGroupA.word,
+        rank: wordDataGroupA.avg_rank_group_b,
+        articles: wordDataGroupA.articles_group_b,
+      }
+    }
+    if (wordDataGroupB) {
+      condensedWordDataGroupB = {
+        word: wordDataGroupB.word,
+        rank: wordDataGroupB.avg_rank_group_b,
+        articles: wordDataGroupB.articles_group_b,
+      }
+      condensedWordDataGroupA = {
+        word: wordDataGroupB.word,
+        rank: wordDataGroupB.avg_rank_group_a,
+        articles: wordDataGroupB.articles_group_a,
+      }
+    }
     if (condensedWordDataGroupA && condensedWordDataGroupB) {
       setSelectedWordDataGroupA(condensedWordDataGroupA)
-			setSelectedWordDataGroupB(condensedWordDataGroupB)
+      setSelectedWordDataGroupB(condensedWordDataGroupB)
       setCurrentPageGroupA(0)
       setCurrentPageGroupB(0)
     }
@@ -294,12 +308,12 @@ const CompareAssociateGame: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="sm">
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
             alignItems: 'center',
-            minHeight: '50vh'
+            minHeight: '50vh',
           }}
         >
           <LoadingSpinner size="lg" />
@@ -311,14 +325,14 @@ const CompareAssociateGame: React.FC = () => {
   if (!gameState) {
     return (
       <Container maxWidth="sm">
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
             minHeight: '50vh',
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           <Typography variant="h3" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -358,17 +372,41 @@ const CompareAssociateGame: React.FC = () => {
 
           {/* Group A Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
+            <Scoreboard
+              scoreboard={scoreboardGroupA}
+              sources={gameState.sources_group_a}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+              isCompleted={gameState.is_completed}
+              guessedWords={gameState.guessed_words_group_a}
+              handleWordClick={handleWordClick}
+              groupLabel="Source Group A"
+              groupAccentColor={groupAccentColor}
+            />
           </Grid>
 
-					{/* Group B Scoreboard */}
+          {/* Group B Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 4 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
+            <Scoreboard
+              scoreboard={scoreboardGroupB}
+              sources={gameState.sources_group_b}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+              isCompleted={gameState.is_completed}
+              guessedWords={gameState.guessed_words_group_b}
+              handleWordClick={handleWordClick}
+              groupLabel="Source Group B"
+              groupAccentColor={groupBAccentColor}
+            />
           </Grid>
 
           {/* Game Stats */}
           <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
-            <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
+            <GameStats
+              guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)}
+              score={gameState.score}
+              remainingGuesses={gameState.remaining_guesses}
+            />
           </Grid>
 
           {/* Recent Guesses */}
@@ -418,18 +456,34 @@ const CompareAssociateGame: React.FC = () => {
       <Grid container spacing={3}>
         {/* Left Column - Header Info, Game Stats & Group A Article Info */}
         <Grid size={{ xs: 12, lg: 2.5 }}>
-          <Stack spacing={2} sx={{ 
-            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
-            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
-          }}>
+          <Stack
+            spacing={2}
+            sx={{
+              height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+              maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none',
+            }}
+          >
             {/* Game Information */}
             <GameInfo timePeriod={gameState.time_period} backPage={'/compare-associate'} />
 
             {/* Game Stats */}
-            <GameStats guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
+            <GameStats
+              guessedWords={gameState.guessed_words_group_a.concat(gameState.guessed_words_group_b)}
+              score={gameState.score}
+              remainingGuesses={gameState.remaining_guesses}
+            />
 
-					{/* Group A Article Info */}
-						<ArticleInfo selectedWordData={selectedWordDataGroupA} currentPage={currentPageGroupA} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupA} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
+            {/* Group A Article Info */}
+            <ArticleInfo
+              selectedWordData={selectedWordDataGroupA}
+              currentPage={currentPageGroupA}
+              articlesPerPage={articlesPerPage}
+              setCurrentPage={setCurrentPageGroupA}
+              closeArticlePanel={closeArticlePanel}
+              scoreboardHeight={scoreboardHeight}
+              groupLabel="Source Group A"
+              groupAccentColor={groupAccentColor}
+            />
           </Stack>
         </Grid>
 
@@ -452,33 +506,65 @@ const CompareAssociateGame: React.FC = () => {
             />
 
             {/* Scoreboard Section */}
-						<Grid container spacing={2}>
-							{/* Group A Scoreboard */}
-							<Grid size={{ xs: 12, lg: 6 }}>
-								<Scoreboard scoreboard={scoreboardGroupA} sources={gameState.sources_group_a} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_a} handleWordClick={handleWordClick} groupLabel="Source Group A" groupAccentColor={groupAccentColor} />
-							</Grid>
+            <Grid container spacing={2}>
+              {/* Group A Scoreboard */}
+              <Grid size={{ xs: 12, lg: 6 }}>
+                <Scoreboard
+                  scoreboard={scoreboardGroupA}
+                  sources={gameState.sources_group_a}
+                  showScoreboard={showScoreboard}
+                  setShowScoreboard={setShowScoreboard}
+                  isCompleted={gameState.is_completed}
+                  guessedWords={gameState.guessed_words_group_a}
+                  handleWordClick={handleWordClick}
+                  groupLabel="Source Group A"
+                  groupAccentColor={groupAccentColor}
+                />
+              </Grid>
 
-							{/* Group B Scoreboard */}
-							<Grid size={{ xs: 12, lg: 6 }}>
-								<Scoreboard scoreboard={scoreboardGroupB} sources={gameState.sources_group_b} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words_group_b} handleWordClick={handleWordClick} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
-							</Grid>
-						</Grid>
+              {/* Group B Scoreboard */}
+              <Grid size={{ xs: 12, lg: 6 }}>
+                <Scoreboard
+                  scoreboard={scoreboardGroupB}
+                  sources={gameState.sources_group_b}
+                  showScoreboard={showScoreboard}
+                  setShowScoreboard={setShowScoreboard}
+                  isCompleted={gameState.is_completed}
+                  guessedWords={gameState.guessed_words_group_b}
+                  handleWordClick={handleWordClick}
+                  groupLabel="Source Group B"
+                  groupAccentColor={groupBAccentColor}
+                />
+              </Grid>
+            </Grid>
           </Stack>
         </Grid>
 
         {/* Right Column - Recent Guesses & Group B Article Info */}
         <Grid size={{ xs: 12, lg: 2.5 }}>
-					<Stack spacing={2} sx={{ 
-            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
-            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
-          }}>
-						{/* Recent Guesses */}
-						<GuessList guesses={gameState.compare_associate_guesses} />
+          <Stack
+            spacing={2}
+            sx={{
+              height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+              maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none',
+            }}
+          >
+            {/* Recent Guesses */}
+            <GuessList guesses={gameState.compare_associate_guesses} />
 
-						{/* Group B Article Info */}
-						<ArticleInfo selectedWordData={selectedWordDataGroupB} currentPage={currentPageGroupB} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPageGroupB} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} groupLabel="Source Group B" groupAccentColor={groupBAccentColor} />
-					</Stack>
-				</Grid>
+            {/* Group B Article Info */}
+            <ArticleInfo
+              selectedWordData={selectedWordDataGroupB}
+              currentPage={currentPageGroupB}
+              articlesPerPage={articlesPerPage}
+              setCurrentPage={setCurrentPageGroupB}
+              closeArticlePanel={closeArticlePanel}
+              scoreboardHeight={scoreboardHeight}
+              groupLabel="Source Group B"
+              groupAccentColor={groupBAccentColor}
+            />
+          </Stack>
+        </Grid>
       </Grid>
     </Container>
   )

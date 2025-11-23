@@ -1,10 +1,10 @@
-import { TrophyIcon } from "@heroicons/react/24/outline"
-import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme } from "@mui/material"
-import { PlayIcon } from "@heroicons/react/24/outline"
-import LoadingSpinner from "../../components/LoadingSpinner"
-import { useNavigate } from "react-router-dom"
-import { Color } from "../../types"
-import { useRef, useEffect } from "react"
+import { TrophyIcon } from '@heroicons/react/24/outline'
+import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme } from '@mui/material'
+import { PlayIcon } from '@heroicons/react/24/outline'
+import LoadingSpinner from '../../components/LoadingSpinner'
+import { useNavigate } from 'react-router-dom'
+import { Color } from '../../types'
+import { useRef, useEffect } from 'react'
 
 interface Props {
   handleSubmitGuess: (e: React.FormEvent<HTMLFormElement>) => void
@@ -27,7 +27,7 @@ const WordInput = ({
   success,
   isCompleted,
   score,
-  isOverlayOpen = false
+  isOverlayOpen = false,
 }: Props) => {
   const navigate = useNavigate()
   const theme = useTheme()
@@ -51,29 +51,35 @@ const WordInput = ({
   }
 
   return (
-    <Card sx={isMobile ? {
-      position: 'fixed',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      borderRadius: 0,
-      zIndex: theme.zIndex.drawer + 1,
-      boxShadow: '0 -8px 24px rgba(15, 23, 42, 0.25)',
-      borderTop: `1px solid ${theme.palette.divider}`,
-      backgroundColor: theme.palette.background.paper
-    } : {}}>
+    <Card
+      sx={
+        isMobile
+          ? {
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              borderRadius: 0,
+              zIndex: theme.zIndex.drawer + 1,
+              boxShadow: '0 -8px 24px rgba(15, 23, 42, 0.25)',
+              borderTop: `1px solid ${theme.palette.divider}`,
+              backgroundColor: theme.palette.background.paper,
+            }
+          : {}
+      }
+    >
       <CardContent
         sx={{
           py: 2,
           px: { xs: 2.25, sm: 3 },
           width: '100%',
-          mx: isMobile ? 'auto' : 0
+          mx: isMobile ? 'auto' : 0,
         }}
       >
         <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
           Guess a Word
         </Typography>
-    
+
         {isCompleted ? (
           <Box sx={{ textAlign: 'center', py: 3 }}>
             <TrophyIcon className="w-12 h-12 mx-auto mb-3" style={{ color: Color.TROPHY }} />
@@ -100,26 +106,26 @@ const WordInput = ({
               fullWidth
               label="Enter a word that appears in news headlines:"
               value={currentGuess}
-              onChange={(e) => setCurrentGuess(e.target.value)}
+              onChange={e => setCurrentGuess(e.target.value)}
               placeholder="Type a word..."
               variant="outlined"
               size="small"
               disabled={submitting}
               sx={{ '& .MuiInputBase-input': { fontSize: '1rem' } }}
             />
-        
+
             {error && (
               <Alert severity="error" sx={{ py: 0.5 }}>
                 {error}
               </Alert>
             )}
-        
+
             {success && (
               <Alert severity="success" sx={{ py: 0.5 }}>
                 {success}
               </Alert>
             )}
-        
+
             <Button
               type="submit"
               variant="contained"
@@ -130,7 +136,7 @@ const WordInput = ({
               {submitting ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <LoadingSpinner size="sm" />
-                    Submitting...
+                  Submitting...
                 </Box>
               ) : (
                 'Submit Guess'

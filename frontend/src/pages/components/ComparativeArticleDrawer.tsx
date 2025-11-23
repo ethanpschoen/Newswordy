@@ -1,20 +1,13 @@
-import { SetStateAction } from "react"
-import {
-  Box,
-  Drawer,
-  Stack,
-  Typography,
-  IconButton,
-  Paper
-} from "@mui/material"
-import { useTheme, alpha } from "@mui/material/styles"
-import useMediaQuery from "@mui/material/useMediaQuery"
+import { SetStateAction } from 'react'
+import { Box, Drawer, Stack, Typography, IconButton, Paper } from '@mui/material'
+import { useTheme, alpha } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  Close as CloseIcon
-} from "@mui/icons-material"
-import { NewsSourceConfig, ScoreboardEntry } from "../../types"
+  Close as CloseIcon,
+} from '@mui/icons-material'
+import { NewsSourceConfig, ScoreboardEntry } from '../../types'
 
 interface Props {
   open: boolean
@@ -45,10 +38,10 @@ const ComparativeArticleDrawer = ({
   currentPageGroupB,
   setCurrentPageGroupA,
   setCurrentPageGroupB,
-  articlesPerPage
+  articlesPerPage,
 }: Props) => {
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("lg"))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   if (!isMobile) return null
   if (!groupAData && !groupBData) return null
@@ -58,7 +51,7 @@ const ComparativeArticleDrawer = ({
     label: string,
     accentColor: string,
     currentPage: number,
-    setCurrentPage: (value: React.SetStateAction<number>) => void
+    setCurrentPage: (value: React.SetStateAction<number>) => void,
   ) => {
     if (!wordData) return null
 
@@ -73,16 +66,16 @@ const ComparativeArticleDrawer = ({
           borderTop: `4px solid ${accentColor}`,
           backgroundColor: alpha(accentColor, 0.03),
           p: 2,
-          borderRadius: 2
+          borderRadius: 2,
         }}
       >
         <Stack spacing={1.5}>
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box>
               <Typography variant="overline" sx={{ fontWeight: 700, color: accentColor, letterSpacing: 1 }}>
                 {label}
               </Typography>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Articles for "{wordData.word.toUpperCase()}"
               </Typography>
             </Box>
@@ -95,21 +88,21 @@ const ComparativeArticleDrawer = ({
                 elevation={0}
                 sx={{
                   p: 1.5,
-                  border: "1px solid",
-                  borderColor: "divider"
+                  border: '1px solid',
+                  borderColor: 'divider',
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.25 }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25 }}>
                   <Box
                     sx={{
                       width: 28,
                       height: 28,
-                      borderRadius: "50%",
+                      borderRadius: '50%',
                       bgcolor: alpha(accentColor, 0.1),
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
                     }}
                   >
                     {NewsSourceConfig[article.source].logo}
@@ -123,23 +116,23 @@ const ComparativeArticleDrawer = ({
                       variant="body2"
                       sx={{
                         fontWeight: 600,
-                        color: "text.primary",
-                        textDecoration: "none",
-                        display: "-webkit-box",
+                        color: 'text.primary',
+                        textDecoration: 'none',
+                        display: '-webkit-box',
                         WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden"
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
                       }}
                     >
                       {article.headline}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                      {new Date(article.published_date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                      {new Date(article.published_date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })}
                     </Typography>
                     <Typography variant="caption" color={accentColor} sx={{ fontWeight: 600 }}>
@@ -154,12 +147,12 @@ const ComparativeArticleDrawer = ({
           {totalArticles > articlesPerPage && (
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 pt: 1,
-                borderTop: "1px solid",
-                borderColor: "divider"
+                borderTop: '1px solid',
+                borderColor: 'divider',
               }}
             >
               <Typography variant="caption" color="text.secondary">
@@ -197,17 +190,17 @@ const ComparativeArticleDrawer = ({
         sx: {
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
-          maxHeight: "85vh"
-        }
+          maxHeight: '85vh',
+        },
       }}
     >
       <Box sx={{ p: 2.5 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
             <Typography variant="overline" color="text.secondary">
               Articles
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Compare Source Groups
             </Typography>
           </Box>
@@ -216,20 +209,8 @@ const ComparativeArticleDrawer = ({
           </IconButton>
         </Box>
         <Stack spacing={2.5}>
-          {renderArticleSection(
-            groupAData,
-            groupALabel,
-            groupAAccentColor,
-            currentPageGroupA,
-            setCurrentPageGroupA
-          )}
-          {renderArticleSection(
-            groupBData,
-            groupBLabel,
-            groupBAccentColor,
-            currentPageGroupB,
-            setCurrentPageGroupB
-          )}
+          {renderArticleSection(groupAData, groupALabel, groupAAccentColor, currentPageGroupA, setCurrentPageGroupA)}
+          {renderArticleSection(groupBData, groupBLabel, groupBAccentColor, currentPageGroupB, setCurrentPageGroupB)}
         </Stack>
       </Box>
     </Drawer>
@@ -237,4 +218,3 @@ const ComparativeArticleDrawer = ({
 }
 
 export default ComparativeArticleDrawer
-

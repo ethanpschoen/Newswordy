@@ -1,8 +1,8 @@
-import { Box, Typography, Card, Stack, CardContent } from "@mui/material"
-import { Button } from "@mui/material"
-import { ArrowLeftIcon } from "@heroicons/react/24/outline"
-import { useNavigate } from "react-router-dom"
-import { TIME_PERIOD_NAMES, TimePeriod } from "../../types"
+import { Box, Typography, Card, Stack, CardContent } from '@mui/material'
+import { Button } from '@mui/material'
+import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom'
+import { TIME_PERIOD_NAMES, TimePeriod } from '../../types'
 
 interface Props {
   isTestMode?: boolean
@@ -32,15 +32,17 @@ const GameInfo = ({ isTestMode = false, timePeriod, backPage = '/' }: Props) => 
               Newswordy
             </Typography>
           </Box>
-                    
+
           {/* Time Period Info */}
-          <Box sx={{ 
-            p: 1.5, 
-            bgcolor: 'grey.50', 
-            borderRadius: 1,
-            border: '1px solid',
-            borderColor: 'grey.200'
-          }}>
+          <Box
+            sx={{
+              p: 1.5,
+              bgcolor: 'grey.50',
+              borderRadius: 1,
+              border: '1px solid',
+              borderColor: 'grey.200',
+            }}
+          >
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
               Selected Time Period
             </Typography>

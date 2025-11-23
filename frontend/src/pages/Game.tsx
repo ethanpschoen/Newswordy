@@ -3,16 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
 import { GameState, Guess, NewsSource, ScoreboardEntry } from '../types'
-import { 
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Stack,
-  Container,
-  useMediaQuery,
-  useTheme
-} from '@mui/material'
+import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
 
@@ -35,26 +26,26 @@ const Game: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>()
 
   const navigate = useNavigate()
-  
+
   // Check if this is test mode
   const isTestMode = gameId === 'test'
-  
+
   // Game state variables
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([])
-  
+
   // Action state variables
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [currentGuess, setCurrentGuess] = useState('')
   const [error, setError] = useState('') // Incorrect guess message
   const [success, setSuccess] = useState('') // Correct guess message
-  
+
   // Article panel state
   const [selectedWordData, setSelectedWordData] = useState<ScoreboardEntry | null>(null)
   const [currentPage, setCurrentPage] = useState(0) // Pagination state
   const articlesPerPage = 10
-  
+
   // Refs and state for height management
   const [showScoreboard, setShowScoreboard] = useState(false)
   const scoreboardRef = useRef<HTMLDivElement>(null)
@@ -109,7 +100,7 @@ const Game: React.FC = () => {
           remaining_guesses: 3,
           is_completed: false,
           max_guesses: 3,
-          scoreboard_size: 10
+          scoreboard_size: 10,
         }
 
         const scoreboard: ScoreboardEntry[] = TEST_DATA
@@ -128,7 +119,12 @@ const Game: React.FC = () => {
         setGameState(game)
 
         // Get top words from database
-        const scoreboardResponse = await gameAPI.getScoreboard(game.time_period, game.sources, game.scoreboard_size, new Date(game.created_at))
+        const scoreboardResponse = await gameAPI.getScoreboard(
+          game.time_period,
+          game.sources,
+          game.scoreboard_size,
+          new Date(game.created_at),
+        )
 
         if (scoreboardResponse.error) {
           console.error('Failed to fetch scoreboard', scoreboardResponse.error)
@@ -170,7 +166,7 @@ const Game: React.FC = () => {
       let updatedScore = gameState?.score || 0
       let updatedGuessedWords = gameState?.guessed_words || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
-      
+
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
         wordScore = calculateScore(index, scoreboard.length)
@@ -192,24 +188,28 @@ const Game: React.FC = () => {
         frequency: foundWord ? foundWord.frequency : 0,
         score: wordScore,
         rank: index !== undefined ? index + 1 : undefined,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }
 
-      const updatedGuesses = [...gameState?.guesses || [], newGuess]
+      const updatedGuesses = [...(gameState?.guesses || []), newGuess]
 
       const updatedGameState = {
         ...gameState!,
         score: updatedScore,
         guesses: updatedGuesses,
         guessed_words: updatedGuessedWords,
-        remaining_guesses: updatedRemainingGuesses
+        remaining_guesses: updatedRemainingGuesses,
       }
 
       // Update gameState through setGameState to trigger re-render
-      setGameState(prev => prev ? {
-        ...prev,
-        ...updatedGameState
-      } : null)
+      setGameState(prev =>
+        prev
+          ? {
+              ...prev,
+              ...updatedGameState,
+            }
+          : null,
+      )
 
       setCurrentGuess('')
 
@@ -221,7 +221,7 @@ const Game: React.FC = () => {
 
       // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
       if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.length) {
-        setGameState(prev => prev ? { ...prev, is_completed: true } : null)
+        setGameState(prev => (prev ? { ...prev, is_completed: true } : null))
         updatedGameState.is_completed = true
       }
 
@@ -230,7 +230,7 @@ const Game: React.FC = () => {
       }
 
       let { guesses: _, ...updatedGame } = updatedGameState
-      
+
       if (updatedGame.is_completed) {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
@@ -280,12 +280,12 @@ const Game: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="sm">
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
             alignItems: 'center',
-            minHeight: '50vh'
+            minHeight: '50vh',
           }}
         >
           <LoadingSpinner size="lg" />
@@ -297,14 +297,14 @@ const Game: React.FC = () => {
   if (!gameState) {
     return (
       <Container maxWidth="sm">
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
             minHeight: '50vh',
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           <Typography variant="h3" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -339,12 +339,24 @@ const Game: React.FC = () => {
 
           {/* Scoreboard */}
           <Grid size={{ xs: 12 }} sx={{ order: 2 }} ref={scoreboardRef}>
-            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard
+              scoreboard={scoreboard}
+              sources={gameState.sources}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+              isCompleted={gameState.is_completed}
+              guessedWords={gameState.guessed_words}
+              handleWordClick={handleWordClick}
+            />
           </Grid>
 
           {/* Game Stats */}
           <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
-            <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
+            <GameStats
+              guessedWords={gameState.guessed_words}
+              score={gameState.score}
+              remainingGuesses={gameState.remaining_guesses}
+            />
           </Grid>
 
           {/* Recent Guesses */}
@@ -356,11 +368,27 @@ const Game: React.FC = () => {
 
           {/* Word Guess - Fixed bar */}
           <Grid size={{ xs: 12 }} sx={{ order: 5 }}>
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordData)} />
+            <WordInput
+              handleSubmitGuess={handleSubmitGuess}
+              currentGuess={currentGuess}
+              setCurrentGuess={setCurrentGuess}
+              submitting={submitting}
+              error={error}
+              success={success}
+              isCompleted={gameState.is_completed}
+              score={gameState.score}
+              isOverlayOpen={Boolean(selectedWordData)}
+            />
           </Grid>
 
           {/* Article Info */}
-          <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} />
+          <ArticleInfo
+            selectedWordData={selectedWordData}
+            currentPage={currentPage}
+            articlesPerPage={articlesPerPage}
+            setCurrentPage={setCurrentPage}
+            closeArticlePanel={closeArticlePanel}
+          />
         </Grid>
       </Container>
     )
@@ -372,15 +400,22 @@ const Game: React.FC = () => {
       <Grid container spacing={3}>
         {/* Left Column - Header Info, Game Stats & Recent Guesses */}
         <Grid size={{ xs: 12, lg: 3 }}>
-          <Stack spacing={2} sx={{ 
-            height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
-            maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none'
-          }}>
+          <Stack
+            spacing={2}
+            sx={{
+              height: scoreboardHeight > 0 ? `${scoreboardHeight}px` : '100%',
+              maxHeight: scoreboardHeight > 0 ? `${scoreboardHeight}px` : 'none',
+            }}
+          >
             {/* Game Information */}
             <GameInfo isTestMode={isTestMode} timePeriod={gameState.time_period} />
 
             {/* Game Stats */}
-            <GameStats guessedWords={gameState.guessed_words} score={gameState.score} remainingGuesses={gameState.remaining_guesses} />
+            <GameStats
+              guessedWords={gameState.guessed_words}
+              score={gameState.score}
+              remainingGuesses={gameState.remaining_guesses}
+            />
 
             {/* Recent Guesses */}
             <GuessList guesses={gameState.guesses} />
@@ -391,16 +426,41 @@ const Game: React.FC = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack spacing={3} ref={scoreboardRef}>
             {/* Word Input Section */}
-            <WordInput handleSubmitGuess={handleSubmitGuess} currentGuess={currentGuess} setCurrentGuess={setCurrentGuess} submitting={submitting} error={error} success={success} isCompleted={gameState.is_completed} score={gameState.score} isOverlayOpen={Boolean(selectedWordData)} />
+            <WordInput
+              handleSubmitGuess={handleSubmitGuess}
+              currentGuess={currentGuess}
+              setCurrentGuess={setCurrentGuess}
+              submitting={submitting}
+              error={error}
+              success={success}
+              isCompleted={gameState.is_completed}
+              score={gameState.score}
+              isOverlayOpen={Boolean(selectedWordData)}
+            />
 
             {/* Scoreboard Section */}
-            <Scoreboard scoreboard={scoreboard} sources={gameState.sources} showScoreboard={showScoreboard} setShowScoreboard={setShowScoreboard} isCompleted={gameState.is_completed} guessedWords={gameState.guessed_words} handleWordClick={handleWordClick} />
+            <Scoreboard
+              scoreboard={scoreboard}
+              sources={gameState.sources}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+              isCompleted={gameState.is_completed}
+              guessedWords={gameState.guessed_words}
+              handleWordClick={handleWordClick}
+            />
           </Stack>
         </Grid>
 
         {/* Right Column - Article Info */}
         <Grid size={{ xs: 12, lg: 3 }}>
-          <ArticleInfo selectedWordData={selectedWordData} currentPage={currentPage} articlesPerPage={articlesPerPage} setCurrentPage={setCurrentPage} closeArticlePanel={closeArticlePanel} scoreboardHeight={scoreboardHeight} />
+          <ArticleInfo
+            selectedWordData={selectedWordData}
+            currentPage={currentPage}
+            articlesPerPage={articlesPerPage}
+            setCurrentPage={setCurrentPage}
+            closeArticlePanel={closeArticlePanel}
+            scoreboardHeight={scoreboardHeight}
+          />
         </Grid>
       </Grid>
     </Container>

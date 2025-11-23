@@ -2,23 +2,16 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { CompareGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
 import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-  Chip,
-  Divider,
-  Alert
-} from '@mui/material'
-import {
-  PlayArrow as PlayIcon,
-  CompareArrows as CompareIcon,
-} from '@mui/icons-material'
+  CompareGame,
+  TIME_PERIODS,
+  DEFAULT_MAX_GUESSES,
+  DEFAULT_SCOREBOARD_SIZE,
+  NewsSource,
+  TimePeriod,
+} from '../types'
+import { Box, Button, Container, Grid, Paper, Stack, Typography, Chip, Divider, Alert } from '@mui/material'
+import { PlayArrow as PlayIcon, CompareArrows as CompareIcon } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import SourceCard from './components/SourceCard'
@@ -31,16 +24,14 @@ const Compare: React.FC = () => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_WEEK)
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
-  
+
   // Two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
   const [groupB, setGroupB] = useState<NewsSource[]>([])
-  
+
   // Available sources (not in either group)
   const allSources = Object.values(NewsSource)
-  const availableSources = allSources.filter(
-    source => !groupA.includes(source) && !groupB.includes(source)
-  )
+  const availableSources = allSources.filter(source => !groupA.includes(source) && !groupB.includes(source))
 
   const handleAddToGroupA = (source: NewsSource) => {
     setGroupA(prev => [...prev, source])
@@ -88,16 +79,16 @@ const Compare: React.FC = () => {
         guessed_words_group_b: [],
         remaining_guesses: maxGuesses,
         is_completed: false,
-        user_id: user?.sub
+        user_id: user?.sub,
       }
-      
+
       const { data, error } = await gameAPI.createComparativeGame(game)
 
       if (error) {
         console.error('Error creating game:', error)
         return
       }
-    
+
       const gameId = data.id
       // Navigate to compare game
       navigate(`/compare/${gameId}`)
@@ -117,16 +108,19 @@ const Compare: React.FC = () => {
           Source Comparison Mode
         </Typography>
         <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
-          Compare word usage between two groups of news sources. Organize sources into Group A and Group B to see how their language differs.
+          Compare word usage between two groups of news sources. Organize sources into Group A and Group B to see how
+          their language differs.
         </Typography>
       </Box>
 
       {/* Instructions Alert */}
       <Alert severity="info" sx={{ mb: 4 }}>
         <Typography variant="body2">
-          <strong>How it works:</strong> Click the <strong style={{ color: '#1976d2' }}>blue</strong> or <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>. 
-          You can also move sources between groups using the swap icon, or remove them using the delete icon. 
-          You need at least one source in each group to start.
+          <strong>How it works:</strong> Click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
+          <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
+          <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>
+          . You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
+          at least one source in each group to start.
         </Typography>
       </Alert>
 
@@ -143,18 +137,14 @@ const Compare: React.FC = () => {
               border: '3px solid',
               borderColor: 'primary.main',
               bgcolor: 'primary.50',
-              borderRadius: 3
+              borderRadius: 3,
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h5" fontWeight="bold" color="primary.main">
                 Group A
               </Typography>
-              <Chip 
-                label={`${groupA.length} source${groupA.length !== 1 ? 's' : ''}`}
-                color="primary"
-                size="small"
-              />
+              <Chip label={`${groupA.length} source${groupA.length !== 1 ? 's' : ''}`} color="primary" size="small" />
             </Box>
             <Divider sx={{ mb: 2 }} />
             {groupA.length === 0 ? (
@@ -167,7 +157,7 @@ const Compare: React.FC = () => {
                   border: '2px dashed',
                   borderColor: 'grey.300',
                   borderRadius: 2,
-                  bgcolor: 'white'
+                  bgcolor: 'white',
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
@@ -176,7 +166,7 @@ const Compare: React.FC = () => {
               </Box>
             ) : (
               <Stack spacing={1.5}>
-                {groupA.map((source) => (
+                {groupA.map(source => (
                   <SourceCard
                     key={source}
                     source={source}
@@ -202,18 +192,14 @@ const Compare: React.FC = () => {
               border: '3px solid',
               borderColor: 'secondary.main',
               bgcolor: 'secondary.50',
-              borderRadius: 3
+              borderRadius: 3,
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h5" fontWeight="bold" color="secondary.main">
                 Group B
               </Typography>
-              <Chip 
-                label={`${groupB.length} source${groupB.length !== 1 ? 's' : ''}`}
-                color="secondary"
-                size="small"
-              />
+              <Chip label={`${groupB.length} source${groupB.length !== 1 ? 's' : ''}`} color="secondary" size="small" />
             </Box>
             <Divider sx={{ mb: 2 }} />
             {groupB.length === 0 ? (
@@ -226,7 +212,7 @@ const Compare: React.FC = () => {
                   border: '2px dashed',
                   borderColor: 'grey.300',
                   borderRadius: 2,
-                  bgcolor: 'white'
+                  bgcolor: 'white',
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
@@ -235,7 +221,7 @@ const Compare: React.FC = () => {
               </Box>
             ) : (
               <Stack spacing={1.5}>
-                {groupB.map((source) => (
+                {groupB.map(source => (
                   <SourceCard
                     key={source}
                     source={source}
@@ -257,17 +243,22 @@ const Compare: React.FC = () => {
           Available Sources
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Click the <strong style={{ color: '#1976d2' }}>blue</strong> or <strong style={{ color: '#dc004e' }}>red</strong> plus button to add a source to <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>.
+          Click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
+          <strong style={{ color: '#dc004e' }}>red</strong> plus button to add a source to{' '}
+          <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>
+          .
         </Typography>
         {availableSources.length === 0 ? (
-          <Alert severity="success">
-            All sources have been assigned to groups!
-          </Alert>
+          <Alert severity="success">All sources have been assigned to groups!</Alert>
         ) : (
           <Grid container spacing={2}>
-            {availableSources.map((source) => (
+            {availableSources.map(source => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={source}>
-                <AvailableSourceCard source={source} handleAddToGroupA={handleAddToGroupA} handleAddToGroupB={handleAddToGroupB} />
+                <AvailableSourceCard
+                  source={source}
+                  handleAddToGroupA={handleAddToGroupA}
+                  handleAddToGroupB={handleAddToGroupB}
+                />
               </Grid>
             ))}
           </Grid>
@@ -307,8 +298,8 @@ const Compare: React.FC = () => {
               background: 'linear-gradient(135deg, #1870C9 0%, #CA0248 100%)',
             },
             '&:disabled': {
-              background: 'grey.300'
-            }
+              background: 'grey.300',
+            },
           }}
         >
           {loading ? 'Creating Game...' : isLoading ? 'Loading...' : 'Start Comparison Game'}
