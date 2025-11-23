@@ -295,6 +295,22 @@ export const userAPI = {
   updateUser: async (user: User, userId: string) => {
     return await supabase.from('users').update(user).eq('id', userId)
   },
+
+  getUserGames: async (userId: string) => {
+    return await supabase.from('games').select('*').eq('user_id', userId)
+  },
+
+  getUserComparativeGames: async (userId: string) => {
+    return await supabase.from('compare_games').select('*').eq('user_id', userId)
+  },
+
+  getUserAssociateGames: async (userId: string) => {
+    return await supabase.from('associate_games').select('*').eq('user_id', userId)
+  },
+
+  getUserComparativeAssociatedGames: async (userId: string) => {
+    return await supabase.from('compare_associate_games').select('*').eq('user_id', userId)
+  },
 }
 
 // Leaderboard API

@@ -383,3 +383,17 @@ export const NewsSourceConfig: Record<NewsSource, { name: string, logo: React.Re
   [NewsSource.WASHINGTON_POST]: {name: 'The Washington Post', logo: <WashingtonPostLogo />},
   [NewsSource.YAHOO]: {name: 'Yahoo News', logo: <YahooNewsLogo />}
 }
+
+export enum GameMode {
+  GAME = 'game',
+  COMPARE = 'compare',
+  ASSOCIATE = 'associate',
+  COMPARE_ASSOCIATE = 'compare-associate'
+}
+
+export const GAME_MODE_NAMES: Record<GameMode, string> = {
+  [GameMode.GAME]: 'Classic',
+  [GameMode.COMPARE]: 'Comparative',
+  [GameMode.ASSOCIATE]: 'Associative',
+  [GameMode.COMPARE_ASSOCIATE]: 'Comparative Associative'
+}
