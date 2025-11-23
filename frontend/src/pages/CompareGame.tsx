@@ -264,6 +264,48 @@ const CompareGame: React.FC = () => {
     }
   }
 
+  const handleGiveUp = async () => {
+    if (!gameState || gameState.is_completed || !gameId) return
+
+    try {
+      setSubmitting(true)
+      
+      const updatedGameState = {
+        ...gameState,
+        is_completed: true,
+        // @ts-ignore
+        completed_at: new Date().toISOString(),
+      }
+
+      // Update local state
+      setGameState(updatedGameState)
+
+      // Update user stats
+      if (isAuthenticated) {
+        const userStats = await userAPI.getSingleUser(user?.sub || '')
+        const stats = userStats.data
+        const newStats = structuredClone(stats)
+
+        newStats.total_score += updatedGameState.score
+        newStats.total_games += 1
+        newStats.average_score = newStats.total_score / newStats.total_games
+        newStats.best_score = Math.max(newStats.best_score, updatedGameState.score)
+        newStats.updated_at = new Date().toISOString()
+
+        await userAPI.updateUser(newStats, user?.sub || '')
+      }
+
+      // Update game state in database
+      let { compare_guesses: _, ...updatedGame } = updatedGameState
+      await gameAPI.updateComparativeGameState(updatedGame, updatedGame.id)
+    } catch (error: any) {
+      console.error('Failed to give up game:', error)
+      setError(error.response?.data?.error || 'Failed to end game')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const handleWordClick = (word: string) => {
     // Find the word data from scoreboard
     let condensedWordDataGroupA: ScoreboardEntry | null = null
@@ -522,6 +564,7 @@ const CompareGame: React.FC = () => {
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
+              onGiveUp={handleGiveUp}
             />
           </Grid>
         </Grid>
@@ -605,6 +648,7 @@ const CompareGame: React.FC = () => {
               score={gameState.score}
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
+              onGiveUp={handleGiveUp}
             />
 
             {/* Scoreboard Section */}
