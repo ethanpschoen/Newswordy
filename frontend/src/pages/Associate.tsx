@@ -24,6 +24,7 @@ const Associate: React.FC = () => {
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
+  const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
 
   const [selectedWord, setSelectedWord] = useState('')
   const [findingCount, setFindingCount] = useState(false)
@@ -35,13 +36,13 @@ const Associate: React.FC = () => {
       const game: AssociateGame = {
         score: 0,
         created_at: new Date().toISOString(),
-        max_guesses: maxGuesses,
+        max_guesses: unlimitedGuesses ? -1 : maxGuesses,
         scoreboard_size: scoreboardSize,
         time_period: selectedTimePeriod,
         sources: selectedSources,
         word: selectedWord,
         guessed_words: [],
-        remaining_guesses: maxGuesses,
+        remaining_guesses: unlimitedGuesses ? -1 : maxGuesses,
         is_completed: false,
         user_id: user?.sub,
       }
@@ -201,6 +202,8 @@ const Associate: React.FC = () => {
         isLoading={isLoading}
         showSources={true}
         showStartButton={false}
+        unlimitedGuesses={unlimitedGuesses}
+        setUnlimitedGuesses={setUnlimitedGuesses}
       />
 
       {/* Start Game Button */}

@@ -54,7 +54,7 @@ const GuessList = ({ guesses }: Props) => {
                       color: guess.rank !== undefined && guess.rank !== null ? Color.SCORE_HIGH : Color.ERROR,
                     }}
                   >
-                    +{guess.score}
+                    {guess.score < 0 ? `${guess.score}` : `+${guess.score}`}
                   </Typography>
                 </Paper>
               ))}

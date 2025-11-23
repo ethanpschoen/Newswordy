@@ -50,6 +50,8 @@ interface Props {
   isLoading: boolean
   showSources: boolean
   showStartButton: boolean
+  unlimitedGuesses?: boolean
+  setUnlimitedGuesses?: (unlimited: boolean) => void
 }
 
 const AdvancedSettings = ({
@@ -66,6 +68,8 @@ const AdvancedSettings = ({
   isLoading,
   showSources,
   showStartButton,
+  unlimitedGuesses = false,
+  setUnlimitedGuesses,
 }: Props) => {
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
 
@@ -132,16 +136,62 @@ const AdvancedSettings = ({
               </FormControl>
             </Grid>
 
-            {/* Max Guesses */}
+            {/* Max Guesses and Unlimited Guesses */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
-                label="Wrong Guesses Allowed"
-                type="number"
-                value={maxGuesses}
-                onChange={e => setMaxGuesses(parseInt(e.target.value))}
-                inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
-              />
+              <Box sx={{ position: 'relative' }}>
+                <TextField
+                  label="Wrong Guesses Allowed"
+                  type="number"
+                  value={maxGuesses}
+                  onChange={e => setMaxGuesses(parseInt(e.target.value))}
+                  inputProps={{ min: 1, max: MAX_MAX_GUESSES }}
+                  disabled={unlimitedGuesses}
+                  fullWidth
+                  sx={{
+                    '& .MuiInputBase-input': {
+                      paddingRight: '140px',
+                    },
+                  }}
+                />
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    right: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    zIndex: 1,
+                    gap: 1.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '24px',
+                      width: '1px',
+                      bgcolor: 'rgba(0, 0, 0, 0.23)',
+                    }}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={unlimitedGuesses}
+                        onChange={e => {
+                          if (setUnlimitedGuesses) {
+                            setUnlimitedGuesses(e.target.checked)
+                          }
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ fontSize: '0.875rem', whiteSpace: 'nowrap', ml: 0.5 }}>
+                        Unlimited
+                      </Typography>
+                    }
+                    sx={{ m: 0 }}
+                  />
+                </Box>
+              </Box>
             </Grid>
 
             {/* Scoreboard Size */}

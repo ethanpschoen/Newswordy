@@ -88,6 +88,7 @@ const Home: React.FC = () => {
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
+  const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
   const [stats, setStats] = useState<Stat[]>([])
 
   const handleStartGame = async (useDefaults: boolean = false) => {
@@ -97,16 +98,17 @@ const Home: React.FC = () => {
       const finalSources = useDefaults ? Object.values(NewsSource) : selectedSources
       const finalMaxGuesses = useDefaults ? DEFAULT_MAX_GUESSES : maxGuesses
       const finalScoreboardSize = useDefaults ? DEFAULT_SCOREBOARD_SIZE : scoreboardSize
+      const finalUnlimitedGuesses = useDefaults ? false : unlimitedGuesses
 
       const game: Game = {
         score: 0,
         created_at: new Date().toISOString(),
-        max_guesses: finalMaxGuesses,
+        max_guesses: finalUnlimitedGuesses ? -1 : finalMaxGuesses,
         scoreboard_size: finalScoreboardSize,
         time_period: finalTimePeriod,
         sources: finalSources.length === 0 ? undefined : finalSources,
         guessed_words: [],
-        remaining_guesses: finalMaxGuesses,
+        remaining_guesses: finalUnlimitedGuesses ? -1 : finalMaxGuesses,
         is_completed: false,
         user_id: user?.sub,
       }
@@ -266,6 +268,8 @@ const Home: React.FC = () => {
         isLoading={isLoading}
         showSources={true}
         showStartButton={true}
+        unlimitedGuesses={unlimitedGuesses}
+        setUnlimitedGuesses={setUnlimitedGuesses}
       />
 
       {/* Other Game Modes */}

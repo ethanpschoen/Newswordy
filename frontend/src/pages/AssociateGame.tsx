@@ -161,7 +161,13 @@ const AssociateGame: React.FC = () => {
         index = undefined
         wordScore = 0
 
-        updatedRemainingGuesses -= 1
+        // Handle unlimited guesses: subtract points instead of decrementing guesses
+        if (updatedRemainingGuesses === -1) {
+          wordScore = updatedScore >= 50 ? -50 : updatedScore <= 0 ? 0 : -updatedScore
+          updatedScore += wordScore
+        } else {
+          updatedRemainingGuesses -= 1
+        }
       }
 
       const newGuess: Guess = {
@@ -203,11 +209,18 @@ const AssociateGame: React.FC = () => {
           : `"${currentGuess}" found! +${wordScore} points`
         setSuccess(message)
       } else {
-        setError(`"${currentGuess}" not found in the word list`)
+        if (updatedRemainingGuesses === -1 && wordScore < 0) {
+          setError(`"${currentGuess}" not found in the word list. ${wordScore} points`)
+        } else {
+          setError(`"${currentGuess}" not found in the word list`)
+        }
       }
 
-      // Check if game is over - too many wrong guesses, or guessed all words on scoreboard
-      if (updatedRemainingGuesses <= 0 || gameState!.scoreboard_size <= updatedGuessedWords.length) {
+      // Check if game is over - too many wrong guesses (unless unlimited), or guessed all words on scoreboard
+      if (
+        (updatedRemainingGuesses !== -1 && updatedRemainingGuesses <= 0) ||
+        gameState!.scoreboard_size <= updatedGuessedWords.length
+      ) {
         setGameState(prev => (prev ? { ...prev, is_completed: true } : null))
         updatedGameState.is_completed = true
       }

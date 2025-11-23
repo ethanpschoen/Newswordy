@@ -39,6 +39,7 @@ const CompareAssociate: React.FC = () => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_MONTH)
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
+  const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
 
   // Two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
@@ -102,7 +103,7 @@ const CompareAssociate: React.FC = () => {
       const game: CompareAssociateGame = {
         score: 0,
         created_at: new Date().toISOString(),
-        max_guesses: maxGuesses,
+        max_guesses: unlimitedGuesses ? -1 : maxGuesses,
         scoreboard_size: scoreboardSize,
         time_period: selectedTimePeriod,
         sources_group_a: groupA,
@@ -110,7 +111,7 @@ const CompareAssociate: React.FC = () => {
         word: selectedWord,
         guessed_words_group_a: [],
         guessed_words_group_b: [],
-        remaining_guesses: maxGuesses,
+        remaining_guesses: unlimitedGuesses ? -1 : maxGuesses,
         is_completed: false,
         user_id: user?.sub,
       }
@@ -444,6 +445,8 @@ const CompareAssociate: React.FC = () => {
         isLoading={isLoading}
         showSources={false}
         showStartButton={false}
+        unlimitedGuesses={unlimitedGuesses}
+        setUnlimitedGuesses={setUnlimitedGuesses}
       />
 
       {/* Start Game Button */}

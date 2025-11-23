@@ -70,12 +70,20 @@ const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
             <Typography
               variant={isMobile ? 'body1' : 'h6'}
               component="div"
-              sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 0.5 }}
+              sx={{
+                fontWeight: 'bold',
+                color: 'secondary.main',
+                mb: 0.5,
+                fontSize: remainingGuesses === -1 ? '3rem' : undefined,
+                lineHeight: remainingGuesses === -1 ? 0.7 : undefined,
+              }}
             >
-              {remainingGuesses}
+              {remainingGuesses === -1 ? '∞' : remainingGuesses}
             </Typography>
             <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-              Wrong Guess{remainingGuesses === 1 ? null : 'es'} Left
+              {remainingGuesses === -1
+                ? 'Unlimited Guesses'
+                : `Wrong Guess${remainingGuesses === 1 ? '' : 'es'} Left`}
             </Typography>
           </Paper>
         </Stack>
