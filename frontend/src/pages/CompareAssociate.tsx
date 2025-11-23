@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
-import { CompareAssociateGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, NewsSourceConfig, TimePeriod } from '../types'
+import { CompareAssociateGame, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
 import {
   Box,
   Button,
@@ -15,19 +15,18 @@ import {
   TextField,
   Typography,
   Chip,
-  IconButton,
   Divider,
   Alert
 } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
   CompareArrows as CompareIcon,
-  Add as AddIcon,
-  Delete as DeleteIcon,
   Search as SearchIcon
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
+import SourceCard from './components/SourceCard'
+import AvailableSourceCard from './components/AvailableSourceCard'
 
 const CompareAssociate: React.FC = () => {
   const { user, isLoading } = useAuth0()
@@ -156,130 +155,6 @@ const CompareAssociate: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     handleFindCount()
-  }
-
-  const SourceCard: React.FC<{ 
-    source: NewsSource
-    onRemove?: () => void
-    onMoveToOther?: () => void
-    groupLabel: string
-    groupColor: string
-  }> = ({ source, onRemove, onMoveToOther, groupLabel, groupColor }) => {
-    const config = NewsSourceConfig[source]
-    return (
-      <Card
-        sx={{
-          p: 1.5,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          border: `2px solid ${groupColor}`,
-          bgcolor: `${groupColor}15`,
-          '&:hover': {
-            boxShadow: 3,
-            transform: 'translateY(-2px)',
-            transition: 'all 0.2s'
-          }
-        }}
-      >
-        <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {config.logo}
-        </Box>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="body2" fontWeight="medium">
-            {config.name}
-          </Typography>
-        </Box>
-        <Stack direction="row" spacing={0.5}>
-          {onMoveToOther && (
-            <IconButton
-              size="small"
-              onClick={onMoveToOther}
-              title={`Move to ${groupLabel === 'Group A' ? 'Group B' : 'Group A'}`}
-            >
-              <CompareIcon fontSize="small" />
-            </IconButton>
-          )}
-          {onRemove && (
-            <IconButton
-              size="small"
-              onClick={onRemove}
-              title="Remove from group"
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          )}
-        </Stack>
-      </Card>
-    )
-  }
-
-  const AvailableSourceCard: React.FC<{ source: NewsSource }> = ({ source }) => {
-    const config = NewsSourceConfig[source]
-    return (
-      <Card
-        sx={{
-          p: 1.5,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          border: '2px dashed',
-          borderColor: 'grey.300',
-          bgcolor: 'grey.50',
-          '&:hover': {
-            borderColor: '#23CE6B',
-            bgcolor: 'rgba(35, 206, 107, 0.1)',
-            transform: 'translateY(-2px)',
-            transition: 'all 0.2s'
-          }
-        }}
-      >
-        <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {config.logo}
-        </Box>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="body2" fontWeight="medium">
-            {config.name}
-          </Typography>
-        </Box>
-        <Stack direction="row" spacing={0.5}>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation()
-              handleAddToGroupA(source)
-            }}
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                bgcolor: 'primary.dark'
-              }
-            }}
-            title="Add to Group A"
-          >
-            <AddIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation()
-              handleAddToGroupB(source)
-            }}
-            sx={{
-              bgcolor: 'secondary.main',
-              color: 'white',
-              '&:hover': {
-                bgcolor: 'secondary.dark'
-              }
-            }}
-            title="Add to Group B"
-          >
-            <AddIcon fontSize="small" />
-          </IconButton>
-        </Stack>
-      </Card>
-    )
   }
 
   return (
@@ -442,7 +317,7 @@ const CompareAssociate: React.FC = () => {
           <Grid container spacing={2}>
             {availableSources.map((source) => (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={source}>
-                <AvailableSourceCard source={source} />
+                <AvailableSourceCard source={source} handleAddToGroupA={handleAddToGroupA} handleAddToGroupB={handleAddToGroupB} />
               </Grid>
             ))}
           </Grid>
