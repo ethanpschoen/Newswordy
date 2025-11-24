@@ -3,13 +3,11 @@ import { ReactComponent as AlJazeeraLogo } from '../components/logos/aljazeera.s
 import { ReactComponent as AxiosLogo } from '../components/logos/axios.svg'
 import { ReactComponent as BBCNewsLogo } from '../components/logos/bbcnews.svg'
 import { ReactComponent as CBSNewsLogo } from '../components/logos/cbsnews.svg'
-import { ReactComponent as CNNLogo } from '../components/logos/cnn.svg'
 import { ReactComponent as FoxNewsLogo } from '../components/logos/foxnews.svg'
 import { ReactComponent as LosAngelesTimesLogo } from '../components/logos/latimes.svg'
 import { ReactComponent as NBCNewsLogo } from '../components/logos/nbcnews.svg'
 import { ReactComponent as NYTimesLogo } from '../components/logos/newyorktimes.svg'
 import { ReactComponent as NPRLogo } from '../components/logos/npr.svg'
-import { ReactComponent as PoliticoLogo } from '../components/logos/politico.svg'
 import { ReactComponent as GuardianLogo } from '../components/logos/theguardian.svg'
 import { ReactComponent as WashingtonPostLogo } from '../components/logos/thewashingtonpost.svg'
 import { ReactComponent as WallStreetJournalLogo } from '../components/logos/wsj.svg'
@@ -335,14 +333,12 @@ export enum NewsSource {
   AXIOS = 'axios',
   BBC = 'bbc',
   CBS = 'cbs',
-  CNN = 'cnn',
   FOX_NEWS = 'fox_news',
   GUARDIAN = 'guardian',
   LOS_ANGELES_TIMES = 'los_angeles_times',
   NBC_NEWS = 'nbc_news',
   NPR = 'npr',
   NYT = 'nyt',
-  POLITICO = 'politico',
   WALL_STREET_JOURNAL = 'wall_street_journal',
   WASHINGTON_POST = 'washington_post',
   YAHOO = 'yahoo',
@@ -371,14 +367,12 @@ export const NewsSourceConfig: Record<NewsSource, { name: string; logo: React.Re
   [NewsSource.AXIOS]: { name: 'Axios', logo: <AxiosLogo /> },
   [NewsSource.BBC]: { name: 'BBC News', logo: <BBCNewsLogo /> },
   [NewsSource.CBS]: { name: 'CBS News', logo: <CBSNewsLogo /> },
-  [NewsSource.CNN]: { name: 'CNN', logo: <CNNLogo /> },
   [NewsSource.FOX_NEWS]: { name: 'Fox News', logo: <FoxNewsLogo /> },
   [NewsSource.GUARDIAN]: { name: 'The Guardian', logo: <GuardianLogo /> },
   [NewsSource.LOS_ANGELES_TIMES]: { name: 'Los Angeles Times', logo: <LosAngelesTimesLogo /> },
   [NewsSource.NBC_NEWS]: { name: 'NBC News', logo: <NBCNewsLogo /> },
   [NewsSource.NPR]: { name: 'NPR', logo: <NPRLogo /> },
   [NewsSource.NYT]: { name: 'The New York Times', logo: <NYTimesLogo /> },
-  [NewsSource.POLITICO]: { name: 'Politico', logo: <PoliticoLogo /> },
   [NewsSource.WALL_STREET_JOURNAL]: { name: 'The Wall Street Journal', logo: <WallStreetJournalLogo /> },
   [NewsSource.WASHINGTON_POST]: { name: 'The Washington Post', logo: <WashingtonPostLogo /> },
   [NewsSource.YAHOO]: { name: 'Yahoo News', logo: <YahooNewsLogo /> },
