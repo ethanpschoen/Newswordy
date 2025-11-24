@@ -365,6 +365,16 @@ export const TIME_PERIOD_NAMES: Record<TimePeriod, string> = {
   [TIME_PERIODS.LAST_YEAR]: 'Last Year',
 }
 
+export const TIME_PERIOD_DESCRIPTIONS: Record<TimePeriod, string> = {
+  [TIME_PERIODS.PAST_DAY]: 'From yesterday.',
+  [TIME_PERIODS.PAST_WEEK]: 'From the past 7 days.',
+  [TIME_PERIODS.PAST_MONTH]: 'From one month ago.',
+  [TIME_PERIODS.PAST_YEAR]: 'From one year ago.',
+  [TIME_PERIODS.LAST_WEEK]: 'From the most recently completed Monday through Sunday before today.',
+  [TIME_PERIODS.LAST_MONTH]: 'From the previous full calendar month (e.g., all of October if you start in November).',
+  [TIME_PERIODS.LAST_YEAR]: 'From the previous calendar year (January 1 through December 31).',
+}
+
 export const NewsSourceConfig: Record<NewsSource, { name: string; logo: React.ReactNode }> = {
   [NewsSource.ABC]: { name: 'ABC News', logo: <ABCNewsLogo /> },
   [NewsSource.AL_JAZEERA]: { name: 'Al Jazeera', logo: <AlJazeeraLogo /> },
@@ -455,3 +465,10 @@ export const COMPARE_PRESETS: ComparePreset[] = [
     groupBSources: [NewsSource.ABC, NewsSource.CBS, NewsSource.NPR, NewsSource.BBC, NewsSource.AXIOS],
   },
 ]
+
+export enum ExplainerMode {
+  CLASSIC = 'classic',
+  COMPARE = 'compare',
+  ASSOCIATE = 'associate',
+  COMPARE_ASSOCIATE = 'compare-associate',
+}

@@ -6,6 +6,7 @@ import {
   Chip,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -28,6 +29,7 @@ import {
 } from '@mui/icons-material'
 import {
   TIME_PERIOD_NAMES,
+  TIME_PERIOD_DESCRIPTIONS,
   NewsSource,
   NewsSourceConfig,
   MAX_MAX_GUESSES,
@@ -133,6 +135,7 @@ const AdvancedSettings = ({
                     </MenuItem>
                   ))}
                 </Select>
+                <FormHelperText>{TIME_PERIOD_DESCRIPTIONS[selectedTimePeriod]}</FormHelperText>
               </FormControl>
             </Grid>
 

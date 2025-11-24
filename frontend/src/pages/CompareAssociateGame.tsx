@@ -9,6 +9,7 @@ import {
   ComparativeScoreboardEntry,
   ComparativeGroup,
   HintType,
+  ExplainerMode,
 } from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
@@ -589,6 +590,7 @@ const CompareAssociateGame: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.COMPARE_ASSOCIATE}
             />
           </Grid>
         </Grid>
@@ -675,6 +677,7 @@ const CompareAssociateGame: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.COMPARE_ASSOCIATE}
             />
 
             {/* Scoreboard Section */}

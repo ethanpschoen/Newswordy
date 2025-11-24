@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup, HintType } from '../types'
+import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup, HintType, ExplainerMode } from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -575,6 +575,7 @@ const CompareGame: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.COMPARE}
             />
           </Grid>
         </Grid>
@@ -659,6 +660,7 @@ const CompareGame: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordDataGroupA || selectedWordDataGroupB)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.COMPARE}
             />
 
             {/* Scoreboard Section */}

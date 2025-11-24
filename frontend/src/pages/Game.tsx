@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { GameState, Guess, NewsSource, ScoreboardEntry, HintType } from '../types'
+import { GameState, Guess, NewsSource, ScoreboardEntry, HintType, ExplainerMode } from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -507,6 +507,7 @@ const Game: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordData)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.CLASSIC}
             />
           </Grid>
 
@@ -576,6 +577,7 @@ const Game: React.FC = () => {
               isOverlayOpen={Boolean(selectedWordData)}
               onShowHint={handleShowHint}
               onGiveUp={handleGiveUp}
+              explainerMode={ExplainerMode.CLASSIC}
             />
 
             {/* Scoreboard Section */}

@@ -3,8 +3,10 @@ import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQ
 import { PlayIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { useNavigate } from 'react-router-dom'
-import { Color, HintType } from '../../types'
+import { Color, HintType, ExplainerMode } from '../../types'
 import { useRef, useEffect } from 'react'
+import { WORD_RULES_HELPER_TEXT } from '../../constants/gameRules'
+import GameExplainerDialog from './GameExplainerDialog'
 
 interface Props {
   handleSubmitGuess: (e: React.FormEvent<HTMLFormElement>) => void
@@ -18,6 +20,7 @@ interface Props {
   isOverlayOpen?: boolean
   onShowHint?: (type: HintType) => void
   onGiveUp?: () => void
+  explainerMode?: ExplainerMode
 }
 
 const WordInput = ({
@@ -32,6 +35,7 @@ const WordInput = ({
   isOverlayOpen = false,
   onShowHint,
   onGiveUp,
+  explainerMode,
 }: Props) => {
   const navigate = useNavigate()
   const theme = useTheme()
@@ -80,9 +84,20 @@ const WordInput = ({
           mx: isMobile ? 'auto' : 0,
         }}
       >
-        <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', mb: 1.5 }}>
-          Guess a Word
-        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 1.5,
+            gap: 1,
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+            Guess a Word
+          </Typography>
+          {explainerMode && <GameExplainerDialog mode={explainerMode} />}
+        </Box>
 
         {isCompleted ? (
           <Box sx={{ textAlign: 'center', py: 3 }}>
@@ -115,6 +130,7 @@ const WordInput = ({
               variant="outlined"
               size="small"
               disabled={submitting}
+              helperText={WORD_RULES_HELPER_TEXT}
               sx={{ '& .MuiInputBase-input': { fontSize: '1rem' } }}
             />
 
