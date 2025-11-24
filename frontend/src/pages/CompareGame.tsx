@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { CompareGameState, Guess, ScoreboardEntry, ComparativeScoreboardEntry, ComparativeGroup, HintType, ExplainerMode } from '../types'
+import {
+  CompareGameState,
+  Guess,
+  ScoreboardEntry,
+  ComparativeScoreboardEntry,
+  ComparativeGroup,
+  HintType,
+  ExplainerMode,
+} from '../types'
 import { Box, Button, Typography, Grid, Stack, Container, useMediaQuery, useTheme } from '@mui/material'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -279,7 +287,7 @@ const CompareGame: React.FC = () => {
 
     try {
       setSubmitting(true)
-      
+
       const updatedGameState = {
         ...gameState,
         is_completed: true,
@@ -387,17 +395,15 @@ const CompareGame: React.FC = () => {
   // Select a hint word with equal probability (no weights)
   const selectHintWord = (wordBoard: ComparativeScoreboardEntry[]): ScoreboardEntry | null => {
     // Filter for unguessed words that haven't been hinted yet
-    const availableWords = wordBoard.filter(
-      entry => {
-        const wordLower = entry.word.toLowerCase()
-        return (
-          (!gameState?.guessed_words_group_a.includes(wordLower) &&
-          !hintedWordsGroupA.includes(wordLower)) &&
-          (!gameState?.guessed_words_group_b.includes(wordLower) &&
-          !hintedWordsGroupB.includes(wordLower))
-        )
-      }
-    )
+    const availableWords = wordBoard.filter(entry => {
+      const wordLower = entry.word.toLowerCase()
+      return (
+        !gameState?.guessed_words_group_a.includes(wordLower) &&
+        !hintedWordsGroupA.includes(wordLower) &&
+        !gameState?.guessed_words_group_b.includes(wordLower) &&
+        !hintedWordsGroupB.includes(wordLower)
+      )
+    })
 
     if (availableWords.length === 0) {
       return null

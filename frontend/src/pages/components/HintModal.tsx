@@ -180,4 +180,3 @@ const HintModal = ({ open, onClose, hintWord, hintType, onHintTypeChange }: Prop
 }
 
 export default HintModal
-

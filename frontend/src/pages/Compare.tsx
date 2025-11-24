@@ -125,8 +125,8 @@ const Compare: React.FC = () => {
       {/* Instructions Alert */}
       <Alert severity="info" sx={{ mb: 4 }}>
         <Typography variant="body2">
-          <strong>How it works:</strong> Choose a preset or click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
-          <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
+          <strong>How it works:</strong> Choose a preset or click the <strong style={{ color: '#1976d2' }}>blue</strong>{' '}
+          or <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
           <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>
           You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
           at least one source in each group to start.

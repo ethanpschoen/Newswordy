@@ -289,7 +289,7 @@ const CompareAssociateGame: React.FC = () => {
 
     try {
       setSubmitting(true)
-      
+
       const updatedGameState = {
         ...gameState,
         is_completed: true,
@@ -397,17 +397,15 @@ const CompareAssociateGame: React.FC = () => {
   // Select a hint word with equal probability (no weights)
   const selectHintWord = (wordBoard: ComparativeScoreboardEntry[]): ScoreboardEntry | null => {
     // Filter for unguessed words that haven't been hinted yet
-    const availableWords = wordBoard.filter(
-      entry => {
-        const wordLower = entry.word.toLowerCase()
-        return (
-          (!gameState?.guessed_words_group_a.includes(wordLower) &&
-          !hintedWordsGroupA.includes(wordLower)) &&
-          (!gameState?.guessed_words_group_b.includes(wordLower) &&
-          !hintedWordsGroupB.includes(wordLower))
-        )
-      }
-    )
+    const availableWords = wordBoard.filter(entry => {
+      const wordLower = entry.word.toLowerCase()
+      return (
+        !gameState?.guessed_words_group_a.includes(wordLower) &&
+        !hintedWordsGroupA.includes(wordLower) &&
+        !gameState?.guessed_words_group_b.includes(wordLower) &&
+        !hintedWordsGroupB.includes(wordLower)
+      )
+    })
 
     if (availableWords.length === 0) {
       return null

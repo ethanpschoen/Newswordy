@@ -1,5 +1,16 @@
 import { TrophyIcon, LightBulbIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import { Box, Button, Card, CardContent, TextField, Typography, Alert, useMediaQuery, useTheme, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+  Alert,
+  useMediaQuery,
+  useTheme,
+  Stack,
+} from '@mui/material'
 import { PlayIcon } from '@heroicons/react/24/outline'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { useNavigate } from 'react-router-dom'
@@ -182,7 +193,13 @@ const WordInput = ({
                   disabled={isCompleted || submitting}
                   onClick={onGiveUp}
                   startIcon={<XCircleIcon className="w-4 h-4" />}
-                  sx={{ textTransform: 'none', py: 1, color: 'error.main', borderColor: 'error.main', '&:hover': { borderColor: 'error.dark', backgroundColor: '#F6A3A2' } }}
+                  sx={{
+                    textTransform: 'none',
+                    py: 1,
+                    color: 'error.main',
+                    borderColor: 'error.main',
+                    '&:hover': { borderColor: 'error.dark', backgroundColor: '#F6A3A2' },
+                  }}
                 >
                   Give Up
                 </Button>

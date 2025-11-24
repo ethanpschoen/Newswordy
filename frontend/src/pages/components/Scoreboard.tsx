@@ -113,17 +113,17 @@ const Scoreboard = ({
               const wordHinted = hintedWords.includes(wordLower)
               const showWord = wordGuessed || gameCompleted
               const showFirstLetter = wordHinted && !wordGuessed
-              
+
               // Display text: full word if guessed/completed, first letter if hinted, ??? otherwise
               const displayText = showWord
                 ? entry.word.toUpperCase()
                 : showFirstLetter
-                ? entry.word.charAt(0).toUpperCase() + ' _'.repeat(entry.word.length - 1)
-                : '???'.repeat(entry.word.length)
-              
+                  ? entry.word.charAt(0).toUpperCase() + ' _'.repeat(entry.word.length - 1)
+                  : '???'.repeat(entry.word.length)
+
               // Make clickable if guessed, completed, or hinted
               const isClickable = showWord || showFirstLetter
-              
+
               return (
                 <Paper
                   key={entry.word}
@@ -144,7 +144,13 @@ const Scoreboard = ({
                         }
                       : {},
                   }}
-                  onClick={showWord ? () => handleWordClick(entry.word) : showFirstLetter ? () => handleHintClick?.(entry.word) : undefined}
+                  onClick={
+                    showWord
+                      ? () => handleWordClick(entry.word)
+                      : showFirstLetter
+                        ? () => handleHintClick?.(entry.word)
+                        : undefined
+                  }
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                     <Avatar

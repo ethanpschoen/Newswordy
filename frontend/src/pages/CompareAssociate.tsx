@@ -29,7 +29,12 @@ import {
   Divider,
   Alert,
 } from '@mui/material'
-import { PlayArrow as PlayIcon, CompareArrows as CompareIcon, Search as SearchIcon, Insights as InsightsIcon } from '@mui/icons-material'
+import {
+  PlayArrow as PlayIcon,
+  CompareArrows as CompareIcon,
+  Search as SearchIcon,
+  Insights as InsightsIcon,
+} from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import SourceCard from './components/SourceCard'
@@ -207,8 +212,12 @@ const CompareAssociate: React.FC = () => {
 
     try {
       const [responseA, responseB] = await Promise.all([
-        groupA.length ? gameAPI.getScoreboard(selectedTimePeriod, groupA, 10, new Date()) : ({ data: [], error: null } as any),
-        groupB.length ? gameAPI.getScoreboard(selectedTimePeriod, groupB, 10, new Date()) : ({ data: [], error: null } as any),
+        groupA.length
+          ? gameAPI.getScoreboard(selectedTimePeriod, groupA, 10, new Date())
+          : ({ data: [], error: null } as any),
+        groupB.length
+          ? gameAPI.getScoreboard(selectedTimePeriod, groupB, 10, new Date())
+          : ({ data: [], error: null } as any),
       ])
 
       if (responseA.error || responseB.error) {
@@ -250,10 +259,10 @@ const CompareAssociate: React.FC = () => {
       {/* Instructions Alert */}
       <Alert severity="info" sx={{ mb: 4 }}>
         <Typography variant="body2">
-          <strong>How it works:</strong> Choose a preset or click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
-          <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
-          <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>.
-          You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
+          <strong>How it works:</strong> Choose a preset or click the <strong style={{ color: '#1976d2' }}>blue</strong>{' '}
+          or <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
+          <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>
+          . You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
           at least one source in each group to start. Once you have selected the source groups, type a word in the input
           field, and verify it's frequency by pressing the 'Find Count' button. Once verified, press the 'Start Game'
           button to begin.

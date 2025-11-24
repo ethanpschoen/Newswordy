@@ -19,12 +19,15 @@ const MODE_SUMMARY_LINES: Record<ExplainerMode, string> = {
   [ExplainerMode.CLASSIC]: 'Scores reward raw mention counts across the sources you picked.',
   [ExplainerMode.ASSOCIATE]: 'Scores reward raw co-mentions with your anchor word.',
   [ExplainerMode.COMPARE]: 'Each column highlights words that make up a bigger share of mentions in that group.',
-  [ExplainerMode.COMPARE_ASSOCIATE]: 'Percent-share differences are calculated only among headlines with your anchor word.',
+  [ExplainerMode.COMPARE_ASSOCIATE]:
+    'Percent-share differences are calculated only among headlines with your anchor word.',
 }
 
 const MODE_SPECIFIC_BULLETS: Record<ExplainerMode, string> = {
-  [ExplainerMode.CLASSIC]: 'Classic mode ranks words purely by how many times they are mentioned during the selected window.',
-  [ExplainerMode.ASSOCIATE]: 'Association mode counts the raw number of headlines containing both your anchor word and the guess.',
+  [ExplainerMode.CLASSIC]:
+    'Classic mode ranks words purely by how many times they are mentioned during the selected window.',
+  [ExplainerMode.ASSOCIATE]:
+    'Association mode counts the raw number of headlines containing both your anchor word and the guess.',
   [ExplainerMode.COMPARE]:
     'Comparison mode surfaces words whose percentage of total mentions is higher in one source group than the other.',
   [ExplainerMode.COMPARE_ASSOCIATE]:
@@ -91,4 +94,3 @@ const GameExplainerDialog = ({ mode, label = 'Learn more', size = 'small' }: Gam
 }
 
 export default GameExplainerDialog
-

@@ -1,5 +1,16 @@
 import React from 'react'
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  LinearProgress,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 export type WordItem = {
   word: string

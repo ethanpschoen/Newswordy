@@ -81,9 +81,7 @@ const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
               {remainingGuesses === -1 ? '∞' : remainingGuesses}
             </Typography>
             <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-              {remainingGuesses === -1
-                ? 'Unlimited Guesses'
-                : `Wrong Guess${remainingGuesses === 1 ? '' : 'es'} Left`}
+              {remainingGuesses === -1 ? 'Unlimited Guesses' : `Wrong Guess${remainingGuesses === 1 ? '' : 'es'} Left`}
             </Typography>
           </Paper>
         </Stack>

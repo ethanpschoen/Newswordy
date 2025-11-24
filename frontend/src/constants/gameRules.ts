@@ -18,4 +18,3 @@ export const BASE_RULE_BULLETS = [
   `Stop words such as ${STOP_WORD_EXAMPLES.slice(0, 5).join(', ')} never appear on the board.`,
   'The chosen time period is fixed when the game is created.',
 ] as const
-

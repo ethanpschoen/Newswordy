@@ -178,7 +178,7 @@ const Game: React.FC = () => {
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
         const baseScore = calculateScore(index, scoreboard.length)
-        
+
         // Check if word was hinted - if so, award half points
         wasHinted = hintedWords.includes(guessWord)
         wordScore = wasHinted ? Math.round(baseScore / 2) : baseScore
@@ -294,7 +294,7 @@ const Game: React.FC = () => {
 
     try {
       setSubmitting(true)
-      
+
       const updatedGameState = {
         ...gameState,
         is_completed: true,
@@ -357,15 +357,10 @@ const Game: React.FC = () => {
   // Select a hint word with equal probability (no weights)
   const selectHintWord = (): ScoreboardEntry | null => {
     // Filter for unguessed words that haven't been hinted yet
-    const availableWords = scoreboard.filter(
-      entry => {
-        const wordLower = entry.word.toLowerCase()
-        return (
-          !gameState?.guessed_words.includes(wordLower) &&
-          !hintedWords.includes(wordLower)
-        )
-      }
-    )
+    const availableWords = scoreboard.filter(entry => {
+      const wordLower = entry.word.toLowerCase()
+      return !gameState?.guessed_words.includes(wordLower) && !hintedWords.includes(wordLower)
+    })
 
     if (availableWords.length === 0) {
       return null
