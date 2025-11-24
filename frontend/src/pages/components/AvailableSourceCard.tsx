@@ -1,6 +1,7 @@
 import { Box, Card, Typography, Stack, IconButton } from '@mui/material'
 import { Add as AddIcon } from '@mui/icons-material'
 import { NewsSource, NewsSourceConfig } from '../../types'
+import NewsSourceLogo from '../../components/NewsSourceLogo'
 
 interface Props {
   source: NewsSource
@@ -29,7 +30,7 @@ const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handl
       }}
     >
       <Box sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {config.logo}
+        <NewsSourceLogo source={source} />
       </Box>
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="body2" fontWeight="medium">

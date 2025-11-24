@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Dialog, DialogContent, DialogTitle, Grid, Typography } from '@mui/material'
 import { NewsSource, NewsSourceConfig } from '../../types'
+import NewsSourceLogo from '../../components/NewsSourceLogo'
 
 interface Props {
   open: boolean
@@ -21,7 +22,7 @@ const SourcesModal = ({ open, onClose, sources }: Props) => {
                     <Box
                       sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      {NewsSourceConfig[source].logo}
+                      <NewsSourceLogo source={source} />
                     </Box>
                     <Typography variant="body1" fontWeight="medium">
                       {NewsSourceConfig[source].name}

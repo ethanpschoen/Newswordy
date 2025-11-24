@@ -1,19 +1,19 @@
-import { ReactComponent as ABCNewsLogo } from '../components/logos/abcnews.svg'
-import { ReactComponent as AlJazeeraLogo } from '../components/logos/aljazeera.svg'
-import { ReactComponent as AxiosLogo } from '../components/logos/axios.svg'
-import { ReactComponent as BBCNewsLogo } from '../components/logos/bbcnews.svg'
-import { ReactComponent as CBSNewsLogo } from '../components/logos/cbsnews.svg'
-import { ReactComponent as FoxNewsLogo } from '../components/logos/foxnews.svg'
-import { ReactComponent as LosAngelesTimesLogo } from '../components/logos/latimes.svg'
-import { ReactComponent as NBCNewsLogo } from '../components/logos/nbcnews.svg'
-import { ReactComponent as NewYorkPostLogo } from '../components/logos/nypost.svg'
-import { ReactComponent as NYTimesLogo } from '../components/logos/newyorktimes.svg'
-import { ReactComponent as NewsmaxLogo } from '../components/logos/newsmax.svg'
-import { ReactComponent as NPRLogo } from '../components/logos/npr.svg'
-import { ReactComponent as GuardianLogo } from '../components/logos/theguardian.svg'
-import { ReactComponent as WashingtonPostLogo } from '../components/logos/thewashingtonpost.svg'
-import { ReactComponent as WallStreetJournalLogo } from '../components/logos/wsj.svg'
-import { ReactComponent as YahooNewsLogo } from '../components/logos/yahoonews.svg'
+import ABCNewsLogo from '../components/logos/abcnews.svg'
+import AlJazeeraLogo from '../components/logos/aljazeera.svg'
+import AxiosLogo from '../components/logos/axios.svg'
+import BBCNewsLogo from '../components/logos/bbcnews.svg'
+import CBSNewsLogo from '../components/logos/cbsnews.svg'
+import FoxNewsLogo from '../components/logos/foxnews.svg'
+import LosAngelesTimesLogo from '../components/logos/latimes.svg'
+import NBCNewsLogo from '../components/logos/nbcnews.svg'
+import NewYorkPostLogo from '../components/logos/nypost.svg'
+import NYTimesLogo from '../components/logos/newyorktimes.svg'
+import NewsmaxLogo from '../components/logos/newsmax.svg'
+import NPRLogo from '../components/logos/npr.svg'
+import GuardianLogo from '../components/logos/theguardian.svg'
+import WashingtonPostLogo from '../components/logos/thewashingtonpost.svg'
+import WallStreetJournalLogo from '../components/logos/wsj.svg'
+import YahooNewsLogo from '../components/logos/yahoonews.svg'
 
 // Color enum with RGB values for consistent theming
 export enum Color {
@@ -375,23 +375,23 @@ export const TIME_PERIOD_DESCRIPTIONS: Record<TimePeriod, string> = {
   [TIME_PERIODS.LAST_YEAR]: 'From the previous calendar year (January 1 through December 31).',
 }
 
-export const NewsSourceConfig: Record<NewsSource, { name: string; logo: React.ReactNode }> = {
-  [NewsSource.ABC]: { name: 'ABC News', logo: <ABCNewsLogo /> },
-  [NewsSource.AL_JAZEERA]: { name: 'Al Jazeera', logo: <AlJazeeraLogo /> },
-  [NewsSource.AXIOS]: { name: 'Axios', logo: <AxiosLogo /> },
-  [NewsSource.BBC]: { name: 'BBC News', logo: <BBCNewsLogo /> },
-  [NewsSource.CBS]: { name: 'CBS News', logo: <CBSNewsLogo /> },
-  [NewsSource.FOX_NEWS]: { name: 'Fox News', logo: <FoxNewsLogo /> },
-  [NewsSource.GUARDIAN]: { name: 'The Guardian', logo: <GuardianLogo /> },
-  [NewsSource.LOS_ANGELES_TIMES]: { name: 'Los Angeles Times', logo: <LosAngelesTimesLogo /> },
-  [NewsSource.NEW_YORK_POST]: { name: 'New York Post', logo: <NewYorkPostLogo /> },
-  [NewsSource.NBC_NEWS]: { name: 'NBC News', logo: <NBCNewsLogo /> },
-  [NewsSource.NEWSMAX]: { name: 'Newsmax', logo: <NewsmaxLogo /> },
-  [NewsSource.NPR]: { name: 'NPR', logo: <NPRLogo /> },
-  [NewsSource.NYT]: { name: 'The New York Times', logo: <NYTimesLogo /> },
-  [NewsSource.WALL_STREET_JOURNAL]: { name: 'The Wall Street Journal', logo: <WallStreetJournalLogo /> },
-  [NewsSource.WASHINGTON_POST]: { name: 'The Washington Post', logo: <WashingtonPostLogo /> },
-  [NewsSource.YAHOO]: { name: 'Yahoo News', logo: <YahooNewsLogo /> },
+export const NewsSourceConfig: Record<NewsSource, { name: string; logoSrc: string }> = {
+  [NewsSource.ABC]: { name: 'ABC News', logoSrc: ABCNewsLogo },
+  [NewsSource.AL_JAZEERA]: { name: 'Al Jazeera', logoSrc: AlJazeeraLogo },
+  [NewsSource.AXIOS]: { name: 'Axios', logoSrc: AxiosLogo },
+  [NewsSource.BBC]: { name: 'BBC News', logoSrc: BBCNewsLogo },
+  [NewsSource.CBS]: { name: 'CBS News', logoSrc: CBSNewsLogo },
+  [NewsSource.FOX_NEWS]: { name: 'Fox News', logoSrc: FoxNewsLogo },
+  [NewsSource.GUARDIAN]: { name: 'The Guardian', logoSrc: GuardianLogo },
+  [NewsSource.LOS_ANGELES_TIMES]: { name: 'Los Angeles Times', logoSrc: LosAngelesTimesLogo },
+  [NewsSource.NEW_YORK_POST]: { name: 'New York Post', logoSrc: NewYorkPostLogo },
+  [NewsSource.NBC_NEWS]: { name: 'NBC News', logoSrc: NBCNewsLogo },
+  [NewsSource.NEWSMAX]: { name: 'Newsmax', logoSrc: NewsmaxLogo },
+  [NewsSource.NPR]: { name: 'NPR', logoSrc: NPRLogo },
+  [NewsSource.NYT]: { name: 'The New York Times', logoSrc: NYTimesLogo },
+  [NewsSource.WALL_STREET_JOURNAL]: { name: 'The Wall Street Journal', logoSrc: WallStreetJournalLogo },
+  [NewsSource.WASHINGTON_POST]: { name: 'The Washington Post', logoSrc: WashingtonPostLogo },
+  [NewsSource.YAHOO]: { name: 'Yahoo News', logoSrc: YahooNewsLogo },
 }
 
 export enum GameMode {

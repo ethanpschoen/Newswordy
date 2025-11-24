@@ -8,6 +8,7 @@ import {
   Close as CloseIcon,
 } from '@mui/icons-material'
 import { NewsSourceConfig, ScoreboardEntry } from '../../types'
+import NewsSourceLogo from '../../components/NewsSourceLogo'
 
 interface Props {
   open: boolean
@@ -105,7 +106,7 @@ const ComparativeArticleDrawer = ({
                       flexShrink: 0,
                     }}
                   >
-                    {NewsSourceConfig[article.source].logo}
+                    <NewsSourceLogo source={article.source} />
                   </Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography
