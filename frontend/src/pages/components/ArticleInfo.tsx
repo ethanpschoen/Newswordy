@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   Box,
   Card,
@@ -46,6 +47,25 @@ const ArticleInfo = ({
     ...(groupLabel ? { borderTop: `4px solid ${accentColor}` } : {}),
   }
 
+  const orderedArticles = useMemo(() => {
+    if (!selectedWordData?.articles) {
+      return []
+    }
+
+    const sorted = [...selectedWordData.articles].sort((a, b) => {
+      const dateA = a.published_date ? new Date(a.published_date).getTime() : 0
+      const dateB = b.published_date ? new Date(b.published_date).getTime() : 0
+      if (dateA === dateB) {
+        return a.headline.localeCompare(b.headline)
+      }
+      return dateB - dateA
+    })
+
+    return sorted
+  }, [selectedWordData?.articles])
+
+  const articleCount = orderedArticles.length
+
   const articleContent = (
     <>
       {selectedWordData ? (
@@ -69,9 +89,9 @@ const ArticleInfo = ({
           </Box>
           <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
             <Stack spacing={1.5} sx={{ flex: 1 }}>
-              {selectedWordData.articles.length > 0 ? (
+              {articleCount > 0 ? (
                 <>
-                  {selectedWordData.articles
+                  {orderedArticles
                     .slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage)
                     .map((article, index) => (
                       <Paper
@@ -167,7 +187,7 @@ const ArticleInfo = ({
             </Stack>
 
             {/* Pagination Controls */}
-            {selectedWordData.articles.length > articlesPerPage && (
+            {articleCount > articlesPerPage && (
               <Box
                 sx={{
                   display: 'flex',
@@ -182,8 +202,7 @@ const ArticleInfo = ({
               >
                 <Typography variant="caption" color="text.secondary">
                   Showing {currentPage * articlesPerPage + 1}-
-                  {Math.min((currentPage + 1) * articlesPerPage, selectedWordData.articles.length)} of{' '}
-                  {selectedWordData.articles.length}
+                  {Math.min((currentPage + 1) * articlesPerPage, articleCount)} of {articleCount}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                   <IconButton
@@ -204,7 +223,7 @@ const ArticleInfo = ({
                   </IconButton>
                   <IconButton
                     size="small"
-                    disabled={(currentPage + 1) * articlesPerPage >= selectedWordData.articles.length}
+                    disabled={(currentPage + 1) * articlesPerPage >= articleCount}
                     onClick={() => setCurrentPage(prev => prev + 1)}
                     sx={{
                       width: 24,
