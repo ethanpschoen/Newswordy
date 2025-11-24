@@ -16,7 +16,6 @@ import LoadingSpinner from '../../components/LoadingSpinner'
 import { useNavigate } from 'react-router-dom'
 import { Color, HintType, ExplainerMode } from '../../types'
 import { useRef, useEffect } from 'react'
-import { WORD_RULES_HELPER_TEXT } from '../../constants/gameRules'
 import GameExplainerDialog from './GameExplainerDialog'
 
 interface Props {
@@ -141,7 +140,6 @@ const WordInput = ({
               variant="outlined"
               size="small"
               disabled={submitting}
-              helperText={WORD_RULES_HELPER_TEXT}
               sx={{ '& .MuiInputBase-input': { fontSize: '1rem' } }}
             />
 
