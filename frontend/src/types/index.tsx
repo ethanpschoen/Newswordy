@@ -6,7 +6,9 @@ import { ReactComponent as CBSNewsLogo } from '../components/logos/cbsnews.svg'
 import { ReactComponent as FoxNewsLogo } from '../components/logos/foxnews.svg'
 import { ReactComponent as LosAngelesTimesLogo } from '../components/logos/latimes.svg'
 import { ReactComponent as NBCNewsLogo } from '../components/logos/nbcnews.svg'
+import { ReactComponent as NewYorkPostLogo } from '../components/logos/nypost.svg'
 import { ReactComponent as NYTimesLogo } from '../components/logos/newyorktimes.svg'
+import { ReactComponent as NewsmaxLogo } from '../components/logos/newsmax.svg'
 import { ReactComponent as NPRLogo } from '../components/logos/npr.svg'
 import { ReactComponent as GuardianLogo } from '../components/logos/theguardian.svg'
 import { ReactComponent as WashingtonPostLogo } from '../components/logos/thewashingtonpost.svg'
@@ -337,6 +339,8 @@ export enum NewsSource {
   GUARDIAN = 'guardian',
   LOS_ANGELES_TIMES = 'los_angeles_times',
   NBC_NEWS = 'nbc_news',
+  NEW_YORK_POST = 'new_york_post',
+  NEWSMAX = 'newsmax',
   NPR = 'npr',
   NYT = 'nyt',
   WALL_STREET_JOURNAL = 'wall_street_journal',
@@ -370,7 +374,9 @@ export const NewsSourceConfig: Record<NewsSource, { name: string; logo: React.Re
   [NewsSource.FOX_NEWS]: { name: 'Fox News', logo: <FoxNewsLogo /> },
   [NewsSource.GUARDIAN]: { name: 'The Guardian', logo: <GuardianLogo /> },
   [NewsSource.LOS_ANGELES_TIMES]: { name: 'Los Angeles Times', logo: <LosAngelesTimesLogo /> },
+  [NewsSource.NEW_YORK_POST]: { name: 'New York Post', logo: <NewYorkPostLogo /> },
   [NewsSource.NBC_NEWS]: { name: 'NBC News', logo: <NBCNewsLogo /> },
+  [NewsSource.NEWSMAX]: { name: 'Newsmax', logo: <NewsmaxLogo /> },
   [NewsSource.NPR]: { name: 'NPR', logo: <NPRLogo /> },
   [NewsSource.NYT]: { name: 'The New York Times', logo: <NYTimesLogo /> },
   [NewsSource.WALL_STREET_JOURNAL]: { name: 'The Wall Street Journal', logo: <WallStreetJournalLogo /> },

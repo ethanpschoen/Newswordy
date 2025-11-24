@@ -88,6 +88,22 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
+    'new_york_post': {
+        'name': 'New York Post',
+        'url': 'https://www.nypost.com/',
+        'rss_feed': 'https://nypost.com/feed/',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
+        'enabled': True
+    },
+    'newsmax': {
+        'name': 'Newsmax',
+        'url': 'https://www.newsmax.com/',
+        'rss_feed': 'https://www.newsmax.com/rss/Newsfront/16/',
+        'headline_selectors': ['h1', 'h2', 'h3', '.headline', '.title', '.article-title'],
+        'article_selectors': ['article', '.story', '.content', '.article'],
+        'enabled': True
+    },
     'npr': {
         'name': 'NPR',
         'url': 'https://www.npr.org/',
