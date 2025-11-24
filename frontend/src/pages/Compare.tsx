@@ -8,7 +8,6 @@ import {
   DEFAULT_MAX_GUESSES,
   DEFAULT_SCOREBOARD_SIZE,
   NewsSource,
-  NewsSourceConfig,
   ComparePreset,
   COMPARE_PRESETS,
   TimePeriod,
@@ -19,6 +18,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import SourceCard from './components/SourceCard'
 import AvailableSourceCard from './components/AvailableSourceCard'
+import ComparePresetsDialog from './components/ComparePresetsDialog'
 
 const Compare: React.FC = () => {
   const { user, isLoading } = useAuth0()
@@ -28,6 +28,7 @@ const Compare: React.FC = () => {
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
+  const [presetDialogOpen, setPresetDialogOpen] = useState(false)
 
   // Two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
@@ -132,61 +133,6 @@ const Compare: React.FC = () => {
           at least one source in each group to start.
         </Typography>
       </Alert>
-
-      {/* Presets */}
-      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
-          Jumpstart with Preset Matchups
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Use these curated examples to quickly fill each group, then tweak as needed.
-        </Typography>
-        <Grid container spacing={2}>
-          {COMPARE_PRESETS.map(preset => (
-            <Grid size={{ xs: 12, md: 4 }} key={preset.id}>
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2.5,
-                  height: '100%',
-                  borderRadius: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1.5,
-                }}
-              >
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    {preset.label}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {preset.description}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" color="primary.main">
-                    {preset.groupALabel}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {preset.groupASources.map(source => NewsSourceConfig[source].name).join(', ')}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" color="secondary.main">
-                    {preset.groupBLabel}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {preset.groupBSources.map(source => NewsSourceConfig[source].name).join(', ')}
-                  </Typography>
-                </Box>
-                <Button variant="contained" fullWidth onClick={() => handleApplyPreset(preset)}>
-                  Use This Preset
-                </Button>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
 
       {/* Two Groups Layout */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -303,9 +249,14 @@ const Compare: React.FC = () => {
 
       {/* Available Sources */}
       <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom sx={{ mb: 0.5, fontWeight: 'bold' }}>
-          Available Sources
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+          <Typography variant="h6" gutterBottom sx={{ mb: 0, fontWeight: 'bold' }}>
+            Available Sources
+          </Typography>
+          <Button variant="outlined" onClick={() => setPresetDialogOpen(true)}>
+            Browse Presets
+          </Button>
+        </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
           <strong style={{ color: '#dc004e' }}>red</strong> plus button to add a source to{' '}
@@ -376,6 +327,12 @@ const Compare: React.FC = () => {
           </Typography>
         )}
       </Box>
+      <ComparePresetsDialog
+        open={presetDialogOpen}
+        onClose={() => setPresetDialogOpen(false)}
+        presets={COMPARE_PRESETS}
+        onApplyPreset={handleApplyPreset}
+      />
     </Container>
   )
 }
