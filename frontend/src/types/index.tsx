@@ -407,3 +407,51 @@ export const HINT_TYPE_NAMES: Record<HintType, string> = {
   [HintType.FILL_BLANK]: 'Fill in the Blank',
   [HintType.FIRST_LETTER]: 'First Letter',
 }
+
+export type ComparePreset = {
+  id: string
+  label: string
+  description: string
+  groupALabel: string
+  groupBLabel: string
+  groupASources: NewsSource[]
+  groupBSources: NewsSource[]
+}
+
+export const COMPARE_PRESETS: ComparePreset[] = [
+  {
+    id: 'left-vs-right',
+    label: 'Left vs Right Leaning',
+    description: 'See how coverage from progressive versus conservative outlets differs.',
+    groupALabel: 'Progressive / Left-Leaning',
+    groupBLabel: 'Conservative / Right-Leaning',
+    groupASources: [NewsSource.NYT, NewsSource.GUARDIAN, NewsSource.NPR, NewsSource.WASHINGTON_POST],
+    groupBSources: [NewsSource.FOX_NEWS, NewsSource.WALL_STREET_JOURNAL, NewsSource.NEWSMAX, NewsSource.NEW_YORK_POST],
+  },
+  {
+    id: 'us-vs-world',
+    label: 'US vs World Focused',
+    description: 'Compare coverage from domestic US outlets with international coverage.',
+    groupALabel: 'US-Focused Outlets',
+    groupBLabel: 'Global / International Outlets',
+    groupASources: [
+      NewsSource.ABC,
+      NewsSource.CBS,
+      NewsSource.NBC_NEWS,
+      NewsSource.NPR,
+      NewsSource.NYT,
+      NewsSource.WASHINGTON_POST,
+      NewsSource.LOS_ANGELES_TIMES,
+    ],
+    groupBSources: [NewsSource.BBC, NewsSource.GUARDIAN, NewsSource.AL_JAZEERA],
+  },
+  {
+    id: 'opinion-vs-fact',
+    label: 'Opinion vs Fact Reporting',
+    description: 'Contrast coverage from analysis-heavy outlets with straight-reporting news desks.',
+    groupALabel: 'Opinion / Analysis Heavy',
+    groupBLabel: 'Straight Reporting',
+    groupASources: [NewsSource.WALL_STREET_JOURNAL, NewsSource.GUARDIAN, NewsSource.FOX_NEWS],
+    groupBSources: [NewsSource.ABC, NewsSource.CBS, NewsSource.NPR, NewsSource.BBC, NewsSource.AXIOS],
+  },
+]

@@ -8,6 +8,9 @@ import {
   DEFAULT_MAX_GUESSES,
   DEFAULT_SCOREBOARD_SIZE,
   NewsSource,
+  NewsSourceConfig,
+  ComparePreset,
+  COMPARE_PRESETS,
   TimePeriod,
 } from '../types'
 import { Box, Button, Container, Grid, Paper, Stack, Typography, Chip, Divider, Alert } from '@mui/material'
@@ -58,6 +61,11 @@ const Compare: React.FC = () => {
   const handleMoveToGroupB = (source: NewsSource) => {
     setGroupA(prev => prev.filter(s => s !== source))
     setGroupB(prev => [...prev, source])
+  }
+
+  const handleApplyPreset = (preset: ComparePreset) => {
+    setGroupA(preset.groupASources)
+    setGroupB(preset.groupBSources)
   }
 
   const handleStartGame = async () => {
@@ -117,13 +125,68 @@ const Compare: React.FC = () => {
       {/* Instructions Alert */}
       <Alert severity="info" sx={{ mb: 4 }}>
         <Typography variant="body2">
-          <strong>How it works:</strong> Click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
+          <strong>How it works:</strong> Choose a preset or click the <strong style={{ color: '#1976d2' }}>blue</strong> or{' '}
           <strong style={{ color: '#dc004e' }}>red</strong> plus button on available sources to add them to{' '}
           <strong style={{ color: '#1976d2' }}>Group A</strong> or <strong style={{ color: '#dc004e' }}>Group B</strong>
-          . You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
+          You can also move sources between groups using the swap icon, or remove them using the delete icon. You need
           at least one source in each group to start.
         </Typography>
       </Alert>
+
+      {/* Presets */}
+      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+          Jumpstart with Preset Matchups
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Use these curated examples to quickly fill each group, then tweak as needed.
+        </Typography>
+        <Grid container spacing={2}>
+          {COMPARE_PRESETS.map(preset => (
+            <Grid size={{ xs: 12, md: 4 }} key={preset.id}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2.5,
+                  height: '100%',
+                  borderRadius: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.5,
+                }}
+              >
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {preset.label}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {preset.description}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" color="primary.main">
+                    {preset.groupALabel}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {preset.groupASources.map(source => NewsSourceConfig[source].name).join(', ')}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" color="secondary.main">
+                    {preset.groupBLabel}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {preset.groupBSources.map(source => NewsSourceConfig[source].name).join(', ')}
+                  </Typography>
+                </Box>
+                <Button variant="contained" fullWidth onClick={() => handleApplyPreset(preset)}>
+                  Use This Preset
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
 
       {/* Two Groups Layout */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
