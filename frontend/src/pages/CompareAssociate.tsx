@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
@@ -12,6 +12,7 @@ import {
   ComparePreset,
   COMPARE_PRESETS,
   TimePeriod,
+  ScoreboardEntry,
 } from '../types'
 import {
   Box,
@@ -28,11 +29,12 @@ import {
   Divider,
   Alert,
 } from '@mui/material'
-import { PlayArrow as PlayIcon, CompareArrows as CompareIcon, Search as SearchIcon } from '@mui/icons-material'
+import { PlayArrow as PlayIcon, CompareArrows as CompareIcon, Search as SearchIcon, Insights as InsightsIcon } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import SourceCard from './components/SourceCard'
 import AvailableSourceCard from './components/AvailableSourceCard'
+import CommonWordsDialog from './components/CommonWordsDialog'
 
 const CompareAssociate: React.FC = () => {
   const { user, isLoading } = useAuth0()
@@ -52,6 +54,12 @@ const CompareAssociate: React.FC = () => {
   const [findingCount, setFindingCount] = useState(false)
   const [wordCountGroupA, setWordCountGroupA] = useState<number | null>(null)
   const [wordCountGroupB, setWordCountGroupB] = useState<number | null>(null)
+
+  const [commonWordsOpen, setCommonWordsOpen] = useState(false)
+  const [commonWordsGroupA, setCommonWordsGroupA] = useState<ScoreboardEntry[]>([])
+  const [commonWordsGroupB, setCommonWordsGroupB] = useState<ScoreboardEntry[]>([])
+  const [loadingCommonWords, setLoadingCommonWords] = useState(false)
+  const [commonWordsError, setCommonWordsError] = useState<string | null>(null)
 
   // Available sources (not in either group)
   const allSources = Object.values(NewsSource)
@@ -180,6 +188,50 @@ const CompareAssociate: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     handleFindCount()
+  }
+
+  useEffect(() => {
+    setCommonWordsGroupA([])
+    setCommonWordsGroupB([])
+  }, [selectedTimePeriod, groupA, groupB])
+
+  const fetchCommonWords = async () => {
+    if (loadingCommonWords) return
+    if (groupA.length === 0 && groupB.length === 0) {
+      setCommonWordsError('Add at least one source to Group A or B to see suggestions.')
+      return
+    }
+
+    setLoadingCommonWords(true)
+    setCommonWordsError(null)
+
+    try {
+      const [responseA, responseB] = await Promise.all([
+        groupA.length ? gameAPI.getScoreboard(selectedTimePeriod, groupA, 10, new Date()) : ({ data: [], error: null } as any),
+        groupB.length ? gameAPI.getScoreboard(selectedTimePeriod, groupB, 10, new Date()) : ({ data: [], error: null } as any),
+      ])
+
+      if (responseA.error || responseB.error) {
+        console.error('Error fetching common words:', responseA.error || responseB.error)
+        setCommonWordsError('Unable to fetch common words. Please try again.')
+        return
+      }
+
+      setCommonWordsGroupA(responseA.data || [])
+      setCommonWordsGroupB(responseB.data || [])
+    } catch (error) {
+      console.error('Failed to fetch common words:', error)
+      setCommonWordsError('Unable to fetch common words. Please try again.')
+    } finally {
+      setLoadingCommonWords(false)
+    }
+  }
+
+  const handleOpenCommonWords = () => {
+    setCommonWordsOpen(true)
+    if (commonWordsGroupA.length === 0 && commonWordsGroupB.length === 0) {
+      fetchCommonWords()
+    }
   }
 
   return (
@@ -406,9 +458,29 @@ const CompareAssociate: React.FC = () => {
 
       <Card sx={{ mb: 4, boxShadow: 3 }}>
         <CardContent>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-            Word Selection
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: { xs: 'flex-start', sm: 'center' },
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 1.5,
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Word Selection
+            </Typography>
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<InsightsIcon />}
+              onClick={handleOpenCommonWords}
+              sx={{ textTransform: 'none', fontWeight: 600, alignSelf: { xs: 'stretch', sm: 'center' } }}
+            >
+              Browse common words
+            </Button>
+          </Box>
           <Box component="form" onSubmit={handleFormSubmit}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
               <TextField
@@ -558,6 +630,40 @@ const CompareAssociate: React.FC = () => {
           </Typography>
         )}
       </Box>
+      <CommonWordsDialog
+        open={commonWordsOpen}
+        onClose={() => setCommonWordsOpen(false)}
+        title="Most common words"
+        description="Top words found in each source group for the selected time period."
+        sections={[
+          {
+            title: 'Group A',
+            words: commonWordsGroupA.map(({ word, frequency }) => ({ word, frequency })),
+            emptyLabel:
+              groupA.length === 0
+                ? 'Add at least one source to Group A to view suggestions.'
+                : 'No data available for the current filters.',
+            accentColor: '#1976d2',
+          },
+          {
+            title: 'Group B',
+            words: commonWordsGroupB.map(({ word, frequency }) => ({ word, frequency })),
+            emptyLabel:
+              groupB.length === 0
+                ? 'Add at least one source to Group B to view suggestions.'
+                : 'No data available for the current filters.',
+            accentColor: '#dc004e',
+          },
+        ]}
+        loading={loadingCommonWords}
+        error={commonWordsError || undefined}
+        onWordSelect={word => {
+          setSelectedWord(word)
+          setWordCountGroupA(null)
+          setWordCountGroupB(null)
+          setCommonWordsOpen(false)
+        }}
+      />
     </Container>
   )
 }

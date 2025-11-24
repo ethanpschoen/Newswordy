@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI } from '../services/api'
@@ -9,11 +9,13 @@ import {
   DEFAULT_SCOREBOARD_SIZE,
   NewsSource,
   TimePeriod,
+  ScoreboardEntry,
 } from '../types'
 import { Box, Button, Card, CardContent, Chip, Container, Stack, TextField, Typography, Alert } from '@mui/material'
-import { PlayArrow as PlayIcon, Search as SearchIcon } from '@mui/icons-material'
+import { PlayArrow as PlayIcon, Search as SearchIcon, Insights as InsightsIcon } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
+import CommonWordsDialog from './components/CommonWordsDialog'
 
 const Associate: React.FC = () => {
   const { isLoading, user } = useAuth0()
@@ -29,6 +31,11 @@ const Associate: React.FC = () => {
   const [selectedWord, setSelectedWord] = useState('')
   const [findingCount, setFindingCount] = useState(false)
   const [wordCount, setWordCount] = useState<number | null>(null)
+
+  const [commonWordsOpen, setCommonWordsOpen] = useState(false)
+  const [commonWords, setCommonWords] = useState<ScoreboardEntry[]>([])
+  const [loadingCommonWords, setLoadingCommonWords] = useState(false)
+  const [commonWordsError, setCommonWordsError] = useState<string | null>(null)
 
   const handleStartGame = async () => {
     setLoading(true)
@@ -88,6 +95,42 @@ const Associate: React.FC = () => {
     handleFindCount()
   }
 
+  useEffect(() => {
+    setCommonWords([])
+  }, [selectedTimePeriod, selectedSources])
+
+  const fetchCommonWords = async () => {
+    if (loadingCommonWords) return
+    if (selectedSources.length === 0) {
+      setCommonWordsError('Select at least one source to see common words.')
+      return
+    }
+
+    setLoadingCommonWords(true)
+    setCommonWordsError(null)
+    try {
+      const { data, error } = await gameAPI.getScoreboard(selectedTimePeriod, selectedSources, 10, new Date())
+      if (error) {
+        console.error('Error fetching common words:', error)
+        setCommonWordsError('Unable to fetch common words. Please try again.')
+        return
+      }
+      setCommonWords(data || [])
+    } catch (fetchError) {
+      console.error('Failed to fetch common words:', fetchError)
+      setCommonWordsError('Unable to fetch common words. Please try again.')
+    } finally {
+      setLoadingCommonWords(false)
+    }
+  }
+
+  const handleOpenCommonWords = () => {
+    setCommonWordsOpen(true)
+    if (commonWords.length === 0) {
+      fetchCommonWords()
+    }
+  }
+
   return (
     <Container maxWidth="xl">
       {/* Header */}
@@ -111,9 +154,29 @@ const Associate: React.FC = () => {
 
       <Card sx={{ mb: 4, boxShadow: 3 }}>
         <CardContent>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-            Word Selection
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: { xs: 'flex-start', sm: 'center' },
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 1.5,
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Word Selection
+            </Typography>
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<InsightsIcon />}
+              onClick={handleOpenCommonWords}
+              sx={{ textTransform: 'none', fontWeight: 600, alignSelf: { xs: 'stretch', sm: 'center' } }}
+            >
+              Browse common words
+            </Button>
+          </Box>
           <Box component="form" onSubmit={handleFormSubmit}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
               <TextField
@@ -236,6 +299,29 @@ const Associate: React.FC = () => {
           </Typography>
         )}
       </Box>
+      <CommonWordsDialog
+        open={commonWordsOpen}
+        onClose={() => setCommonWordsOpen(false)}
+        title="Most common words"
+        description="Based on your selected sources and time period."
+        sections={[
+          {
+            title: 'Top words',
+            words: commonWords.map(({ word, frequency }) => ({ word, frequency })),
+            emptyLabel:
+              selectedSources.length === 0
+                ? 'Select at least one source to view suggestions.'
+                : 'No data available for the selected filters.',
+          },
+        ]}
+        loading={loadingCommonWords}
+        error={commonWordsError || undefined}
+        onWordSelect={(word, frequency) => {
+          setSelectedWord(word)
+          setWordCount(frequency ?? null)
+          setCommonWordsOpen(false)
+        }}
+      />
     </Container>
   )
 }
