@@ -375,6 +375,7 @@ export const TIME_PERIOD_DESCRIPTIONS: Record<TimePeriod, string> = {
   [TIME_PERIODS.LAST_YEAR]: 'From the previous calendar year (January 1 through December 31).',
 }
 
+// TODO: Handle old news sources (Politico, CNN) to prevent errors
 export const NewsSourceConfig: Record<NewsSource, { name: string; logoSrc: string }> = {
   [NewsSource.ABC]: { name: 'ABC News', logoSrc: ABCNewsLogo },
   [NewsSource.AL_JAZEERA]: { name: 'Al Jazeera', logoSrc: AlJazeeraLogo },
