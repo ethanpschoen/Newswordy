@@ -178,7 +178,7 @@ const Associate: React.FC = () => {
             </Button>
           </Box>
           <Box component="form" onSubmit={handleFormSubmit}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 0 }}>
               <TextField
                 label="Enter a word that appears in news headlines"
                 value={selectedWord}
