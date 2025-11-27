@@ -142,13 +142,18 @@ const Home: React.FC = () => {
             Welcome back, <strong>{user?.nickname || user?.email}</strong>! Your stats will be saved.
           </Alert>
         ) : (
-          <Alert severity="info" sx={{ mb: 2 }}>
+          <Alert
+            severity="info"
+            sx={{ mb: 2, pb: 0 }}
+            action={
+              <Button variant="contained" size="small" onClick={() => loginWithRedirect()}>
+                Sign In to Save Stats
+              </Button>
+            }
+          >
             <Typography variant="body2" sx={{ mb: 1 }}>
               Sign in to save your stats and compete on the leaderboard!
             </Typography>
-            <Button variant="contained" size="small" onClick={() => loginWithRedirect()}>
-              Sign In to Save Stats
-            </Button>
           </Alert>
         )}
       </Box>
