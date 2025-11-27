@@ -96,6 +96,7 @@ NEWS_SOURCES = {
         'article_selectors': ['article', '.story', '.content', '.article'],
         'enabled': True
     },
+    # TODO: Error fetching RSS feed https://www.newsmax.com/rss/Newsfront/16/: HTTPSConnectionPool(host='www.newsmax.com', port=443): Read timed out. (read timeout=30)
     'newsmax': {
         'name': 'Newsmax',
         'url': 'https://www.newsmax.com/',
