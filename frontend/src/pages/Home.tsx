@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
@@ -11,9 +11,11 @@ import {
   CompareArrows as CompareIcon,
   Search as SearchIcon,
   Compare as CompareAssociateIcon,
+  HelpOutline as HelpIcon,
 } from '@mui/icons-material'
 import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
+import TutorialDialog from './components/TutorialDialog'
 
 interface Stat {
   name: string
@@ -90,6 +92,24 @@ const Home: React.FC = () => {
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
   const [stats, setStats] = useState<Stat[]>([])
+  const [tutorialOpen, setTutorialOpen] = useState(false)
+
+  // Check if user has seen tutorial on mount
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('newswordy_tutorial_completed')
+    if (!hasSeenTutorial) {
+      setTutorialOpen(true)
+    }
+  }, [])
+
+  const handleTutorialComplete = () => {
+    localStorage.setItem('newswordy_tutorial_completed', 'true')
+    setTutorialOpen(false)
+  }
+
+  const handleShowTutorial = () => {
+    setTutorialOpen(true)
+  }
 
   const handleStartGame = async (useDefaults: boolean = false) => {
     setLoading(true)
@@ -166,6 +186,17 @@ const Home: React.FC = () => {
         <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto', mb: 1 }}>
           Guess the most common words in news headlines. Test your knowledge of current events!
         </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleShowTutorial}
+            startIcon={<HelpIcon />}
+            sx={{ textTransform: 'none' }}
+          >
+            Show Tutorial
+          </Button>
+        </Box>
       </Box>
 
       {/* User Stats - Only show if authenticated */}
@@ -422,6 +453,9 @@ const Home: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
+
+      {/* Tutorial Dialog */}
+      <TutorialDialog open={tutorialOpen} onClose={() => setTutorialOpen(false)} onComplete={handleTutorialComplete} />
     </Container>
   )
 }
