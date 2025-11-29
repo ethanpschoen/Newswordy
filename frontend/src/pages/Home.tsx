@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
 import { Game, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
-import { Box, Button, Card, CardContent, Container, Grid, Paper, Typography, Alert } from '@mui/material'
+import { Box, Button, Card, CardContent, Container, Grid, Typography, Alert } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
   EmojiEvents as TrophyIcon,
@@ -278,7 +278,7 @@ const Home: React.FC = () => {
       />
 
       {/* Other Game Modes */}
-      <Box sx={{ mb: 4 }}>
+      <Box>
         <Grid container spacing={3}>
           {/* Source Comparison Mode */}
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -422,16 +422,6 @@ const Home: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-
-      {/* How to Play */}
-      <Paper elevation={1} sx={{ p: 3, bgcolor: 'grey.50' }}>
-        <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
-          How to Play
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Guess words that appear frequently in news headlines. The more common the word, the more points you earn!
-        </Typography>
-      </Paper>
     </Container>
   )
 }
