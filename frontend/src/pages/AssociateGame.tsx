@@ -157,6 +157,8 @@ const AssociateGame: React.FC = () => {
 
         updatedScore += wordScore
         updatedGuessedWords.push(guessWord)
+
+        handleWordClick(foundWord.word)
       } else {
         index = undefined
         wordScore = 0

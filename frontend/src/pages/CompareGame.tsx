@@ -182,6 +182,8 @@ const CompareGame: React.FC = () => {
         const baseScore = calculateScore(index, scoreboard.length / 2)
         wordScore = wasHinted ? Math.round(baseScore / 2) : baseScore
         updatedScore += wordScore
+
+        handleWordClick(foundWord.word)
       } else {
         index = undefined
         wordScore = 0
