@@ -55,14 +55,19 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
         <Stack spacing={3}>
           {/* What is the game */}
           <Box>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}
+            >
               <PlayIcon color="primary" />
               What is Newswordy?
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ pl: 5 }}>
-              Newswordy is a word guessing game based on real news headlines. Your goal is to guess the most common words
-              that appear in recent news articles. The higher a word ranks on the scoreboard, the more points you'll earn
-              for guessing it!
+              Newswordy is a word guessing game based on real news headlines. Your goal is to guess the most common
+              words that appear in recent news articles. The higher a word ranks on the scoreboard, the more points
+              you'll earn for guessing it!
             </Typography>
           </Box>
 
@@ -70,7 +75,12 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
 
           {/* How to play */}
           <Box>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}
+            >
               <TrophyIcon color="warning" />
               How to Play
             </Typography>
@@ -100,13 +110,19 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
 
           {/* Game features */}
           <Box>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}
+            >
               <HintIcon color="info" />
               Game Features
             </Typography>
             <Box component="ul" sx={{ pl: 5, mb: 0, listStyleType: 'disc' }}>
               <Typography component="li" variant="body2" color="text.secondary" sx={{ display: 'list-item', mb: 1 }}>
-                <strong>Hints:</strong> Get help with fill-in-the-blank or first-letter hints (reduces points by 50%). When a word is hinted, it shows the first letter on the scoreboard - click it to view the hint again!
+                <strong>Hints:</strong> Get help with fill-in-the-blank or first-letter hints (reduces points by 50%).
+                When a word is hinted, it shows the first letter on the scoreboard - click it to view the hint again!
               </Typography>
               <Typography component="li" variant="body2" color="text.secondary" sx={{ display: 'list-item', mb: 1 }}>
                 <strong>Article View:</strong> Click any word to see real headlines that contain it
@@ -129,7 +145,10 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
             </Typography>
             <Stack spacing={2}>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}
+                >
                   <PlayIcon fontSize="small" color="primary" />
                   Classic Mode
                 </Typography>
@@ -138,16 +157,23 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}
+                >
                   <CompareIcon fontSize="small" color="secondary" />
                   Source Comparison
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ pl: 4 }}>
-                  Compare word usage between two groups of sources. Find words that appear more in one group than the other.
+                  Compare word usage between two groups of sources. Find words that appear more in one group than the
+                  other.
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}
+                >
                   <SearchIcon fontSize="small" sx={{ color: '#099A39' }} />
                   Word Association
                 </Typography>
@@ -156,12 +182,16 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}
+                >
                   <CompareAssociateIcon fontSize="small" sx={{ color: '#B38205' }} />
                   Comparative Association
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ pl: 4 }}>
-                  Combine comparison and association: compare word usage between source groups, but only for headlines containing your anchor word.
+                  Combine comparison and association: compare word usage between source groups, but only for headlines
+                  containing your anchor word.
                 </Typography>
               </Box>
             </Stack>
@@ -171,7 +201,12 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
 
           {/* Tips */}
           <Box>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}
+            >
               <ArticleIcon color="success" />
               Tips for Success
             </Typography>
@@ -205,4 +240,3 @@ const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
 }
 
 export default TutorialDialog
-
