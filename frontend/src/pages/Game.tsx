@@ -55,7 +55,6 @@ const Game: React.FC = () => {
   // Hint state
   const [hintModalOpen, setHintModalOpen] = useState(false)
   const [currentHintWord, setCurrentHintWord] = useState<ScoreboardEntry | null>(null)
-  const [hintType, setHintType] = useState<HintType>(HintType.FILL_BLANK)
   const [hintedWords, setHintedWords] = useState<string[]>([])
 
   useEffect(() => {
@@ -377,7 +376,6 @@ const Game: React.FC = () => {
     const hintWord = selectHintWord()
     if (hintWord) {
       setCurrentHintWord(hintWord)
-      setHintType(type)
       // Add word to hinted words list when hint is shown
       setHintedWords(prev => {
         if (!prev.includes(hintWord.word.toLowerCase())) {
@@ -519,13 +517,7 @@ const Game: React.FC = () => {
         </Grid>
 
         {/* Hint Modal */}
-        <HintModal
-          open={hintModalOpen}
-          onClose={handleCloseHintModal}
-          hintWord={currentHintWord}
-          hintType={hintType}
-          onHintTypeChange={setHintType}
-        />
+        <HintModal open={hintModalOpen} onClose={handleCloseHintModal} hintWord={currentHintWord} />
       </Container>
     )
   }
@@ -606,13 +598,7 @@ const Game: React.FC = () => {
       </Grid>
 
       {/* Hint Modal */}
-      <HintModal
-        open={hintModalOpen}
-        onClose={handleCloseHintModal}
-        hintWord={currentHintWord}
-        hintType={hintType}
-        onHintTypeChange={setHintType}
-      />
+      <HintModal open={hintModalOpen} onClose={handleCloseHintModal} hintWord={currentHintWord} />
     </Container>
   )
 }
