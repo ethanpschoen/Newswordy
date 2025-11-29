@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Grid,
-  Paper,
-  Box,
-  Typography,
-  Button,
-} from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, IconButton, Grid, Paper, Box, Typography, Button } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { ComparePreset, NewsSourceConfig } from '../../types'
 
@@ -93,4 +83,3 @@ const ComparePresetsDialog: React.FC<ComparePresetsDialogProps> = ({ open, onClo
 }
 
 export default ComparePresetsDialog
-

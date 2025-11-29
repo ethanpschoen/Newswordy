@@ -31,4 +31,3 @@ const NewsSourceLogo = ({ source, size, sx, ...boxProps }: NewsSourceLogoProps) 
 }
 
 export default NewsSourceLogo
-

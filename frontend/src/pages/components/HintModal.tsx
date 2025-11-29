@@ -106,21 +106,21 @@ const HintModal = ({ open, onClose, hintWord, hintType, onHintTypeChange }: Prop
                   <Paper key={`${article.url}-${index}`} elevation={1} sx={{ p: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                       {/* Source Icon */}
-                    <Box
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'primary.light',
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <NewsSourceLogo source={article.source} />
-                    </Box>
+                      <Box
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: 'primary.light',
+                          borderRadius: '50%',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <NewsSourceLogo source={article.source} />
+                      </Box>
 
                       {/* Article Content */}
                       <Box sx={{ flex: 1, minWidth: 0 }}>
