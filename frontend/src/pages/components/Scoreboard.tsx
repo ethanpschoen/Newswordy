@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar, useMediaQuery } from '@mui/material'
+import { Box, Button, Card, CardContent, Stack, Typography, Paper, Avatar, useMediaQuery, Tooltip } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
 import { ScoreboardEntry, Color, ComparativeScoreboardEntry, NewsSource } from '../../types'
 import SourcesModal from './SourcesModal'
+import { Article as ArticleIcon, Lightbulb as HintIcon } from '@mui/icons-material'
 
 interface Props {
   scoreboard: ScoreboardEntry[] | ComparativeScoreboardEntry[]
@@ -123,10 +124,14 @@ const Scoreboard = ({
 
               // Make clickable if guessed, completed, or hinted
               const isClickable = showWord || showFirstLetter
+              const tooltipText = showWord
+                ? 'Click to view articles containing this word'
+                : showFirstLetter
+                  ? 'Click to view hint again'
+                  : ''
 
-              return (
+              const paperElement = (
                 <Paper
-                  key={entry.word}
                   elevation={isClickable ? 2 : 1}
                   sx={{
                     p: 2,
@@ -136,11 +141,13 @@ const Scoreboard = ({
                     cursor: isClickable ? 'pointer' : 'default',
                     minHeight: '48px',
                     backgroundColor: showWord && !wordGuessed ? '#fbe7e5' : null,
+                    border: isClickable ? `1px solid ${alpha(accentColor, 0.2)}` : '1px solid transparent',
                     '&:hover': isClickable
                       ? {
                           backgroundColor: 'action.hover',
                           transform: 'translateY(-1px)',
                           transition: 'all 0.2s ease-in-out',
+                          borderColor: accentColor,
                         }
                       : {},
                   }}
@@ -180,6 +187,23 @@ const Scoreboard = ({
                     >
                       {displayText}
                     </Typography>
+                    {isClickable && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          color: accentColor,
+                          flexShrink: 0,
+                          opacity: 0.7,
+                        }}
+                      >
+                        {showFirstLetter ? (
+                          <HintIcon fontSize="small" sx={{ mr: 1 }} />
+                        ) : (
+                          <ArticleIcon fontSize="small" sx={{ mr: 1 }} />
+                        )}
+                      </Box>
+                    )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                     <Typography
@@ -204,6 +228,18 @@ const Scoreboard = ({
                     )}
                   </Box>
                 </Paper>
+              )
+
+              return (
+                <Box key={entry.word}>
+                  {isClickable ? (
+                    <Tooltip title={tooltipText} arrow placement="top">
+                      {paperElement}
+                    </Tooltip>
+                  ) : (
+                    paperElement
+                  )}
+                </Box>
               )
             })}
           </Stack>
