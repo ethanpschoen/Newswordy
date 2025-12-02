@@ -195,6 +195,7 @@ const Scoreboard = ({
                           color: accentColor,
                           flexShrink: 0,
                           opacity: 0.7,
+                          minWidth: '20px',
                         }}
                       >
                         {showFirstLetter ? (
