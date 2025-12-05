@@ -442,8 +442,8 @@ const CompareAssociateGame: React.FC = () => {
         return prev
       })
     }
-    setCurrentHintWord(hintWordA)
-    setCurrentHintWordGroupB(hintWordB)
+    setCurrentHintWord(hintWordA || hintWordB)
+    setCurrentHintWordGroupB(hintWordA ? hintWordB : null)
     setHintModalOpen(true)
   }
 
