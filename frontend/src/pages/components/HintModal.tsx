@@ -186,6 +186,7 @@ const HintModal = ({
         </Box>
       )
     } else {
+      const firstLetter = word.word.charAt(0).toUpperCase()
       return (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography
@@ -193,10 +194,10 @@ const HintModal = ({
             component="div"
             sx={{ mb: 2, fontWeight: 'bold', color: accentColor || 'primary.main' }}
           >
-            {word.word.charAt(0).toUpperCase()}
+            {firstLetter}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            The word starts with the letter <strong>{word.word.charAt(0).toUpperCase()}</strong>
+            The word starts with the letter <strong>{firstLetter}</strong>
           </Typography>
         </Box>
       )
