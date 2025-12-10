@@ -11,6 +11,8 @@ const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
+  const hasUnlimitedGuesses = remainingGuesses === -1
+
   return (
     <Card sx={{ minHeight: isMobile ? 'auto' : '340px' }}>
       <CardContent sx={{ py: 2 }}>
@@ -74,14 +76,14 @@ const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
                 fontWeight: 'bold',
                 color: 'secondary.main',
                 mb: 0.5,
-                fontSize: remainingGuesses === -1 ? '3rem' : undefined,
-                lineHeight: remainingGuesses === -1 ? 0.7 : undefined,
+                fontSize: hasUnlimitedGuesses ? '3rem' : undefined,
+                lineHeight: hasUnlimitedGuesses ? 0.7 : undefined,
               }}
             >
-              {remainingGuesses === -1 ? '∞' : remainingGuesses}
+              {hasUnlimitedGuesses ? '∞' : remainingGuesses}
             </Typography>
             <Typography variant="body2" color="secondary.main" sx={{ fontWeight: 'medium' }}>
-              {remainingGuesses === -1 ? 'Unlimited Guesses' : `Wrong Guess${remainingGuesses === 1 ? '' : 'es'} Left`}
+              {hasUnlimitedGuesses ? 'Unlimited Guesses' : `Wrong Guess${remainingGuesses === 1 ? '' : 'es'} Left`}
             </Typography>
           </Paper>
         </Stack>
