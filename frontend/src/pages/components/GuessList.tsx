@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Chip, Paper, Stack, Typography } from '@mui/material'
 import { Color, Guess } from '../../types'
+import { getRankColor } from './Scoreboard'
 
 interface Props {
   guesses: Guess[]
@@ -34,17 +35,7 @@ const GuessList = ({ guesses }: Props) => {
                     <Chip
                       label={guess.rank !== undefined && guess.rank !== null ? `#${guess.rank}` : `X`}
                       size="small"
-                      color={
-                        guess.rank === 1
-                          ? 'success'
-                          : guess.rank === 2
-                            ? 'default'
-                            : guess.rank === 3
-                              ? 'warning'
-                              : guess.rank !== undefined && guess.rank !== null
-                                ? 'primary'
-                                : 'error'
-                      }
+                      sx={{ bgcolor: getRankColor(guess.rank || 0) }}
                     />
                   </Box>
                   <Typography
