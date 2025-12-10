@@ -9,6 +9,11 @@ interface Props {
   handleAddToGroupB: (source: NewsSource) => void
 }
 
+/**
+ * Card component for displaying available news sources that can be added to comparison groups.
+ * Shows the source logo and name with buttons to add to either Group A or Group B.
+ * Used in the compare game setup interface.
+ */
 const AvailableSourceCard: React.FC<Props> = ({ source, handleAddToGroupA, handleAddToGroupB }) => {
   const config = NewsSourceConfig[source]
   return (

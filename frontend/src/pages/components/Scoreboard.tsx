@@ -30,6 +30,12 @@ export const getRankColor = (rank: number) => {
   return Color.RANK_DEFAULT_BG
 }
 
+/**
+ * Displays the ranked list of top words for the game.
+ * Words are hidden until guessed or the game is completed, with support for hint indicators.
+ * Clickable words show article information, and the component supports grouping for comparative modes.
+ * Used in Game pages.
+ */
 const Scoreboard = ({
   scoreboard,
   sources,

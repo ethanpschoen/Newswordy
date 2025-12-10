@@ -8,6 +8,11 @@ interface Props {
   mode: GameMode
 }
 
+/**
+ * Displays a list of games for a specific game mode.
+ * Shows game status, scores, completion state, and allows navigation to individual games.
+ * Used in the Profile page to show user's game history.
+ */
 const GamesList = ({ games, mode }: Props) => {
   const navigate = useNavigate()
 

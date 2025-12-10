@@ -27,6 +27,12 @@ interface TutorialDialogProps {
   onComplete: () => void
 }
 
+/**
+ * Welcome dialog that provides an introduction and tutorial for new users.
+ * Explains game mechanics, features, game modes, and tips for success.
+ * Can be skipped or dismissed after reading.
+ * Used in the Home page to introduce the game to new users.
+ */
 const TutorialDialog = ({ open, onClose, onComplete }: TutorialDialogProps) => {
   const handleGotIt = () => {
     onComplete()

@@ -11,6 +11,12 @@ interface Props {
   groupColor: string
 }
 
+/**
+ * Card component for displaying a news source within a comparison group.
+ * Shows the source logo and name, with options to remove or move the source to the other group.
+ * Styled with the group's accent color for visual distinction.
+ * Used in the comparative games' setup interface.
+ */
 const SourceCard: React.FC<Props> = ({ source, onRemove, onMoveToOther, groupLabel, groupColor }) => {
   const config = NewsSourceConfig[source]
   return (

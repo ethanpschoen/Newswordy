@@ -10,6 +10,11 @@ type ComparePresetsDialogProps = {
   onApplyPreset: (preset: ComparePreset) => void
 }
 
+/**
+ * Dialog that displays preset source group configurations for comparison games.
+ * Allows users to quickly apply predefined source groupings instead of manually selecting sources.
+ * Used in Comparative game modes on the selection page.
+ */
 const ComparePresetsDialog: React.FC<ComparePresetsDialogProps> = ({ open, onClose, presets, onApplyPreset }) => {
   const handleApply = (preset: ComparePreset) => {
     onApplyPreset(preset)

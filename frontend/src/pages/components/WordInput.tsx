@@ -33,6 +33,12 @@ interface Props {
   explainerMode?: ExplainerMode
 }
 
+/**
+ * Input component for submitting word guesses during gameplay.
+ * Includes form validation, hint button, give up option, and completion state.
+ * On mobile, renders as a fixed bottom card; on desktop, renders inline.
+ * Used in Game pages to submit word guesses.
+ */
 const WordInput = ({
   handleSubmitGuess,
   currentGuess,

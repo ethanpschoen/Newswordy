@@ -24,7 +24,6 @@ interface Props {
   open: boolean
   onClose: () => void
   hintWord: ScoreboardEntry | null
-  // Optional props for comparative modes
   hintWordGroupB?: ScoreboardEntry | null
   groupALabel?: string
   groupBLabel?: string
@@ -32,6 +31,12 @@ interface Props {
   groupBAccentColor?: string
 }
 
+/**
+ * Modal dialog that provides hints for words on the scoreboard.
+ * Supports two hint types: fill-in-the-blank (shows headlines with word replaced) and first letter.
+ * In comparative modes, displays separate hint panels for Group A and Group B.
+ * Used in Game pages.
+ */
 const HintModal = ({
   open,
   onClose,

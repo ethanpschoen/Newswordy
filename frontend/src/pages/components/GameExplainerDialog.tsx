@@ -40,6 +40,11 @@ interface GameExplainerDialogProps {
   size?: 'small' | 'medium'
 }
 
+/**
+ * Dialog component that explains how scoring works for different game modes.
+ * Displays mode-specific scoring rules and general game mechanics.
+ * Triggered by a button that can be placed anywhere in the UI.
+ */
 const GameExplainerDialog = ({ mode, label = 'Learn more', size = 'small' }: GameExplainerDialogProps) => {
   const [open, setOpen] = useState(false)
   const bullets = [...BASE_RULE_BULLETS, MODE_SPECIFIC_BULLETS[mode]]

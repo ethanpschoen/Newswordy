@@ -26,6 +26,12 @@ interface Props {
   articlesPerPage: number
 }
 
+/**
+ * Mobile-only drawer component that displays articles for two compared word groups side by side.
+ * Shows paginated article lists for both Group A and Group B with their respective accent colors.
+ * Only renders on mobile devices; desktop uses a different layout.
+ * Used in Comparative game modes to display articles for the two compared word groups.
+ */
 const ComparativeArticleDrawer = ({
   open,
   onClose,

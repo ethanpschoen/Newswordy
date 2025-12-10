@@ -56,6 +56,10 @@ interface Props {
   setUnlimitedGuesses?: (unlimited: boolean) => void
 }
 
+/**
+ * Collapsible advanced settings component, allows user to configure various game settings.
+ * Used in Game Selection pages
+ */
 const AdvancedSettings = ({
   selectedTimePeriod,
   setSelectedTimePeriod,
@@ -73,8 +77,10 @@ const AdvancedSettings = ({
   unlimitedGuesses = false,
   setUnlimitedGuesses,
 }: Props) => {
+  // Dropdown element, default to closed
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
 
+  // Handle individual source toggling
   const handleSourceToggle = (source: NewsSource) => {
     if (!setSelectedSources) return
     setSelectedSources(prev => (prev.includes(source) ? prev.filter(s => s !== source) : [...prev, source]))

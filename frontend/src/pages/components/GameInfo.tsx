@@ -10,6 +10,10 @@ interface Props {
   backPage?: string
 }
 
+/**
+ * Header component for game pages that displays navigation and time period information.
+ * Shows a back button and the selected time period for the current game.
+ */
 const GameInfo = ({ isTestMode = false, timePeriod, backPage = '/' }: Props) => {
   const navigate = useNavigate()
 

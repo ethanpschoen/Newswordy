@@ -35,6 +35,12 @@ interface CommonWordsDialogProps {
   onWordSelect?: (word: string, frequency?: number) => void
 }
 
+/**
+ * Dialog component that displays common words organized into sections.
+ * Used to show the most frequently mentioned words, with optional word selection functionality.
+ * Supports loading states and error handling.
+ * Used for Associative modes on the selection page.
+ */
 const CommonWordsDialog: React.FC<CommonWordsDialogProps> = ({
   open,
   onClose,

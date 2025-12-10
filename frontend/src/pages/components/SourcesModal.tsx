@@ -8,6 +8,11 @@ interface Props {
   sources: NewsSource[]
 }
 
+/**
+ * Simple modal dialog that displays a list of news sources used in the current game.
+ * Shows source logos and names in a grid layout.
+ * Used in Game pages.
+ */
 const SourcesModal = ({ open, onClose, sources }: Props) => {
   return (
     <Dialog open={open} onClose={onClose}>

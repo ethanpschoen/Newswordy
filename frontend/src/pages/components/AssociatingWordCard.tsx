@@ -1,6 +1,14 @@
 import { Card, CardContent, Typography } from '@mui/material'
 
-const AssociatingWordCard: React.FC<{ word: string }> = ({ word }) => {
+interface Props {
+  word: string
+}
+
+/**
+ * Displays the anchor word in association game modes.
+ * Shows a styled card with the word that players are trying to find associated words for.
+ */
+const AssociatingWordCard: React.FC<Props> = ({ word }) => {
   return (
     <Card
       sx={{

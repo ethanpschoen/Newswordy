@@ -47,6 +47,7 @@ const Navbar: React.FC = () => {
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
+    // If logged in, show profile and leaderboard
     ...(isAuthenticated
       ? [
           { name: 'Profile', href: '/profile', icon: UserIcon },

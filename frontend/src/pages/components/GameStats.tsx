@@ -7,6 +7,12 @@ interface Props {
   remainingGuesses: number
 }
 
+/**
+ * Displays key game statistics in a card layout.
+ * Shows total score, number of words found, and remaining guesses (or unlimited indicator).
+ * Uses gradient backgrounds for visual distinction of each stat.
+ * Used in Game pages to display game statistics.
+ */
 const GameStats = ({ guessedWords, score, remainingGuesses }: Props) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))

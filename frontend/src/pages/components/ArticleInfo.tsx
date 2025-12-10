@@ -30,6 +30,12 @@ interface Props {
   groupAccentColor?: string
 }
 
+/**
+ * Displays article information for a selected word from the scoreboard.
+ * Shows a paginated list of articles containing the word, with source logos and publication dates.
+ * Renders as a card on desktop and a bottom drawer on mobile.
+ * Used in Game pages to display articles for a selected word.
+ */
 const ArticleInfo = ({
   selectedWordData,
   currentPage,
@@ -48,6 +54,7 @@ const ArticleInfo = ({
     ...(groupLabel ? { borderTop: `4px solid ${accentColor}` } : {}),
   }
 
+  // Sort articles by published date, most recent first
   const orderedArticles = useMemo(() => {
     if (!selectedWordData?.articles) {
       return []

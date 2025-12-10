@@ -6,6 +6,12 @@ interface Props {
   guesses: Guess[]
 }
 
+/**
+ * Displays a list of all guesses made during the game.
+ * Shows each guessed word with its rank and score, using color coding for rank positions.
+ * Displays negative scores for incorrect guesses and positive scores for correct ones.
+ * Used in Game pages.
+ */
 const GuessList = ({ guesses }: Props) => {
   return (
     <Card
