@@ -91,9 +91,9 @@ const HintModal = ({
     // Create regex to match the word (case-insensitive, whole word only)
     const regex = new RegExp(`\\b${word}\\b`, 'gi')
     const wordLength = word.length
-    // Use thin space (\u2009) between underscores for smaller spacing
-    // Use non-breaking space (\u00A0) before/after to prevent HTML whitespace collapse
-    const blank = '\u00A0' + '_' + '\u2009_'.repeat(wordLength - 1) + '\u00A0' // eslint-disable-line
+    // Use non-breaking space (\u00A0) between underscores to prevent line breaks
+    // This ensures the entire blank stays together as one word
+    const blank = '\u00A0' + '_' + '\u00A0_'.repeat(wordLength - 1) + '\u00A0' // eslint-disable-line
     return headline.replace(regex, blank)
   }
 
