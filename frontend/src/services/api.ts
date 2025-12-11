@@ -308,10 +308,6 @@ export const userAPI = {
   },
 
   getUser: async (userId: string) => {
-    return await supabase.from('users').select('*').eq('id', userId)
-  },
-
-  getSingleUser: async (userId: string) => {
     return await supabase.from('users').select('*').eq('id', userId).single()
   },
 

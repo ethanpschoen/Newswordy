@@ -53,7 +53,7 @@ const Home: React.FC = () => {
   const getUserStats = async () => {
     if (!isAuthenticated) return
 
-    const account = await userAPI.getSingleUser(user?.sub || '')
+    const account = await userAPI.getUser(user?.sub || '')
     const history = account.data
 
     const userStats: Stat[] = [

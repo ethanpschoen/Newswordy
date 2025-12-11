@@ -308,7 +308,7 @@ const Game: React.FC = () => {
 
       // Update user stats
       if (isAuthenticated && !isTestMode) {
-        const userStats = await userAPI.getSingleUser(user?.sub || '')
+        const userStats = await userAPI.getUser(user?.sub || '')
         const stats = userStats.data
         const newStats = structuredClone(stats)
 
