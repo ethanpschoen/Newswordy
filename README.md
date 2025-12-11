@@ -86,8 +86,8 @@ The source list can easily be expanded by adding new configurations in `scraper/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ethanpschoen/Newswordy.git
-   cd Newswordy
+   git clone https://github.com/ethanpschoen/newswordy.git
+   cd newswordy
    ```
 
 2. **Navigate to frontend directory**
