@@ -1,0 +1,68 @@
+﻿Computer Science Comps Final Paper Rubric (Fall 2025)
+
+
+CONTENT AREA
+	Excellent
+	Good
+	Marginal
+	Unacceptable
+	Problem Statement - What problem are you solving? Why is it important?
+	The problem to be solved is clearly stated, and its importance and value clearly laid out. All relevant societal context is discussed, as it relates to and will influence the project.
+	The problem to be solved is clearly stated, but its importance and value overstated. Most relevant societal context is discussed, but may need clarification on how it relates to or will influence the project.
+	The problem to be solved is only vaguely stated, and its importance and value overstated. Significant social context is missing, or the context does not readily relate to the project.
+	There is no clear problem to be solved, with minimal explanation of the importance/value of the project. Little to no societal context is presented.
+	Technical Background - What does someone need to know to understand the problem?
+	All technical terms are defined as they are used and understandable for the average CS student. Relevant mathematical and algorithmic concepts are introduced and explained.
+	Most technical terms are defined as they are used, but may require additional study for the average CS student. Some relevant mathematical and algorithmic concepts are missing.
+	Most technical terms are defined, or include jargon not understandable by the average CS student. Many relevant mathematical and algorithmic concepts are missing.
+	The importance/value of the project is never explained. Many technical terms are undefined, or include jargon only the author understands. The necessary mathematical and algorithmic concepts are missing.
+	Prior Work - How have other people solved similar problems? What inspirations are you drawing from?
+	All literature/prior work cited is relevant, and no relevant literature/work is missing. Papers are discussed in thematic groups, highlighting how they are connected. The discussion highlights how the literature influenced the project.
+	The majority of the literature cited is relevant, but may be missing important areas of review. Papers are discussed in thematic groups, but with missing connections. Irrelevant details may be included in the description and key contributions to the project may be missing.
+	Most of the literature/work cited is relevant, but many are not or may be missing. Papers are discussed in thematic groups, but with little or no connections. Descriptions include many irrelevant details, with unclear or missing contributions to the project.
+	Most of the literature/work cited is irrelevant to the project. Papers are discussed individually with minimal connections. Significant or foundational work in the area is not included. Descriptions include irrelevant details or incorrect claims. 
+	Methods - How did you go about solving the problem? What did you do?
+	The approach to the project is clearly laid out, and justified with respect to literature and the goals of the project. Intermediate decisions are explained and evidence for choosing between approaches presented. Prior and current work is clearly delineated.
+	The approach to the project is laid out and justified, with minor details missing. Intermediate decisions may be missing. Alternative approaches are listed, but not the evidence for rejecting them. Prior and current work is delineated, with some areas of confusion
+	The approach to the project is laid out, with insufficient detail. Intermediate decisions are not mentioned. The methods are only barely justified. No consideration to alternate approaches is given. The boundary between prior and current work is unclear.
+	No methods, or methods that do not correspond to what was actually done. Intermediate decisions are unexplained and inexplicable. Prior and current work is muddled, or work is overstated or plagiarized.
+	Evaluation Metrics - How will we know that the problem has been solved?
+	The metrics used and method of collection are appropriate, clearly explained, and justified with respect to the literature and the problem to be solved. Other metrics and why they are not used are discussed.
+	The metrics used and method of collection are appropriate and clearly explained, although the justification may need work. Some other metrics are considered, but with weak reasons for not using them.
+	The metrics used and method of collection are marginally appropriate, but not clearly explained and with minimal justification. No other metrics were considered.
+	No metrics were given, or the specific method of calculation unclear. The metrics are not justified or do not match the goals of the project.
+	Results and Discussion - Did you actually solve the problem? Why/Why not?
+	The stated metrics are used and the results explained with respect to the methods. Alternate explanations and caveats to the results are explored. The results are connected to the goals of the project.
+	The stated metrics are used and the results explained, although they may not be verified. Some caveats are listed, but alternate explanations are not considered. The results are connected to the goals of the project.
+	The stated metrics are used, but with no explanation of why those results occurred. Little to no caveats or alternate explanations are explored. The results have minimal connection to the goals of the project.
+	No results, or results that do not match the evaluation metrics or the project goals.
+	Ethical Considerations - Why might people want to be careful about your project? What difficult decisions did you have to make?
+	The project is considered both in its complete technological and societal context. Issues of bias and diversity are explored in detail, and potential contributions to global and local inequity examined. Relevant literature is cited.
+	Both technological and societal context of the project is explored, although some considerations may be missing. Issues of bias and diversity are explored, as are potential contributions to global and local inequity. Little to no relevant literature is cited.
+	Only one of technological or societal context is considered, in insufficient detail. Issues of bias and diversity are explored in brief, as are contributions to global/local inequity. No relevant literature is cited. 
+	Ethical considerations are non existent or perfunctory. Issues of bias and diversity are glossed over or ignored, as are potential contributions to global and local inequity. Little to no relevant literature is cited.
+	Replication Instructions - How would someone else use your project?
+
+
+(as an appendix to your paper; this does not count towards your page requirement/limit)
+	All software used by the project is listed, with instructions that successfully allow another CS student to execute it. Particular attention is paid to future-proving the instructions (eg. package version, VMs, etc.)
+	All software used by the project is listed, with instructions that successfully allow another CS student to execute it. Reproduction may require additional steps (eg. unguided installation of software).
+	Some software or steps for reproducing the project are missing or incorrect, requiring minor fixes. Reproduction may require additional steps (eg. unguided installation of software).
+	Some software or steps for reproducing the project are missing or incorrect, requiring major fixes or debugging. Additional requirements may be missing entirely and uninferable from what is provided.
+	Code Architecture Overview - How would someone else extend your project?
+
+
+(as an appendix to your paper; this does not count towards your page requirement/limit)
+	The organization of the code is clearly laid out/diagrammed, with justification. Another developer could use the overview to extend or debug the project.
+	The organization of the code with incomplete justification. Another developer could discuss the merits of the code, but not contribute.
+	Boundaries between project components are awkward. The text is descriptive of the organization but does not aid understanding. Another developer will have trouble understanding the code.
+	Boundaries between project components are bizarre or non-existent. Another developer is better off starting from scratch.
+	
+
+Other requirements:
+* The paper must be submitted as a GitHub link, which contains the LaTeX source of your paper, based on the Oxy CS comps paper template. Files should not be in a zip file in the repository, but added directly. Adding a zip file to your git repository, or not including the LaTeX source, is a failable offense.
+* The paper must be at least 6 full pages, and no more than 10 pages. This page limit does not include section headings, images, tables, code listings, references, or appendices. The Methods, Evaluation Metrics, and Results and Discussion content areas should be at least half your paper.
+* The main text of the paper must not spend more than a paragraph (say, 200 words) discussing the languages, libraries, and frameworks used. There must not be any discussion of code outside of the Code Architecture Overview. Discussion of the algorithm is acceptable if the algorithm is novel.
+* Do not assume the reader will run your code. Include screenshots if you want to discuss what your project looks like. If you want to show text-based input or output, transcribe the text (it should be copyable without OCR). Including images of text is a failable offense.
+* The paper should not include raw data, interview responses, etc. Select from, summarize, or visualize the most relevant points and explain your findings. However, do include the raw data in your repository, and mention in the paper that it’s available and how to find them.
+* The paper must contain references for every content area, excluding Replication Instructions and Code Architecture Overview.

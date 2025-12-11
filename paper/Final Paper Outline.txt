@@ -1,0 +1,103 @@
+﻿Newswordy: The Buzzword Guessing Game
+Ethan Schoen
+
+
+* Intro + Problem Statement – What problem are you solving? Why is it important?
+   * News ecosystem is toxic and hard to navigate
+   * Contributes to polarization and disengagement
+   * When mainstream becomes untrustworthy, more extreme sources prevail
+      * Social media
+   * Little media accountability
+      * Just dismissed as biased or “fake”
+   * Wanted to find a fun and engaging way to have a broad overview of current events to have a general sense of awareness of what is going on
+   * Hence, Newswordy: game to guess top words in news article headlines
+      * Building on the success of daily games (wordle, crossword, etc.)
+      * More accessible way to learn
+      * Bit of competitiveness to be more aware and do better in game
+      * Allow for opportunities to dig deeper
+         * Quantitative analysis of gaps in coverage, difference between sources
+   * When people are more informed, misinformation should be less pervasive
+   * Ideally, less polarizing as it represents the general overview of important current events
+   * MUST FIND CITATION FOR:
+      * Toxic news ecosystem
+      * Lack of accessibility
+      * Polarization and disengagement with current events
+         * Leads to social media
+      * Biased news outlets
+      * Social science of daily games
+      * More informed public, combat misinformation
+* Technical Background – What does someone need to know to understand the problem?
+   * ADD MORE
+      * How people consume the news in modern day
+         * Emphasize TV and how cable news is more about entertainment than information (cite)
+      * How news consumption fuels views and perspectives
+* Prior Work – How have other people solved similar problems? What inspirations are you drawing from?
+   * ADD MORE
+      * Games to raise awareness?
+      * Attempts to teach about current events in more engaging ways?
+      * Assessments of media bias
+      * Daily games
+         * Wordle, Crosswords, etc.
+* Methods – How did you go about solving the problem? What did you do?
+   * Game components
+      * Getting the news articles (Python backend)
+         * Chose 16 of most popular news outlets
+         * Found their RSS feed, representing “front page” news
+         * For each headline, separate into words (and exclude stop words)
+         * Upload to database
+         * Scraped twice a day
+      * Processing the information (PostgreSQL database & functions)
+         * There are several configurable settings, most significant being
+            * Which sources to consider
+            * What time period to look at
+         * Based on these…
+            * Filter articles that fit criteria
+            * Count the number of mentions for each word
+            * Build top scoreboard for words
+      * Displaying the information (TypeScript frontend)
+         * Game components, intended to be intuitive with opportunity to dive deeper
+         * Game modes:
+            * Classic mode, top words for selected sources and time period
+            * Compare mode, find difference between word usage across two groups of sources (with presets for groups to help)
+            * Associate mode, find top words occurring most frequently alongside anchor word (with ability to see most common words to help)
+            * Compare associate word, find words occurring alongside anchor word more by one group than another (with presets for groups and ability to see most common words to help)
+         * General features:
+            * Profile to see past performance and revisit past games
+            * Hints to see context for help
+            * Points system for game mechanic
+            * Panel showing articles mentioning words, to see why word is among the top (this is important!!!). This shows up as soon as the word is guessed, or it is viewable by clicking on the word (including when the game is over… when all words, including those not already guessed, are clickable)
+* Evaluation Metrics – How will we know that the problem has been solved?
+   * User interviews
+   * Things that matter:
+      * Educational
+         * For people who don’t engage with news as much, were they able to learn something and understand why it is being talked about
+         * For people who already read the news, were they able to use advanced game modes to critically evaluate coverage
+      * Engaging
+         * Is this a viable alternative to existing methods
+         * Is this engaging enough for users to continue playing
+         * Is this more accessible and interpretable than existing methods
+* Results and Discussion – Did you actually solve the problem? Why/Why not?
+   * User interview results
+   * In general, the game does seem to provide some value
+      * People who already keep up with the news found advanced features interesting and insightful
+      * People who don’t keep up with the news as much were able to learn about current events much more
+   * Room for improvement
+      * Tendency to play game modes that they felt they would perform better in, things that they already knew about
+      * With game aspect, more focus on performing better than learning more
+   * Limitations to style of game, where it's left pretty broad with opportunities to dive deeper
+* Ethical Considerations – Why might people want to be careful about your project? What difficult decisions did you have to make?
+   * ADD MORE
+      * Media bias is a challenging and contentious subject
+      * Polarization is a continuously studied phenomenon
+      * Potential to merely perpetuate issues in media
+      * Also, possible that more engagement with news is not what is ideal
+* Replication Instructions – How would someone else use your project?
+   * Duplicate GitHub repository
+   * Set up .env variables
+      * Database
+      * Auth0
+   * Install Python packages
+   * Install Node.js modules
+   * Etc.
+* Code Architecture Overview – How would someone else extend your project?
+   * Etc.
