@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { gameAPI, userAPI } from '../services/api'
-import { Game, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod } from '../types'
+import { Game, TIME_PERIODS, DEFAULT_MAX_GUESSES, DEFAULT_SCOREBOARD_SIZE, NewsSource, TimePeriod, UserStat } from '../types'
 import { Box, Button, Card, CardContent, Container, Grid, Typography, Alert } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
@@ -17,16 +17,14 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import TutorialDialog from './components/TutorialDialog'
 
-interface Stat {
-  name: string
-  value: number
-  icon: any
-  color: string
-}
-
+/**
+ * This is the home page for the Newswordy app.
+ * It allows the user to select a game mode and start a game.
+ */
 const Home: React.FC = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, user } = useAuth0()
 
+  // Function to upsert the user into the database
   const upsertUser = async () => {
     if (!isAuthenticated) return
 
@@ -50,13 +48,14 @@ const Home: React.FC = () => {
     }
   }
 
+  // Function to get the user's stats from the database
   const getUserStats = async () => {
     if (!isAuthenticated) return
 
     const account = await userAPI.getUser(user?.sub || '')
     const history = account.data
 
-    const userStats: Stat[] = [
+    const userStats: UserStat[] = [
       {
         name: 'Total Games',
         value: history?.total_games || 0,
@@ -85,13 +84,15 @@ const Home: React.FC = () => {
   useMemo(getUserStats, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const navigate = useNavigate()
+
+  // State variables for the home page and classic game settings
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_WEEK)
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
-  const [stats, setStats] = useState<Stat[]>([])
+  const [stats, setStats] = useState<UserStat[]>([])
   const [tutorialOpen, setTutorialOpen] = useState(false)
 
   // Check if user has seen tutorial on mount
@@ -103,6 +104,7 @@ const Home: React.FC = () => {
   }, [])
 
   const handleTutorialComplete = () => {
+    // Set the tutorial completion flag in local storage
     localStorage.setItem('newswordy_tutorial_completed', 'true')
     setTutorialOpen(false)
   }
@@ -111,15 +113,18 @@ const Home: React.FC = () => {
     setTutorialOpen(true)
   }
 
+  // Function to start a game
   const handleStartGame = async (useDefaults: boolean = false) => {
     setLoading(true)
     try {
+      // Set the final game settings based on the user's selections
       const finalTimePeriod = useDefaults ? TIME_PERIODS.PAST_WEEK : selectedTimePeriod
       const finalSources = useDefaults ? Object.values(NewsSource) : selectedSources
       const finalMaxGuesses = useDefaults ? DEFAULT_MAX_GUESSES : maxGuesses
       const finalScoreboardSize = useDefaults ? DEFAULT_SCOREBOARD_SIZE : scoreboardSize
       const finalUnlimitedGuesses = useDefaults ? false : unlimitedGuesses
 
+      // Create the game object with the final settings
       const game: Game = {
         score: 0,
         created_at: new Date().toISOString(),

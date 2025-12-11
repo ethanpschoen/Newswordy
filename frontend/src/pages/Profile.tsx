@@ -4,23 +4,22 @@ import { userAPI } from '../services/api'
 import { Box, Card, CardContent, Container, Divider, Grid, Typography } from '@mui/material'
 import { PlayArrow as PlayIcon, EmojiEvents as TrophyIcon, Person as UserIcon } from '@mui/icons-material'
 import GamesList from './components/GamesList'
-import { AssociateGame, CompareAssociateGame, CompareGame, Game, GameMode } from '../types'
+import { AssociateGame, CompareAssociateGame, CompareGame, Game, GameMode, UserStat } from '../types'
 
-interface Stat {
-  name: string
-  value: number
-  icon: any
-  color: string
-}
-
+/**
+ * This is the profile page for the Newswordy app.
+ * It allows the user to view their game history and stats.
+ * The user can select a past game to revisit it.
+ */
 const Profile: React.FC = () => {
   const { user } = useAuth0()
 
+  // Function to get the user's stats from the database
   const getUserStats = async () => {
     const account = await userAPI.getUser(user?.sub || '')
     const history = account.data
 
-    const userStats: Stat[] = [
+    const userStats: UserStat[] = [
       {
         name: 'Total Completed Games',
         value: history?.total_games || 0,
@@ -43,6 +42,7 @@ const Profile: React.FC = () => {
 
     setStats(userStats)
 
+    // Get the user's game history from the database
     const games = await userAPI.getUserGames(user?.sub || '')
     const comparativeGames = await userAPI.getUserComparativeGames(user?.sub || '')
     const associateGames = await userAPI.getUserAssociateGames(user?.sub || '')
@@ -56,7 +56,8 @@ const Profile: React.FC = () => {
 
   useMemo(getUserStats, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [stats, setStats] = useState<Stat[]>([])
+  // State variables for the profile page
+  const [stats, setStats] = useState<UserStat[]>([])
   const [games, setGames] = useState<Game[]>([])
   const [comparativeGames, setComparativeGames] = useState<CompareGame[]>([])
   const [associateGames, setAssociateGames] = useState<AssociateGame[]>([])

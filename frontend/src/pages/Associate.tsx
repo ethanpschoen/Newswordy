@@ -17,10 +17,16 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import AdvancedSettings from './components/AdvancedSettings'
 import CommonWordsDialog from './components/CommonWordsDialog'
 
+/**
+ * This is the selection page for the Word Association game mode.
+ * It allows the user to select a word and verify its frequency, and then start the game.
+ */
 const Associate: React.FC = () => {
   const { isLoading, user } = useAuth0()
 
   const navigate = useNavigate()
+
+  // State variables for the page & game settings
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_MONTH)
   const [selectedSources, setSelectedSources] = useState<NewsSource[]>(Object.values(NewsSource))
@@ -28,18 +34,22 @@ const Associate: React.FC = () => {
   const [scoreboardSize, setScoreboardSize] = useState(DEFAULT_SCOREBOARD_SIZE)
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
 
+  // State variables for the word selection and frequency verification
   const [selectedWord, setSelectedWord] = useState('')
   const [findingCount, setFindingCount] = useState(false)
   const [wordCount, setWordCount] = useState<number | null>(null)
 
+  // State variables for the common words dialog
   const [commonWordsOpen, setCommonWordsOpen] = useState(false)
   const [commonWords, setCommonWords] = useState<ScoreboardEntry[]>([])
   const [loadingCommonWords, setLoadingCommonWords] = useState(false)
   const [commonWordsError, setCommonWordsError] = useState<string | null>(null)
 
+  // Function to start the game
   const handleStartGame = async () => {
     setLoading(true)
     try {
+      // Create the game object with proper settings
       const game: AssociateGame = {
         score: 0,
         created_at: new Date().toISOString(),
@@ -71,6 +81,7 @@ const Associate: React.FC = () => {
     }
   }
 
+  // Function to find the frequency of the selected word
   const handleFindCount = async () => {
     if (findingCount || !selectedWord.trim() || (wordCount !== undefined && wordCount !== null)) {
       return
@@ -95,10 +106,12 @@ const Associate: React.FC = () => {
     handleFindCount()
   }
 
+  // Effect to reset the common words list when the time period or sources change
   useEffect(() => {
     setCommonWords([])
   }, [selectedTimePeriod, selectedSources])
 
+  // Function to fetch the common words for modal dialog
   const fetchCommonWords = async () => {
     if (loadingCommonWords) return
     if (selectedSources.length === 0) {
@@ -124,6 +137,7 @@ const Associate: React.FC = () => {
     }
   }
 
+  // Function to open the common words modal dialog
   const handleOpenCommonWords = () => {
     setCommonWordsOpen(true)
     if (commonWords.length === 0) {

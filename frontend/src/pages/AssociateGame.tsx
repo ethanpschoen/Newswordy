@@ -16,9 +16,14 @@ import ArticleInfo from './components/ArticleInfo'
 import AssociatingWordCard from './components/AssociatingWordCard'
 import HintModal from './components/HintModal'
 
+/**
+ * This is the game page for the Word Association game mode.
+ * It allows the user to guess words that go alongside the selected word most frequently, and displays the scoreboard of the most common words.
+ */
 const AssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
 
+  // Get the game ID from the URL
   const { associateId: gameId } = useParams<{ associateId: string }>()
 
   const navigate = useNavigate()
@@ -82,6 +87,7 @@ const AssociateGame: React.FC = () => {
     }
   }, [scoreboard, showScoreboard, gameState?.associate_guesses])
 
+  // Function to load the game state from the database
   const loadGame = async () => {
     try {
       setLoading(true)
@@ -96,7 +102,7 @@ const AssociateGame: React.FC = () => {
       const game = gameResponse.data
       setGameState(game)
 
-      // Get top words from database
+      // Get top words (the scoreboard) from database
       const scoreboardResponse = await gameAPI.getAssociatedScoreboard(
         game.time_period,
         game.sources,
@@ -119,6 +125,7 @@ const AssociateGame: React.FC = () => {
     }
   }
 
+  // Function to submit a guess
   const handleSubmitGuess = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!currentGuess.trim() || !gameId) return
@@ -137,6 +144,7 @@ const AssociateGame: React.FC = () => {
         return
       }
 
+      // Find the word in the scoreboard
       const foundWord = scoreboard.find(entry => entry.word === guessWord)
 
       let index: number | undefined
@@ -146,6 +154,7 @@ const AssociateGame: React.FC = () => {
       let updatedGuessedWords = gameState?.guessed_words || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
 
+      // If the word is in the scoreboard, calculate and update the score and add it to the guessed words list
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
         const baseScore = calculateScore(index, scoreboard.length)
@@ -157,12 +166,14 @@ const AssociateGame: React.FC = () => {
         updatedScore += wordScore
         updatedGuessedWords.push(guessWord)
 
+        // Open the article panel for the word
         handleWordClick(foundWord.word)
       } else {
+        // If the word is not in the scoreboard, either decrement the remaining guesses or subtract points if unlimited guesses
         index = undefined
         wordScore = 0
 
-        // Handle unlimited guesses: subtract points instead of decrementing guesses
+        // If the user has unlimited guesses, subtract points instead of decrementing guesses
         if (updatedRemainingGuesses === -1) {
           wordScore = updatedScore >= 50 ? -50 : updatedScore <= 0 ? 0 : -updatedScore
           updatedScore += wordScore
@@ -171,6 +182,7 @@ const AssociateGame: React.FC = () => {
         }
       }
 
+      // Create a new guess object
       const newGuess: Guess = {
         id: `${Date.now()}`,
         game_id: gameId,
@@ -226,6 +238,7 @@ const AssociateGame: React.FC = () => {
         updatedGameState.is_completed = true
       }
 
+      // Submit the guess to the database
       await gameAPI.submitAssociateGuess(newGuess)
 
       let { associate_guesses: _, ...updatedGame } = updatedGameState
@@ -234,7 +247,7 @@ const AssociateGame: React.FC = () => {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
 
-        // Update user stats
+        // Update user stats if logged in
         if (isAuthenticated) {
           const userStats = await userAPI.getUser(user?.sub || '')
           const stats = userStats.data
@@ -250,6 +263,7 @@ const AssociateGame: React.FC = () => {
         }
       }
 
+      // Update the game state in the database
       await gameAPI.updateAssociateGameState(updatedGame, updatedGame.id)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
@@ -258,6 +272,7 @@ const AssociateGame: React.FC = () => {
     }
   }
 
+  // Function to give up and end game
   const handleGiveUp = async () => {
     if (!gameState || gameState.is_completed || !gameId) return
 
@@ -274,7 +289,7 @@ const AssociateGame: React.FC = () => {
       // Update local state
       setGameState(updatedGameState)
 
-      // Update user stats
+      // Update user stats if logged in
       if (isAuthenticated) {
         const userStats = await userAPI.getUser(user?.sub || '')
         const stats = userStats.data
@@ -300,6 +315,7 @@ const AssociateGame: React.FC = () => {
     }
   }
 
+  // Function to open the article panel for a word
   const handleWordClick = (word: string) => {
     // Find the word data from scoreboard
     const wordData = scoreboard.find(item => item.word.toLowerCase() === word.toLowerCase())
@@ -309,6 +325,7 @@ const AssociateGame: React.FC = () => {
     }
   }
 
+  // Function to show a hint for a word selected from the scoreboard
   const handleHintClick = (word: string) => {
     const wordLower = word.toLowerCase()
     const wordData = scoreboard.find(item => item.word.toLowerCase() === wordLower)
@@ -321,7 +338,7 @@ const AssociateGame: React.FC = () => {
     setSelectedWordData(null)
   }
 
-  // Select a hint word with equal probability (no weights)
+  // Select a hint word
   const selectHintWord = (): ScoreboardEntry | null => {
     // Filter for unguessed words that haven't been hinted yet
     const availableWords = scoreboard.filter(entry => {
@@ -333,11 +350,12 @@ const AssociateGame: React.FC = () => {
       return null
     }
 
-    // Select random word with equal probability
+    // Select random word
     const randomIndex = Math.floor(Math.random() * availableWords.length)
     return availableWords[randomIndex]
   }
 
+  // Function to show a hint for a word
   const handleShowHint = (type: HintType) => {
     const hintWord = selectHintWord()
     if (hintWord) {

@@ -41,10 +41,16 @@ import AvailableSourceCard from './components/AvailableSourceCard'
 import ComparePresetsDialog from './components/ComparePresetsDialog'
 import CommonWordsDialog from './components/CommonWordsDialog'
 
+/**
+ * This is the selection page for the Comparative Association game mode.
+ * It allows the user to select two groups of sources and an anchor word, and then start the game.
+ */
 const CompareAssociate: React.FC = () => {
   const { user, isLoading } = useAuth0()
 
   const navigate = useNavigate()
+
+  // State variables for the page & game settings
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_MONTH)
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
@@ -52,15 +58,17 @@ const CompareAssociate: React.FC = () => {
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
   const [presetDialogOpen, setPresetDialogOpen] = useState(false)
 
-  // Two groups of sources
+  // State variables for the two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
   const [groupB, setGroupB] = useState<NewsSource[]>([])
 
+  // State variables for the anchor word and frequency verification
   const [selectedWord, setSelectedWord] = useState('')
   const [findingCount, setFindingCount] = useState(false)
   const [wordCountGroupA, setWordCountGroupA] = useState<number | null>(null)
   const [wordCountGroupB, setWordCountGroupB] = useState<number | null>(null)
 
+  // State variables for the common words dialog
   const [commonWordsOpen, setCommonWordsOpen] = useState(false)
   const [commonWordsGroupA, setCommonWordsGroupA] = useState<ScoreboardEntry[]>([])
   const [commonWordsGroupB, setCommonWordsGroupB] = useState<ScoreboardEntry[]>([])
@@ -71,6 +79,8 @@ const CompareAssociate: React.FC = () => {
   const allSources = Object.values(NewsSource)
   const availableSources = allSources.filter(source => !groupA.includes(source) && !groupB.includes(source))
 
+  // Functions for adding, removing, and moving sources between groups
+  // Reset the word count when a group is changed
   const handleAddToGroupA = (source: NewsSource) => {
     setGroupA(prev => [...prev, source])
     setWordCountGroupA(null)
@@ -114,7 +124,9 @@ const CompareAssociate: React.FC = () => {
     setGroupB(preset.groupBSources)
   }
 
+  // Function to start the game
   const handleStartGame = async () => {
+    // Check if at least one source is in each group
     if (groupA.length === 0 || groupB.length === 0) {
       alert('Please add at least one source to each group before starting.')
       return
@@ -122,6 +134,7 @@ const CompareAssociate: React.FC = () => {
 
     setLoading(true)
     try {
+      // Create the game object with proper settings
       const game: CompareAssociateGame = {
         score: 0,
         created_at: new Date().toISOString(),
@@ -146,7 +159,7 @@ const CompareAssociate: React.FC = () => {
       }
 
       const gameId = data.id
-      // Navigate to compare game
+      // Navigate to compare-associate game
       navigate(`/compare-associate/${gameId}`)
     } catch (error) {
       console.error('Failed to create game:', error)
@@ -155,7 +168,9 @@ const CompareAssociate: React.FC = () => {
     }
   }
 
+  // Function to find the frequency of the selected word
   const handleFindCount = async () => {
+    // Check if the word is already being found, or if the word is empty, or if the word count is already set
     if (
       findingCount ||
       !selectedWord.trim() ||
@@ -164,8 +179,10 @@ const CompareAssociate: React.FC = () => {
     ) {
       return
     }
+
     setFindingCount(true)
     try {
+      // Get the frequency of the word for each group
       const { data: dataGroupA, error: errorGroupA } = await gameAPI.getWordCount(
         selectedTimePeriod,
         groupA,
@@ -178,10 +195,12 @@ const CompareAssociate: React.FC = () => {
         selectedWord,
         new Date(),
       )
+
       if (errorGroupA || errorGroupB) {
         console.error('Error finding count:', errorGroupA || errorGroupB)
         return
       }
+
       setWordCountGroupA(dataGroupA)
       setWordCountGroupB(dataGroupB)
     } catch (error) {
@@ -196,13 +215,16 @@ const CompareAssociate: React.FC = () => {
     handleFindCount()
   }
 
+  // Effect to reset the common words list when the time period or groups change
   useEffect(() => {
     setCommonWordsGroupA([])
     setCommonWordsGroupB([])
   }, [selectedTimePeriod, groupA, groupB])
 
+  // Function to fetch the common words for modal dialog
   const fetchCommonWords = async () => {
     if (loadingCommonWords) return
+    // Check if at least one source is in each group
     if (groupA.length === 0 && groupB.length === 0) {
       setCommonWordsError('Add at least one source to Group A or B to see suggestions.')
       return
@@ -212,6 +234,7 @@ const CompareAssociate: React.FC = () => {
     setCommonWordsError(null)
 
     try {
+      // Get the common words for each individual group
       const [responseA, responseB] = await Promise.all([
         groupA.length
           ? gameAPI.getScoreboard(selectedTimePeriod, groupA, 10, new Date())

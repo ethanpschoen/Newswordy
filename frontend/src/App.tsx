@@ -44,6 +44,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <LoadingSpinner />
   }
 
+  // If the user is not authenticated or the user is not found, redirect to the home page
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />
   }
@@ -80,6 +81,7 @@ const AppContent: React.FC = () => {
     }
   }, [isAuthenticated, getAccessTokenSilently, isLoading])
 
+  // If the page is still loading, show the loading spinner
   if (isLoading) {
     return <LoadingSpinner />
   }
@@ -89,6 +91,7 @@ const AppContent: React.FC = () => {
       <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
         <Navbar />
         <Box component="main" sx={{ py: 4 }}>
+          {/* Routes for the app */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game/:gameId" element={<Game />} />
@@ -122,6 +125,7 @@ const AppContent: React.FC = () => {
   )
 }
 
+// Main App component
 function App() {
   return (
     <ThemeProvider theme={theme}>

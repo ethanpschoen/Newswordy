@@ -123,8 +123,11 @@ export enum Color {
   GRADIENT_ORANGE_END = 'rgb(255, 204, 128)',
 }
 
-// Frontend types for Newswordy
+// Frontend types
 
+/**
+ * User interface, matching database schema
+ */
 export interface User {
   id: string
   email: string
@@ -137,6 +140,9 @@ export interface User {
   best_score: number
 }
 
+/**
+ * Game interface, matching database schema
+ */
 export interface Game {
   id?: string
   time_period: TimePeriod
@@ -152,6 +158,9 @@ export interface Game {
   created_at?: string
 }
 
+/**
+ * Game state interface, used for local state management
+ */
 export interface GameState {
   id: string
   time_period: TimePeriod
@@ -165,6 +174,9 @@ export interface GameState {
   scoreboard_size: number
 }
 
+/**
+ * Guess interface, matching database schema
+ */
 export interface Guess {
   id: string
   game_id: string
@@ -176,6 +188,10 @@ export interface Guess {
   created_at: string
 }
 
+/**
+ * Scoreboard entry interface, used for displaying the scoreboard
+ * Matches output from scoreboard generator stored procedures
+ */
 export interface ScoreboardEntry {
   word: string
   frequency?: number
@@ -183,6 +199,10 @@ export interface ScoreboardEntry {
   articles: Article[]
 }
 
+/**
+ * Article interface, used for displaying the articles
+ * Matches output from scoreboard generator stored procedures
+ */
 export interface Article {
   url: string
   source: NewsSource
@@ -190,6 +210,9 @@ export interface Article {
   published_date: string
 }
 
+/**
+ * Associate game interface, matching database schema
+ */
 export interface AssociateGame {
   id?: string
   time_period: TimePeriod
@@ -206,6 +229,9 @@ export interface AssociateGame {
   created_at?: string
 }
 
+/**
+ * Associate game state interface, used for local state management
+ */
 export interface AssociateGameState {
   id: string
   time_period: TimePeriod
@@ -220,6 +246,9 @@ export interface AssociateGameState {
   scoreboard_size: number
 }
 
+/**
+ * Compare game interface, matching database schema
+ */
 export interface CompareGame {
   id?: string
   time_period: TimePeriod
@@ -237,6 +266,9 @@ export interface CompareGame {
   created_at?: string
 }
 
+/**
+ * Compare game state interface, used for local state management
+ */
 export interface CompareGameState {
   id: string
   time_period: TimePeriod
@@ -252,6 +284,9 @@ export interface CompareGameState {
   scoreboard_size: number
 }
 
+/**
+ * Compare associate game interface, matching database schema
+ */
 export interface CompareAssociateGame {
   id?: string
   time_period: TimePeriod
@@ -270,6 +305,9 @@ export interface CompareAssociateGame {
   created_at?: string
 }
 
+/**
+ * Compare associate game state interface, used for local state management
+ */
 export interface CompareAssociateGameState {
   id: string
   time_period: TimePeriod
@@ -286,6 +324,10 @@ export interface CompareAssociateGameState {
   scoreboard_size: number
 }
 
+/**
+ * Comparative scoreboard entry interface, used for displaying the scoreboard
+ * Matches output from scoreboard generator stored procedures
+ */
 export interface ComparativeScoreboardEntry {
   group_name: ComparativeGroup
   word: string
@@ -296,26 +338,17 @@ export interface ComparativeScoreboardEntry {
   articles_group_b: Article[]
 }
 
+/**
+ * Comparative group enum, used for displaying the groups
+ */
 export enum ComparativeGroup {
   GROUP_A = 'Group A',
   GROUP_B = 'Group B',
 }
 
-export interface ApiResponse<T = any> {
-  success: boolean
-  data?: T
-  message?: string
-  error?: string
-}
-
-export interface LeaderboardEntry {
-  userId: string
-  username: string
-  score: number
-  rank: number
-}
-
-// Time periods
+/**
+ * Time periods enum, used for displaying the time periods
+ */
 export const TIME_PERIODS = {
   PAST_DAY: 'past_day',
   PAST_WEEK: 'past_week',
@@ -326,6 +359,9 @@ export const TIME_PERIODS = {
   LAST_YEAR: 'last_year',
 } as const
 
+/**
+ * Time period type, used for displaying the time periods
+ */
 export type TimePeriod = (typeof TIME_PERIODS)[keyof typeof TIME_PERIODS]
 
 // News sources enum based on config.py
@@ -354,7 +390,9 @@ export const DEFAULT_SCOREBOARD_SIZE = 10
 export const MAX_MAX_GUESSES = Infinity
 export const MAX_SCOREBOARD_SIZE = 50
 
-// Time period display names
+/**
+ * Time period display names, used for displaying the time period names
+ */
 export const TIME_PERIOD_NAMES: Record<TimePeriod, string> = {
   [TIME_PERIODS.PAST_DAY]: 'Past Day',
   [TIME_PERIODS.PAST_WEEK]: 'Past Week',
@@ -365,6 +403,9 @@ export const TIME_PERIOD_NAMES: Record<TimePeriod, string> = {
   [TIME_PERIODS.LAST_YEAR]: 'Last Year',
 }
 
+/**
+ * Time period descriptions, used for displaying the time period descriptions
+ */
 export const TIME_PERIOD_DESCRIPTIONS: Record<TimePeriod, string> = {
   [TIME_PERIODS.PAST_DAY]: 'From yesterday.',
   [TIME_PERIODS.PAST_WEEK]: 'From the past 7 days.',
@@ -376,6 +417,9 @@ export const TIME_PERIOD_DESCRIPTIONS: Record<TimePeriod, string> = {
 }
 
 // TODO: Handle old news sources (Politico, CNN) to prevent errors
+/**
+ * News source config, used for displaying the news source name and logo
+ */
 export const NewsSourceConfig: Record<NewsSource, { name: string; logoSrc: string }> = {
   [NewsSource.ABC]: { name: 'ABC News', logoSrc: ABCNewsLogo },
   [NewsSource.AL_JAZEERA]: { name: 'Al Jazeera', logoSrc: AlJazeeraLogo },
@@ -395,6 +439,9 @@ export const NewsSourceConfig: Record<NewsSource, { name: string; logoSrc: strin
   [NewsSource.YAHOO]: { name: 'Yahoo News', logoSrc: YahooNewsLogo },
 }
 
+/**
+ * Game mode enum, used for displaying the game modes
+ */
 export enum GameMode {
   GAME = 'game',
   COMPARE = 'compare',
@@ -402,6 +449,9 @@ export enum GameMode {
   COMPARE_ASSOCIATE = 'compare-associate',
 }
 
+/**
+ * Game mode names, used for displaying the game mode names
+ */
 export const GAME_MODE_NAMES: Record<GameMode, string> = {
   [GameMode.GAME]: 'Classic',
   [GameMode.COMPARE]: 'Comparative',
@@ -409,16 +459,25 @@ export const GAME_MODE_NAMES: Record<GameMode, string> = {
   [GameMode.COMPARE_ASSOCIATE]: 'Comparative Associative',
 }
 
+/**
+ * Hint type enum, used for displaying the hint types
+ */
 export enum HintType {
   FILL_BLANK = 'fill-blank',
   FIRST_LETTER = 'first-letter',
 }
 
+/**
+ * Hint type names, used for displaying the hint type names
+ */
 export const HINT_TYPE_NAMES: Record<HintType, string> = {
   [HintType.FILL_BLANK]: 'Fill in the Blank',
   [HintType.FIRST_LETTER]: 'First Letter',
 }
 
+/**
+ * Compare preset interface, used for displaying the compare presets
+ */
 export type ComparePreset = {
   id: string
   label: string
@@ -429,6 +488,9 @@ export type ComparePreset = {
   groupBSources: NewsSource[]
 }
 
+/**
+ * Compare presets, used for displaying the compare presets
+ */
 export const COMPARE_PRESETS: ComparePreset[] = [
   {
     id: 'left-vs-right',
@@ -467,9 +529,36 @@ export const COMPARE_PRESETS: ComparePreset[] = [
   },
 ]
 
+/**
+ * Explainer mode enum, used for displaying the explainer modes
+ */
 export enum ExplainerMode {
   CLASSIC = 'classic',
   COMPARE = 'compare',
   ASSOCIATE = 'associate',
   COMPARE_ASSOCIATE = 'compare-associate',
+}
+
+/**
+ * User stat interface, used for displaying the user stats
+ */
+export interface UserStat {
+  name: string
+  value: number
+  icon: any
+  color: string
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean
+  data?: T
+  message?: string
+  error?: string
+}
+
+export interface LeaderboardEntry {
+  userId: string
+  username: string
+  score: number
+  rank: number
 }

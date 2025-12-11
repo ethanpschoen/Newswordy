@@ -25,9 +25,14 @@ import AssociatingWordCard from './components/AssociatingWordCard'
 import ComparativeArticleDrawer from './components/ComparativeArticleDrawer'
 import HintModal from './components/HintModal'
 
+/**
+ * This is the game page for the Comparative Association game mode.
+ * It allows the user to guess words used alongside the selected word, more by one group than the other.
+ */
 const CompareAssociateGame: React.FC = () => {
   const { isAuthenticated, user } = useAuth0()
 
+  // Get the game ID from the URL
   const { compareAssociateId: gameId } = useParams<{ compareAssociateId: string }>()
 
   const navigate = useNavigate()
@@ -97,6 +102,7 @@ const CompareAssociateGame: React.FC = () => {
     }
   }, [scoreboardGroupA, showScoreboard, gameState?.compare_associate_guesses])
 
+  // Function to load the game state from the database
   const loadGame = async () => {
     try {
       setLoading(true)
@@ -127,6 +133,7 @@ const CompareAssociateGame: React.FC = () => {
 
       const board = scoreboardResponse.data
       setScoreboard(board)
+
       setScoreboardGroupA(
         board.filter((entry: ComparativeScoreboardEntry) => entry.group_name === ComparativeGroup.GROUP_A),
       )
@@ -141,6 +148,7 @@ const CompareAssociateGame: React.FC = () => {
     }
   }
 
+  // Function to submit a guess
   const handleSubmitGuess = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!currentGuess.trim() || !gameId) return
@@ -169,6 +177,7 @@ const CompareAssociateGame: React.FC = () => {
       let updatedGuessedWordsGroupB = gameState?.guessed_words_group_b || []
       let updatedRemainingGuesses = gameState?.remaining_guesses || 0
 
+      // If the word is in the scoreboard, calculate and update the score and add it to the guessed words list
       if (foundWord) {
         index = scoreboard.findIndex(entry => entry.word === guessWord)
 
@@ -185,8 +194,10 @@ const CompareAssociateGame: React.FC = () => {
         wordScore = wasHinted ? Math.round(baseScore / 2) : baseScore
         updatedScore += wordScore
 
+        // Show the articles for the word
         handleWordClick(foundWord.word)
       } else {
+        // If the word is not in the scoreboard, either decrement the remaining guesses or subtract points if unlimited guesses
         index = undefined
         wordScore = 0
 
@@ -199,6 +210,7 @@ const CompareAssociateGame: React.FC = () => {
         }
       }
 
+      // Create a new guess object
       const newGuess: Guess = {
         id: `${Date.now()}`,
         game_id: gameId,
@@ -254,6 +266,7 @@ const CompareAssociateGame: React.FC = () => {
         updatedGameState.is_completed = true
       }
 
+      // Submit the guess to the database
       await gameAPI.submitComparativeAssociatedGuess(newGuess)
 
       let { compare_associate_guesses: _, ...updatedGame } = updatedGameState
@@ -262,7 +275,7 @@ const CompareAssociateGame: React.FC = () => {
         // @ts-ignore
         updatedGame.completed_at = new Date().toISOString()
 
-        // Update user stats
+        // Update user stats if logged in
         if (isAuthenticated) {
           const userStats = await userAPI.getUser(user?.sub || '')
           const stats = userStats.data
@@ -278,6 +291,7 @@ const CompareAssociateGame: React.FC = () => {
         }
       }
 
+      // Update the game state in the database
       await gameAPI.updateComparativeAssociatedGameState(updatedGame, updatedGame.id)
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to submit guess')
@@ -286,6 +300,7 @@ const CompareAssociateGame: React.FC = () => {
     }
   }
 
+  // Function to give up and end game
   const handleGiveUp = async () => {
     if (!gameState || gameState.is_completed || !gameId) return
 
@@ -302,7 +317,7 @@ const CompareAssociateGame: React.FC = () => {
       // Update local state
       setGameState(updatedGameState)
 
-      // Update user stats
+      // Update user stats if logged in
       if (isAuthenticated) {
         const userStats = await userAPI.getUser(user?.sub || '')
         const stats = userStats.data
@@ -328,15 +343,17 @@ const CompareAssociateGame: React.FC = () => {
     }
   }
 
+  // Function to open the article panels for a word
   const handleWordClick = (word: string) => {
-    // Find the word in the combined scoreboard to get articles from both groups
+    // Find the word from the overall scoreboard to get articles from both groups
+    // The word will only show up in one group's scoreboard, but that entry will have articles from both groups
     const wordLower = word.toLowerCase()
     const wordEntry = scoreboard.find((entry: ComparativeScoreboardEntry) => entry.word.toLowerCase() === wordLower) as
       | ComparativeScoreboardEntry
       | undefined
 
     if (wordEntry) {
-      // Each ComparativeScoreboardEntry has articles from both groups
+      // Extract the word data from the overall scoreboard
       const condensedWordDataGroupA: ScoreboardEntry = {
         word: wordEntry.word,
         rank: wordEntry.avg_rank_group_a,
@@ -347,16 +364,22 @@ const CompareAssociateGame: React.FC = () => {
         rank: wordEntry.avg_rank_group_b,
         articles: wordEntry.articles_group_b,
       }
+
       setSelectedWordDataGroupA(condensedWordDataGroupA)
       setSelectedWordDataGroupB(condensedWordDataGroupB)
+
+      // Reset the pagination to the first page
       setCurrentPageGroupA(0)
       setCurrentPageGroupB(0)
     }
   }
 
+  // Function to show a hint for a word when clicked on from the scoreboard
   const handleHintClick = (word: string) => {
     const wordLower = word.toLowerCase()
     let condensedWordData: ScoreboardEntry | null = null
+
+    // Find the word, looking at both group's scoreboards
     const wordDataGroupA = scoreboardGroupA.find(item => item.word.toLowerCase() === wordLower)
     const wordDataGroupB = scoreboardGroupB.find(item => item.word.toLowerCase() === wordLower)
 
@@ -386,7 +409,7 @@ const CompareAssociateGame: React.FC = () => {
     setSelectedWordDataGroupB(null)
   }
 
-  // Select a hint word with equal probability (no weights)
+  // Select a hint word
   const selectHintWord = (wordBoard: ComparativeScoreboardEntry[], group: ComparativeGroup): ScoreboardEntry | null => {
     // Filter for unguessed words that haven't been hinted yet
     const availableWords = wordBoard.filter(entry => {
@@ -402,7 +425,7 @@ const CompareAssociateGame: React.FC = () => {
       return null
     }
 
-    // Select random word with equal probability
+    // Select random word
     const randomIndex = Math.floor(Math.random() * availableWords.length)
     return {
       word: availableWords[randomIndex].word,
@@ -417,9 +440,12 @@ const CompareAssociateGame: React.FC = () => {
     }
   }
 
+  // Function to show a hint
   const handleShowHint = (type: HintType) => {
+    // Select a hint word from each group (if possible)
     const hintWordA = selectHintWord(scoreboardGroupA, ComparativeGroup.GROUP_A)
     const hintWordB = selectHintWord(scoreboardGroupB, ComparativeGroup.GROUP_B)
+
     if (!hintWordA && !hintWordB) {
       // No more hints are available
       setError('No more hints are available. Select a hinted word to fill in the blank!')
@@ -442,6 +468,10 @@ const CompareAssociateGame: React.FC = () => {
         return prev
       })
     }
+
+    // Set the current hint word(s)
+    // If only the word from Group B is available, it will set it as the main hint
+    // Otherwise, it will set the word from Group A as the main hint
     setCurrentHintWord(hintWordA || hintWordB)
     setCurrentHintWordGroupB(hintWordA ? hintWordB : null)
     setHintModalOpen(true)
@@ -453,6 +483,7 @@ const CompareAssociateGame: React.FC = () => {
 
   const theme = useTheme()
   const isNarrowScreen = useMediaQuery(theme.breakpoints.down('lg'))
+  // Set the accent colors for the groups
   const groupAccentColor = theme.palette.primary.main
   const groupBAccentColor = theme.palette.secondary.main || theme.palette.info.main
 

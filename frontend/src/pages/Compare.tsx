@@ -20,9 +20,16 @@ import SourceCard from './components/SourceCard'
 import AvailableSourceCard from './components/AvailableSourceCard'
 import ComparePresetsDialog from './components/ComparePresetsDialog'
 
+/**
+ * This is the selection page for the Source Comparison game mode.
+ * It allows the user to select two groups of sources and start the game.
+ */
 const Compare: React.FC = () => {
   const { user, isLoading } = useAuth0()
+
   const navigate = useNavigate()
+
+  // State variables for the page & game settings
   const [loading, setLoading] = useState(false)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>(TIME_PERIODS.PAST_WEEK)
   const [maxGuesses, setMaxGuesses] = useState(DEFAULT_MAX_GUESSES)
@@ -30,7 +37,7 @@ const Compare: React.FC = () => {
   const [unlimitedGuesses, setUnlimitedGuesses] = useState(false)
   const [presetDialogOpen, setPresetDialogOpen] = useState(false)
 
-  // Two groups of sources
+  // State variables for the two groups of sources
   const [groupA, setGroupA] = useState<NewsSource[]>([])
   const [groupB, setGroupB] = useState<NewsSource[]>([])
 
@@ -69,7 +76,9 @@ const Compare: React.FC = () => {
     setGroupB(preset.groupBSources)
   }
 
+  // Function to start the game
   const handleStartGame = async () => {
+    // Check if at least one source is in each group
     if (groupA.length === 0 || groupB.length === 0) {
       alert('Please add at least one source to each group before starting.')
       return
@@ -77,6 +86,7 @@ const Compare: React.FC = () => {
 
     setLoading(true)
     try {
+      // Create the game object with proper settings
       const game: CompareGame = {
         score: 0,
         created_at: new Date().toISOString(),

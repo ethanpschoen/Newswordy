@@ -104,11 +104,21 @@ export const defineTimePeriod = (timePeriod: TimePeriod, referenceDate: Date) =>
 
 // Game API
 export const gameAPI = {
+  /**
+   * Creates a new classic game in the database
+   * @param game - The game object to create
+   * @returns The game ID
+   */
   createGame: async (game: Game) => {
     return await supabase.from('games').insert([game]).select('id').single()
   },
 
   // TODO: validate user with game?
+  /**
+   * Gets the classic game state from the database
+   * @param gameId - The ID of the game to get the state of
+   * @returns The game state
+   */
   getGameState: async (gameId: string) => {
     return await supabase
       .from('games')
@@ -123,14 +133,32 @@ export const gameAPI = {
   },
 
   // TODO: validate user with game?
+  /**
+   * Updates the classic game state in the database
+   * @param game - The updated game object
+   * @param gameId - The ID of the game to update
+   */
   updateGameState: async (game: Game, gameId: string) => {
     return await supabase.from('games').update(game).eq('id', gameId)
   },
 
+  /**
+   * Submits a classic guess to the database
+   * @param data - The guess object to submit
+   */
   submitGuess: async (data: Guess) => {
     return await supabase.from('guesses').insert(data)
   },
 
+  /**
+   * Gets the top words scoreboard for a classic game from the database
+   * This uses a PostgreSQL stored procedure to get the top words for a given time period, sources, and reference date
+   * @param timePeriod - The time period to get the scoreboard for
+   * @param sources - The sources to get the scoreboard for
+   * @param scoreboardSize - The size of the scoreboard
+   * @param referenceDate - The reference date to get the scoreboard for
+   * @returns The scoreboard
+   */
   getScoreboard: async (timePeriod: TimePeriod, sources: NewsSource[], scoreboardSize: number, referenceDate: Date) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
@@ -144,11 +172,21 @@ export const gameAPI = {
       .select('*')
   },
 
+  /**
+   * Creates a new comparative game in the database
+   * @param game - The comparative game object to create
+   * @returns The comparative game ID
+   */
   createComparativeGame: async (game: CompareGame) => {
     return await supabase.from('compare_games').insert(game).select('id').single()
   },
 
   // TODO: validate user with game?
+  /**
+   * Gets the comparative game state from the database
+   * @param gameId - The ID of the comparative game to get the state of
+   * @returns The comparative game state
+   */
   getComparativeGameState: async (gameId: string) => {
     return await supabase
       .from('compare_games')
@@ -163,14 +201,33 @@ export const gameAPI = {
   },
 
   // TODO: validate user with game?
+  /**
+   * Updates the comparative game state in the database
+   * @param game - The updated comparative game object
+   * @param gameId - The ID of the comparative game to update
+   */
   updateComparativeGameState: async (game: CompareGame, gameId: string) => {
     return await supabase.from('compare_games').update(game).eq('id', gameId)
   },
 
+  /**
+   * Submits a comparative guess to the database
+   * @param data - The comparative guess object to submit
+   */
   submitComparativeGuess: async (data: Guess) => {
     return await supabase.from('compare_guesses').insert(data)
   },
 
+  /**
+   * Gets the top words scoreboard for a comparative game from the database
+   * This uses a PostgreSQL stored procedure to get the top words for a given time period, sources, and reference date
+   * @param timePeriod - The time period to get the scoreboard for
+   * @param sources_group_a - The sources for group A
+   * @param sources_group_b - The sources for group B
+   * @param scoreboardSize - The size of the scoreboard
+   * @param referenceDate - The reference date to get the scoreboard for
+   * @returns The scoreboard
+   */
   getComparativeScoreboard: async (
     timePeriod: TimePeriod,
     sources_group_a: NewsSource[],
@@ -191,6 +248,15 @@ export const gameAPI = {
       .select('*')
   },
 
+  /**
+   * Gets the word count for a given time period, sources, and search term
+   * This uses a PostgreSQL stored procedure to get the word count for a given time period, sources, and search term
+   * @param timePeriod - The time period to get the word count for
+   * @param sources - The sources to get the word count for
+   * @param search_term - The search term to get the word count for
+   * @param referenceDate - The reference date to get the word count for
+   * @returns The word count
+   */
   getWordCount: async (timePeriod: TimePeriod, sources: NewsSource[], search_term: string, referenceDate: Date) => {
     const { start_date, end_date } = defineTimePeriod(timePeriod, referenceDate)
 
@@ -204,11 +270,21 @@ export const gameAPI = {
       .select('*')
   },
 
+  /**
+   * Creates a new associate game in the database
+   * @param game - The associate game object to create
+   * @returns The associate game ID
+   */
   createAssociateGame: async (game: AssociateGame) => {
     return await supabase.from('associate_games').insert(game).select('id').single()
   },
 
   // TODO: validate user with game?
+  /**
+   * Gets the associate game state from the database
+   * @param gameId - The ID of the associate game to get the state of
+   * @returns The associate game state
+   */
   getAssociateGameState: async (gameId: string) => {
     return await supabase
       .from('associate_games')
@@ -223,14 +299,33 @@ export const gameAPI = {
   },
 
   // TODO: validate user with game?
+  /**
+   * Updates the associate game state in the database
+   * @param game - The updated associate game object
+   * @param gameId - The ID of the associate game to update
+   */
   updateAssociateGameState: async (game: AssociateGame, gameId: string) => {
     return await supabase.from('associate_games').update(game).eq('id', gameId)
   },
 
+  /**
+   * Submits an associate guess to the database
+   * @param data - The associate guess object to submit
+   */
   submitAssociateGuess: async (data: Guess) => {
     return await supabase.from('associate_guesses').insert(data)
   },
 
+  /**
+   * Gets the top words scoreboard for an associate game from the database
+   * This uses a PostgreSQL stored procedure to get the top words for a given time period, sources, and reference date
+   * @param timePeriod - The time period to get the scoreboard for
+   * @param sources - The sources to get the scoreboard for
+   * @param search_term - The search term to get the scoreboard for
+   * @param scoreboardSize - The size of the scoreboard
+   * @param referenceDate - The reference date to get the scoreboard for
+   * @returns The scoreboard
+   */
   getAssociatedScoreboard: async (
     timePeriod: TimePeriod,
     sources: NewsSource[],
@@ -251,11 +346,21 @@ export const gameAPI = {
       .select('*')
   },
 
+  /**
+   * Creates a new comparative associated game in the database
+   * @param game - The comparative associated game object to create
+   * @returns The comparative associated game ID
+   */
   createComparativeAssociatedGame: async (game: CompareAssociateGame) => {
     return await supabase.from('compare_associate_games').insert(game).select('id').single()
   },
 
   // TODO: validate user with game?
+  /**
+   * Gets the comparative associated game state from the database
+   * @param gameId - The ID of the comparative associated game to get the state of
+   * @returns The comparative associated game state
+   */
   getComparativeAssociatedGameState: async (gameId: string) => {
     return await supabase
       .from('compare_associate_games')
@@ -270,14 +375,34 @@ export const gameAPI = {
   },
 
   // TODO: validate user with game?
+  /**
+   * Updates the comparative associated game state in the database
+   * @param game - The updated comparative associated game object
+   * @param gameId - The ID of the comparative associated game to update
+   */
   updateComparativeAssociatedGameState: async (game: CompareAssociateGame, gameId: string) => {
     return await supabase.from('compare_associate_games').update(game).eq('id', gameId)
   },
 
+  /**
+   * Submits a comparative associated guess to the database
+   * @param data - The comparative associated guess object to submit
+   */
   submitComparativeAssociatedGuess: async (data: Guess) => {
     return await supabase.from('compare_associate_guesses').insert(data)
   },
 
+  /**
+   * Gets the top words scoreboard for a comparative associated game from the database
+   * This uses a PostgreSQL stored procedure to get the top words for a given time period, sources, and reference date
+   * @param timePeriod - The time period to get the scoreboard for
+   * @param sources_group_a - The sources for group A
+   * @param sources_group_b - The sources for group B
+   * @param search_term - The search term to get the scoreboard for
+   * @param scoreboardSize - The size of the scoreboard
+   * @param referenceDate - The reference date to get the scoreboard for
+   * @returns The scoreboard
+   */
   getComparativeAssociatedScoreboard: async (
     timePeriod: TimePeriod,
     sources_group_a: NewsSource[],
@@ -303,30 +428,66 @@ export const gameAPI = {
 
 // User API
 export const userAPI = {
+  /**
+   * Creates a new user in the database
+   * @param user - The user object to create
+   * @returns The user ID
+   */
   createUser: async (user: User) => {
     return await supabase.from('users').insert(user)
   },
 
+  /**
+   * Gets a user from the database
+   * @param userId - The ID of the user to get
+   * @returns The user
+   */
   getUser: async (userId: string) => {
     return await supabase.from('users').select('*').eq('id', userId).single()
   },
 
+  /**
+   * Updates a user in the database
+   * @param user - The user object to update
+   * @param userId - The ID of the user to update
+   * @returns The updated user
+   */
   updateUser: async (user: User, userId: string) => {
     return await supabase.from('users').update(user).eq('id', userId)
   },
 
+  /**
+   * Gets the classic games for a user from the database
+   * @param userId - The ID of the user to get the games for
+   * @returns The games
+   */
   getUserGames: async (userId: string) => {
     return await supabase.from('games').select('*').eq('user_id', userId)
   },
 
+  /**
+   * Gets the comparative games for a user from the database
+   * @param userId - The ID of the user to get the games for
+   * @returns The games
+   */
   getUserComparativeGames: async (userId: string) => {
     return await supabase.from('compare_games').select('*').eq('user_id', userId)
   },
 
+  /**
+   * Gets the associate games for a user from the database
+   * @param userId - The ID of the user to get the games for
+   * @returns The games
+   */
   getUserAssociateGames: async (userId: string) => {
     return await supabase.from('associate_games').select('*').eq('user_id', userId)
   },
 
+  /**
+   * Gets the comparative associated games for a user from the database
+   * @param userId - The ID of the user to get the games for
+   * @returns The games
+   */
   getUserComparativeAssociatedGames: async (userId: string) => {
     return await supabase.from('compare_associate_games').select('*').eq('user_id', userId)
   },

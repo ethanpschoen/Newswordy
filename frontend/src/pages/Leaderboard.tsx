@@ -2,6 +2,10 @@ import React from 'react'
 import { Color } from '../types'
 import { Box, Typography } from '@mui/material'
 
+/**
+ * This is the leaderboard page for the Newswordy app.
+ * It is a placeholder for the leaderboard functionality.
+ */
 const Leaderboard: React.FC = () => {
   return (
     <Box sx={{ textAlign: 'center', py: 12 }}>
