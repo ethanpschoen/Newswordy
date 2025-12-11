@@ -36,16 +36,16 @@ The contemporary news ecosystem is noisy, polarized, and difficult to navigate.
 24-hour cable channels, online outlets, and social media platforms compete
 for attention by emphasizing novelty, outrage, and conflict, often at the
 expense of context and nuance.
-This contributes to \emph{news fatigue}, disengagement, and selective exposure,
+This contributes to news fatigue, disengagement, and selective exposure,
 where people either tune out entirely or restrict themselves to a narrow set of
-ideologically aligned sources.\cite{news-polarization-cable-tv,news-avoidance-fatigue}
+ideologically aligned sources.\cite{MartinBiasIn2017,FitzpatrickNoNews2022}
 At the same time, the proliferation of partisan media and misinformation makes
 it harder for non-experts to develop a broad, trustworthy sense of what is
-actually happening in the world.\cite{misinformation-polarization}
+actually happening in the world.\cite{KubinTheRole2021}
 
 When mainstream outlets are perceived as untrustworthy, people may turn to
 more extreme or less rigorous sources, including influencer-driven commentary
-and algorithmically curated social feeds.\cite{selective-exposure}
+and algorithmically curated social feeds.\cite{SpohrFakeNews2017}
 In this environment, there are relatively few tools that help users compare
 coverage across outlets at a glance or understand how different news sources
 frame the same events.
@@ -62,7 +62,8 @@ Rather than replacing traditional news consumption, the goal is to create an
 \emph{on-ramp}: a low-friction daily habit that encourages curiosity about what
 is in the news and how different sources talk about it.
 
-Newswordy is a web-based word-guessing game that operationalizes this idea.
+\href{https://newswordy.vercel.app}{Newswordy (available at https://newswordy.vercel.app)}
+is a web-based word-guessing game that operationalizes this idea.
 Each day, it aggregates headlines from a curated set of major news outlets and
 builds word-frequency summaries and comparisons over configurable time windows.
 Players then try to guess the most frequent words in those headlines, earning
@@ -71,9 +72,9 @@ As they play, users can click on any word to see the underlying articles that
 mention it, surfacing the context behind the ``buzzwords'' and inviting deeper
 engagement with specific stories.
 
-The game builds on the success of daily casual games such as Wordle and
-crosswords, which have been shown to support regular engagement and incidental
-learning.\cite{serious-games-learning,gamification-engagement}
+The game builds on the success of daily casual games such as Wordle,
+crossword puzzles, and Duolingo, which have been shown to support regular engagement and incidental
+learning.\cite{FreitasAreGames2018,SailerTheGamification2023}
 By framing news awareness as a playful, time-bounded challenge with clear
 feedback, Newswordy aims to make it easier for both habitual news readers and
 more casual consumers to track what topics dominate headlines and how that
@@ -101,14 +102,14 @@ Television, particularly cable news, remains one of the most influential
 sources of political information for many adults.
 Research has shown that cable outlets have increasingly diverged from each
 other in both content and tone, contributing to partisan news diets and
-ideological polarization.\cite{news-polarization-cable-tv}
+ideological polarization.\cite{MartinBiasIn2017}
 Programs often blur the boundary between hard news and opinion, prioritizing
 emotional resonance and entertainment value to maintain viewership.
 
 At the same time, social media platforms have become a major gateway to news,
 especially for younger audiences.
 Algorithmic feeds prioritize engagement, which tends to surface sensational,
-outrage-inducing, or identity-affirming content.\cite{misinformation-polarization}
+outrage-inducing, or identity-affirming content.\cite{KubinTheRole2021}
 Users encounter news interspersed with memes, personal updates, and advertising,
 which can make it difficult to distinguish verified reporting from rumors or
 manipulated narratives.
@@ -116,44 +117,24 @@ manipulated narratives.
 These dynamics contribute to two related challenges.
 First, many people experience news as exhausting or demoralizing, leading to
 selective avoidance and a sense that being informed is incompatible with their
-mental health.\cite{news-avoidance-fatigue}
+mental health.\cite{FitzpatrickNoNews2022}
 Second, those who do stay engaged often do so within relatively narrow
 information ecosystems that reinforce their existing views.
 Both outcomes undermine the civic goal of having a broadly informed public.
 
-\subsection{Headlines, Word Frequencies, and Co-occurrence}
+\subsection{News Headlines}
 
-From a computational perspective, Newswordy treats headlines as compact
-summaries of what newsrooms consider most important.
-Headlines are not neutral data --- they reflect editorial choices and
-institutional biases --- but they provide a tractable lens on the \emph{agenda}
-of different outlets.
-
-By tokenizing headlines into words, filtering out stop words, and aggregating
-counts over time, we obtain simple but interpretable statistics:
-which words are most prominent overall, how their frequencies change over time,
-and how those distributions differ between groups of sources.
-Similarly, co-occurrence statistics --- which words commonly appear in
-headlines alongside a given ``anchor'' word --- offer a window into how a topic
-is framed (for example, whether ``immigration'' co-occurs more with ``border''
-or ``workers'').
-
-These techniques are intentionally lightweight compared to more complex
-topic modeling or representation-learning approaches.
-The goal is not to infer hidden ideological dimensions, but to expose
-patterns that non-experts can understand and reason about:
-``these are the words showing up in headlines right now, and here is how they
-change when I switch sources or time ranges.''
-
-\subsection{Scope of Technical Discussion}
-
-Newswordy is implemented using a web frontend, a PostgreSQL database, and a
-Python-based scraping pipeline.
-However, in keeping with the rubric, the remainder of this paper focuses on the
-problem formulation, design choices, and evaluation rather than the specifics
-of languages or libraries.
-High-level architecture and replication details are provided in later sections
-and in the public GitHub repository.
+Headlines are a useful lens for understanding what ``the news'' is about because
+they are the most visible, compressed representation of a story.
+They encode what editors and platforms believe will attract attention, and they
+often foreground the people, institutions, and frames that an outlet wants
+readers to associate with an event.
+While a headline cannot capture nuance, aggregating many headlines over time can
+reveal consistent patterns in emphasis: which topics recur, which actors are
+named, and which terms become salient across outlets.
+For this reason, headlines provide a practical unit of analysis for lightweight,
+comparative tools that aim to surface patterns in coverage without requiring
+full-text article processing.
 
 \section{Prior Work}
 
@@ -167,9 +148,7 @@ Several organizations provide visualizations and ratings intended to help
 people reason about media bias and reliability.
 Examples include news bias charts and sites that position outlets along
 ideological and credibility axes based on content analysis and expert
-judgments.\cite{media-bias-charts}
-Other tools aggregate headlines into dashboards or topic maps, allowing users
-to see how different outlets are covering particular stories.
+judgments.\cite{HeldebrandtHowA2019}
 
 These tools can be powerful for motivated users, but they have several
 limitations relative to the problem Newswordy addresses.
@@ -183,8 +162,8 @@ groups and time ranges to see how the vocabulary of coverage shifts.
 
 \subsection{News Quizzes and Games}
 
-Mainstream outlets frequently offer weekly ``news quiz'' articles that test
-readers on the details of recent stories.
+Mainstream outlets frequently offer weekly ``news quizzes'' that test readers
+on the details of recent stories.
 These quizzes can be engaging, but they typically require prior reading of the
 same outlet's coverage and focus on factual recall rather than comparative
 reasoning about media agendas.
@@ -193,11 +172,11 @@ In parallel, casual word games like crosswords and Wordle have become daily
 rituals for millions of players.
 Although they are not usually framed as news-literacy tools, they demonstrate
 that low-friction, time-bounded puzzles can sustain long-term engagement and
-support vocabulary and pattern learning.\cite{wordle-article}
+support vocabulary and pattern learning.\cite{RitcheyWordleAs2023}
 
 Newswordy combines these two lines of inspiration.
 Like a news quiz, it is grounded in current events; like a daily puzzle, it
-asks players to make educated guesses about words under light time pressure.
+asks players to make educated guesses about words under light pressure.
 However, instead of quizzing users on article-specific facts, it focuses on the
 \emph{distribution} of words across headlines, encouraging players to think
 about which topics dominate coverage and how that varies across sources.
@@ -205,17 +184,17 @@ about which topics dominate coverage and how that varies across sources.
 \subsection{Serious Games and Gamification}
 
 There is a rich literature on serious games --- games designed for purposes
-such as education, training, or civic engagement.\cite{serious-games-learning}
+such as education, training, or civic engagement.\cite{FreitasAreGames2018}
+In practice, many of the most successful learning-oriented products borrow from
+games without fully becoming games themselves.
+Apps like Duolingo and Brilliant use short lessons, immediate feedback, and
+visible progress to sustain engagement over long periods. The use of streaks
+is also a common feature of these games, intended to support habit formation.
+These examples suggest that lightweight, repeatable interactions can support
+learning goals when the mechanics align with the desired habit.
 Research on gamification suggests that points, progress feedback, and social
 comparison can increase short-term engagement, but that thoughtful alignment
-between game mechanics and learning goals is crucial.\cite{gamification-engagement}
-
-In designing Newswordy, the primary goal was not to maximize time-on-site,
-but to encourage brief, repeated interactions that leave players with a clearer
-mental model of what the news is about.
-The use of points and streaks is intended to support habit formation, while the
-ability to click into underlying articles and explore advanced comparison modes
-supports deeper reflection for users who want it.
+between game mechanics and learning goals is crucial.\cite{SailerTheGamification2023}
 
 \section{Methods}
 
@@ -229,9 +208,10 @@ From this overarching goal, I derived several more concrete objectives:
     \item \textbf{Broad awareness:} help players develop an at-a-glance sense
     of which topics dominate recent headlines.
     \item \textbf{Comparative insight:} make it easy to compare how different
-    groups of outlets talk about the same period or anchor word.
+    groups of outlets talk (or don't talk) about the same content.
     \item \textbf{Transparency:} always allow players to see the underlying
-    articles behind aggregate statistics.
+    articles behind aggregate statistics, and encourage further engagement
+    with the content.
     \item \textbf{Low friction:} keep each play session short and intuitive,
     suitable for daily or weekly use.
 \end{itemize}
@@ -258,8 +238,8 @@ For each article, the scraper lowercases the headline, tokenizes it into words,
 and removes common stop words (e.g., ``the'', ``and'').
 Remaining tokens are treated as candidate ``buzzwords.''
 
-When a user starts a game, they configure a time window (for example, the past
-day or week) and a set of sources or source groups.
+When a user starts a game, they may configure a time window (for
+example, the past day or week) and a set of sources or source groups.
 The backend then:
 \begin{enumerate}
     \item Filters stored articles to those whose timestamps fall within the
@@ -269,15 +249,14 @@ The backend then:
 \end{enumerate}
 
 For modes that involve comparison between two groups of sources, the system
-computes separate frequency counts for each group and then derives a
-comparison score (for example, the difference in normalized frequencies).
+determines the percentage of articles from each source mentioning a given word,
+and finds the difference in percentages between the two groups.
 For association-based modes, it first identifies all headlines containing the
 chosen anchor word and then computes co-occurrence counts for other tokens
 within those headlines.
 
 These computations are implemented as database queries and functions so that
-they can run close to the data and respond in real time as users adjust
-settings.
+they can run close to the data and respond in real time as users start a game.
 The algorithms themselves are simple by design, making it easier for players
 to build an intuition for what the scores mean.
 
@@ -291,20 +270,20 @@ Newswordy exposes these statistics through four main game modes:
     This mode emphasizes broad awareness of what is ``in the air.''
     \item[Comparison mode] splits sources into two configurable groups and asks
     players to guess words that are disproportionately frequent in one group.
-    This highlights differences in framing and agenda between outlets.
+    This highlights differences in coverage and agenda between outlets.
     \item[Association mode] lets players pick an anchor word and guess other
     words that commonly appear alongside it in headlines, surfacing the
     narrative context around specific topics.
     \item[Comparative association] combines the previous two ideas by comparing
     co-occurrence patterns for an anchor word across two source groups, helping
-    players explore how different outlets talk about the same topic.
+    players explore how different outlets talk about and frame the same topic.
 \end{description}
 
 All modes share a common interaction pattern: players type guesses into a text
 field, the system checks whether the guess appears on the relevant scoreboard,
 and correct guesses are revealed with their scores.
-Hints are available to keep the experience approachable, including partial
-reveals of word shapes and lists of most common words.
+Hints are available to keep the experience approachable, including
+reveals of the word's length and its first letter.
 
 \subsection{Interface and Interaction Design}
 
@@ -320,9 +299,10 @@ Key elements include:
 
 Importantly, the article list appears as soon as a word is guessed and remains
 available after the game ends, so players can always trace aggregate patterns
-back to individual stories.
-User accounts and profiles allow players to revisit past games, see historical
-scores, and track their engagement over time, supporting habit formation.
+back to individual stories. Furthermore, this encourages players to explore the
+content behind the words they guess, rather than simply thinking about the words
+themselves. User accounts and profiles allow players to revisit past games, see
+historical scores, and track their engagement over time, supporting habit formation.
 
 \section{Evaluation Metrics}
 
@@ -339,13 +319,13 @@ The evaluation was organized around three main questions:
     \item \textbf{Educational value:} Do players report feeling more aware of
     current events or more able to reason about differences in coverage after
     playing?
+    \item \textbf{Support for critical comparison:} For users who already
+    follow the news closely, do advanced modes (comparison and association)
+    help them explore media bias and framing in new ways?
     \item \textbf{Engagement and usability:} Do players find the game engaging
     enough that they would choose to play it again?
     Is the interface intuitive enough that they would feel comfortable using it
     without guidance?
-    \item \textbf{Support for critical comparison:} For users who already
-    follow the news closely, do advanced modes (comparison and association)
-    help them explore media bias and framing in new ways?
 \end{itemize}
 
 \subsection{Interview Protocol and Measures}
@@ -377,7 +357,7 @@ self-reported learning, engagement intentions, and perceived usability.
 
 In a longer-term study, it would be valuable to complement interviews with
 quantitative measures, such as pre/post quizzes on current events, retention
-tests administered days later, or large-scale telemetry on repeated play.
+tests administered days later, or detailed prompts about a specific finding.
 However, these were beyond the scope of this project.
 
 I also considered incorporating objective measures of exploration behavior,
@@ -406,15 +386,16 @@ Common motivations for change included wanting to read a wider variety of
 sources and balancing a desire to be responsible and informed with the stress
 of constant negative coverage.
 These comments align with broader research on news avoidance and the emotional
-burden of contemporary news consumption.\cite{news-avoidance-fatigue}
+burden of contemporary news consumption.\cite{FitzpatrickNoNews2022}
 
 \subsection{Experiences with Classic Mode}
 
 In the classic mode, participants generally found the core mechanic intuitive:
 guessing words felt similar to other word games they had played.
-Several noted that the game was harder than expected because many frequent
-words were descriptive or thematic (for example, issue or place names) rather
-than the proper nouns they initially guessed.
+Several noted that the game was harder than expected, largely because headline
+vocabulary is unpredictable: proper nouns, niche terms, and event-specific names
+can dominate a day, and the ``best'' guesses depend heavily on the selected time
+window and source group.
 
 Hints, especially partial word reveals, were frequently cited as helpful for
 keeping the experience from becoming frustrating.
@@ -431,23 +412,27 @@ which aspects of ongoing stories were most salient in headlines.
 Participants who already engaged heavily with news tended to gravitate toward
 the comparison and association modes.
 They appreciated being able to see, for example, which words appeared more
-often in left-leaning versus right-leaning outlets, or how references to
-religious figures clustered in particular source groups.
+often in left-leaning versus right-leaning outlets.
 These interactions often led to discussion about why a given word might be
 more common in one group, reflecting on both substantive differences in
 coverage and stylistic choices.
 
+A particularly notable instance was when users noticed that the left-leaning outlets
+were more likely to talk about the Pope, which provoked larger discussion.
+Users were surprised as they expected right-leaning outlets to be more likely to talk
+about religion, but they hypothesized that since the Pope is considered more progressive,
+the left-leaning sources would be more likely to talk about him and his left-leaning views.
+
 Association-based modes also surfaced surprising connections.
 Some participants remarked that the association lists made them more aware of
-how certain topics (such as immigration or climate) are consistently linked to
-particular frames or co-occurring issues.
+how certain topics are consistently linked to particular frames or co-occurring issues.
 Others compared these patterns with what they saw on social media, noting that
 social feeds sometimes emphasized different angles than mainstream outlets.
 
 At the same time, a few participants tended to select topics they already felt
 knowledgeable about, which limited the potential for learning new content.
 This is a known challenge in educational games: players may optimize for
-success rather than exploration.\cite{gamification-engagement}
+success rather than exploration.\cite{SailerTheGamification2023}
 
 \subsection{Perceived Learning and Engagement}
 
@@ -460,6 +445,7 @@ to validate or challenge their intuitions about media bias.
 Participants who read the news less often emphasized that the game surfaced
 stories they had not previously encountered and gave them a sense of ``what is
 going on'' without requiring them to read full articles first.
+One user remarked that the game was ``not only enjoyable, but also educational.''
 Several said they would be likely to play on a weekly or monthly basis, or
 that they could imagine playing competitively with friends or family.
 
@@ -483,11 +469,8 @@ time periods.
 Feedback highlighted several areas for improvement.
 Some participants wanted the time-range selection to be more prominent, as
 they did not initially realize they could adjust it.
-Others suggested automatically opening the article list when a word is guessed
-and clearly indicating which word's articles are being shown.
 There were also requests for more in-context explanation of certain advanced
-features and for small enhancements like displaying the number of letters in
-each word.
+features.
 
 \subsection{Did the Game Solve the Problem?}
 
@@ -501,7 +484,7 @@ to deeper engagement with specific stories.
 
 At the same time, the results highlight several caveats.
 Because the sample is small and drawn from a relatively homogeneous population
-of college students, it is not clear how well the game would generalize to
+of mostly college students, it is not clear how well the game would generalize to
 other demographics.
 Self-reported learning and engagement are also vulnerable to social desirability
 bias.
@@ -530,7 +513,7 @@ Although I aimed for a mix of U.S. and international outlets and a range of
 political orientations, the selection is still skewed toward large,
 English-language organizations.
 This can reinforce an existing hierarchy of whose perspectives count as
-``mainstream'' and whose are peripheral.\cite{media-bias-charts}
+``mainstream'' and whose are peripheral.\cite{HeldebrandtHowA2019}
 
 Moreover, focusing on headlines means inheriting all of the biases and blind
 spots of professional newsrooms.
@@ -546,7 +529,7 @@ deeply consequential for people's lives.
 Points, streaks, and competitive comparisons can encourage players to treat
 headlines as abstract tokens rather than stories about real events.
 This tension is not unique to Newswordy; it reflects broader concerns about
-gamification in civic and political contexts.\cite{serious-games-learning}
+gamification in civic and political contexts.\cite{FreitasAreGames2018}
 
 To mitigate this, the design emphasizes transparency and context.
 Every aggregate statistic is backed by a list of concrete articles that
@@ -585,7 +568,8 @@ and options for data export or deletion would be necessary.
 \section{Replication Instructions}
 
 This section outlines how another computer science student could set up and
-run Newswordy using the public GitHub repository.
+run Newswordy using the public GitHub repository, available at
+\url{https://github.com/ethanpschoen/newswordy}.
 More detailed, continuously updated instructions are provided in the
 repository's README.
 
@@ -596,9 +580,33 @@ To replicate the project, a developer will need:
     \item A recent version of Node.js and \texttt{npm} for the web frontend.
     \item Python 3.11 or later for the scraping pipeline.
     \item A PostgreSQL-compatible database, such as a Supabase project.
+    When using Supabase, the frontend can connect via the Supabase client using
+    the project's public URL and anon key, while database-side SQL functions can
+    expose higher-level queries (e.g., ``top words'') through RPC calls.
     \item Accounts with a hosting provider (e.g., Vercel) and an authentication
     provider (e.g., Auth0) if they wish to deploy the app publicly.
 \end{itemize}
+
+\subsection{Scraper and Database Setup}
+
+To populate the database with headlines, the developer can:
+\begin{enumerate}
+    \item \texttt{cd scraper}
+    \item Create and activate a Python virtual environment.
+    \item \texttt{pip install -r requirements.txt} to install scraping and
+    text-processing dependencies.
+    \item Configure database connection parameters via a \texttt{.env} file,
+    using the example provided in the repository.
+    \item Run the database initialization script to create necessary tables.
+    \item Run the scraper manually to fetch and process headlines.
+    \item Define the Row-Level Security (RLS) rules for the database tables.
+    \item Add the necessary database functions to support the game modes.
+\end{enumerate}
+
+For automated updates, the repository includes a scheduled workflow that runs
+the scraper twice daily.
+To enable this, the developer must configure the appropriate database
+credentials as secrets in their GitHub repository.
 
 \subsection{Frontend Setup}
 
@@ -615,25 +623,6 @@ directory, install dependencies, and start a development server:
 The frontend communicates directly with the database via a client library, so
 no separate backend API server is required.
 
-\subsection{Scraper and Database Setup}
-
-To populate the database with headlines, the developer can:
-\begin{enumerate}
-    \item \texttt{cd scraper}
-    \item Create and activate a Python virtual environment.
-    \item \texttt{pip install -r requirements.txt} to install scraping and
-    text-processing dependencies.
-    \item Configure database connection parameters via a \texttt{.env} file,
-    using the example provided in the repository.
-    \item Run the database initialization script to create necessary tables.
-    \item Run the scraper manually to fetch and process headlines.
-\end{enumerate}
-
-For automated updates, the repository includes a scheduled workflow that runs
-the scraper twice daily.
-To enable this, the developer must configure the appropriate database
-credentials as secrets in their GitHub repository.
-
 \subsection{Reproducibility Considerations}
 
 Because external APIs and news content can change over time, exact numerical
@@ -645,23 +634,9 @@ evaluations.
 
 \section{Code Architecture Overview}
 
-At a high level, Newswordy is organized into three main components: the web
-frontend, the news scraping and processing pipeline, and the database layer
-that stores articles and supports word-frequency queries.
-
-\subsection{Frontend Structure}
-
-The frontend is implemented as a single-page application with routes
-corresponding to different game modes and profile views.
-Reusable UI components handle common elements such as the scoreboard, guess
-input, hints, article information drawers, and game statistics.
-Service modules encapsulate communication with the database and authentication
-provider, so that changes to backend APIs or credentials can be made in one
-place.
-
-This modular structure makes it straightforward to add new game modes or
-variants: a developer can create a new page that composes existing components
-and issues queries against new or existing database functions.
+At a high level, Newswordy is organized into three main components: the news
+scraping and processing pipeline, the database layer that stores articles and
+supports word-frequency queries, and the web frontend.
 
 \subsection{Scraper and Processing Pipeline}
 
@@ -678,18 +653,70 @@ This separation of concerns allows developers to extend the system in several
 ways, such as adding new sources, adjusting tokenization rules, or storing
 additional metadata (for example, topic labels) without rewriting core logic.
 
+If a developer wishes to add new sources, they would need to add the source
+to the configuration file (alongside its RSS feed) and then run the scraper
+to populate the database. This would require a corresponding addition to the
+frontend with the name and logo of the source.
+
+Potential extensions include changing the data extraction source from RSS feeds
+or improving normalization so that related forms of a word (e.g., pluralization)
+are treated consistently.
+More ambitious extensions could incorporate lemmatization, phrase extraction
+(bigrams), or topic labels, enabling game modes that surface themes rather than
+only single tokens.
+
 \subsection{Database and Query Layer}
 
 The database schema distinguishes between raw articles and derived statistics.
 Tables store articles with fields for source, title, URL, and publication
-time, while additional tables or views support aggregated word counts and
-co-occurrence measures.
+time, while additional tables or views support aggregated word counts.
 
 Query functions encapsulate the logic for computing top words, comparisons
 between source groups, and association patterns for anchor words.
 Because these functions live in the database, the frontend can request
 high-level operations (such as ``top words for this source group and time
 range'') without needing to implement complex logic in client code.
+
+To support player accounts and longitudinal statistics, the schema also
+includes tables that record gameplay and user statistics.
+For each game mode, there are two corresponding tables: one for the game itself
+and one for the guesses made in that game.
+
+When a player makes a new game, a new game record (and its ID) is created,
+and as they make guesses, the guesses are recorded in
+the guesses table. The game record is updated with each change in state,
+and the guesses table is updated with the guesses and their scores.
+This was done so that the frontend could easily display the game state and guesses,
+and to support features like streaks, personal history pages, and aggregate analysis
+of which words users tend to miss.
+
+The game ID is used on the frontend to match the game settings from the database,
+which is then used to fetch the list of top words for the game, using the RPC functions.
+
+\subsection{Frontend Structure}
+
+The frontend is implemented as a single-page application with routes
+corresponding to different game modes and profile views.
+Reusable UI components handle common elements such as the scoreboard, guess
+input, hints, article information drawers, and game statistics.
+Service modules encapsulate communication with the database and authentication
+provider, so that changes to backend APIs or credentials can be made in one
+place.
+
+This modular structure makes it straightforward to add new game modes or
+variants: a developer can create a new page that composes existing components
+and issues queries against new or existing database functions.
+
+To add new pages, a developer can add the route to \texttt{App.tsx} and create
+the new page component in the \texttt{pages} directory. New game modes can build
+off of the existing components and structure.
+
+Potential frontend extensions include a leaderboard, new pages that explain
+how to interpret comparisons, richer article browsing and filtering, and
+additional game modes that focus on specific beats (e.g., politics-only sources)
+or new regions and languages as additional headline sources are integrated.
+
+\bigskip
 
 Overall, this architecture is intended to make the system both understandable
 to new contributors and extensible to new research questions about news
