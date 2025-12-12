@@ -54,6 +54,9 @@ newswordy/
 │   ├── config.py             # News sources configuration
 │   ├── scheduler.py          # Local scheduling (optional)
 │   └── requirements.txt
+├── supabase/                 # Database schema and SQL functions
+│   ├── schema.sql            # Complete database schema
+│   └── functions/            # RPC functions (SQL)
 └── .github/
     └── workflows/
         └── run-scraper.yaml  # GitHub Actions workflow
