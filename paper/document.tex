@@ -3,6 +3,9 @@
 % use the oxycomps style file
 \usepackage{oxycomps}
 
+% figures live in paper/figures/
+\graphicspath{{figures/}}
+
 % usage: \fixme[comments describing issue]{text to be fixed}
 % define \fixme as not doing anything special
 \newcommand{\fixme}[2][]{#2}
@@ -35,24 +38,24 @@
 The contemporary news ecosystem is noisy, polarized, and difficult to navigate.
 24-hour cable channels, online outlets, and social media platforms compete
 for attention by emphasizing novelty, outrage, and conflict, often at the
-expense of context and nuance.
+expense of context and nuance\cite{JonesTheNew2012}.
 This contributes to news fatigue, disengagement, and selective exposure,
 where people either tune out entirely or restrict themselves to a narrow set of
-ideologically aligned sources.\cite{MartinBiasIn2017,FitzpatrickNoNews2022}
+ideologically aligned sources\cite{MartinBiasIn2017,FitzpatrickNoNews2022}.
 At the same time, the proliferation of partisan media and misinformation makes
 it harder for non-experts to develop a broad, trustworthy sense of what is
-actually happening in the world.\cite{KubinTheRole2021}
+actually happening in the world\cite{KubinTheRole2021}.
 
 When mainstream outlets are perceived as untrustworthy, people may turn to
 more extreme or less rigorous sources, including influencer-driven commentary
-and algorithmically curated social feeds.\cite{SpohrFakeNews2017}
+and algorithmically curated social feeds\cite{SpohrFakeNews2017}.
 In this environment, there are relatively few tools that help users compare
 coverage across outlets at a glance or understand how different news sources
 frame the same events.
 Existing media bias charts and dashboards are valuable, but they tend to assume
 a high level of prior motivation and literacy: users must already care enough
 about news to seek them out, interpret visualizations, and read methodological
-fine print.
+fine print\cite{HeldebrandtHowA2019}.
 
 The problem this project addresses is how to provide an accessible, engaging
 way for people to develop a broad awareness of current events and differences
@@ -72,9 +75,20 @@ As they play, users can click on any word to see the underlying articles that
 mention it, surfacing the context behind the ``buzzwords'' and inviting deeper
 engagement with specific stories.
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.49\textwidth]{homepage.png}
+    \hfill
+    \includegraphics[width=0.49\textwidth]{gameplay.png}
+    \caption{Newswordy interface overview. Left: home page with mode selection.
+    Right: gameplay view with guess input, scoreboard, and an article drawer for
+    a selected buzzword.}
+    \label{fig:ui-overview}
+\end{figure*}
+
 The game builds on the success of daily casual games such as Wordle,
 crossword puzzles, and Duolingo, which have been shown to support regular engagement and incidental
-learning.\cite{FreitasAreGames2018,SailerTheGamification2023,LoewenMobileAssisted2019,ZamaniTheUse2021}
+learning\cite{LoewenMobileAssisted2019,RitcheyWordleAs2023,ZamaniTheUse2021}.
 By framing news awareness as a playful, time-bounded challenge with clear
 feedback, Newswordy aims to make it easier for both habitual news readers and
 more casual consumers to track what topics dominate headlines and how that
@@ -102,14 +116,14 @@ Television, particularly cable news, remains one of the most influential
 sources of political information for many adults.
 Research has shown that cable outlets have increasingly diverged from each
 other in both content and tone, contributing to partisan news diets and
-ideological polarization.\cite{MartinBiasIn2017}
+ideological polarization\cite{MartinBiasIn2017}.
 Programs often blur the boundary between hard news and opinion, prioritizing
 emotional resonance and entertainment value to maintain viewership.
 
 At the same time, social media platforms have become a major gateway to news,
 especially for younger audiences.
 Algorithmic feeds prioritize engagement, which tends to surface sensational,
-outrage-inducing, or identity-affirming content.\cite{KubinTheRole2021}
+outrage-inducing, or identity-affirming content\cite{KubinTheRole2021}.
 Users encounter news interspersed with memes, personal updates, and advertising,
 which can make it difficult to distinguish verified reporting from rumors or
 manipulated narratives.
@@ -117,7 +131,7 @@ manipulated narratives.
 These dynamics contribute to two related challenges.
 First, many people experience news as exhausting or demoralizing, leading to
 selective avoidance and a sense that being informed is incompatible with their
-mental health.\cite{FitzpatrickNoNews2022}
+mental health\cite{FitzpatrickNoNews2022}.
 Second, those who do stay engaged often do so within relatively narrow
 information ecosystems that reinforce their existing views.
 Both outcomes undermine the civic goal of having a broadly informed public.
@@ -148,7 +162,7 @@ Several organizations provide visualizations and ratings intended to help
 people reason about media bias and reliability.
 Examples include news bias charts and sites that position outlets along
 ideological and credibility axes based on content analysis and expert
-judgments.\cite{HeldebrandtHowA2019}
+judgments\cite{HeldebrandtHowA2019}.
 
 These tools can be powerful for motivated users, but they have several
 limitations relative to the problem Newswordy addresses.
@@ -163,7 +177,7 @@ groups and time ranges to see how the vocabulary of coverage shifts.
 \subsection{News Quizzes and Games}
 
 Mainstream outlets frequently offer weekly ``news quizzes'' that test readers
-on the details of recent stories.
+on the details of recent stories\cite{ConillGamifyingThe2018}.
 These quizzes can be engaging, but they typically require prior reading of the
 same outlet's coverage and focus on factual recall rather than comparative
 reasoning about media agendas.
@@ -172,7 +186,7 @@ In parallel, casual word games like crosswords and Wordle have become daily
 rituals for millions of players.
 Although they are not usually framed as news-literacy tools, they demonstrate
 that low-friction, time-bounded puzzles can sustain long-term engagement and
-support vocabulary and pattern learning.\cite{RitcheyWordleAs2023}
+support vocabulary and pattern learning\cite{RitcheyWordleAs2023}.
 
 Newswordy combines these two lines of inspiration.
 Like a news quiz, it is grounded in current events; like a daily puzzle, it
@@ -184,17 +198,17 @@ about which topics dominate coverage and how that varies across sources.
 \subsection{Serious Games and Gamification}
 
 There is a rich literature on serious games --- games designed for purposes
-such as education, training, or civic engagement.\cite{FreitasAreGames2018}
+such as education, training, or civic engagement\cite{FreitasAreGames2018}.
 In practice, many of the most successful learning-oriented products borrow from
 games without fully becoming games themselves.
 Apps like Duolingo and Brilliant use short lessons, immediate feedback, and
-visible progress to sustain engagement over long periods.\cite{PuenteAssessingThe2023} The use of streaks
+visible progress to sustain engagement over long periods\cite{PuenteAssessingThe2023}. The use of streaks
 is also a common feature of these games, intended to support habit formation.
 These examples suggest that lightweight, repeatable interactions can support
 learning goals when the mechanics align with the desired habit.
 Research on gamification suggests that points, progress feedback, and social
 comparison can increase short-term engagement, but that thoughtful alignment
-between game mechanics and learning goals is crucial.\cite{SailerTheGamification2023, ConillGamifyingThe2018}
+between game mechanics and learning goals is crucial\cite{SailerTheGamification2023}.
 
 \section{Methods}
 
@@ -220,9 +234,17 @@ From this overarching goal, I derived several more concrete objectives:
 
 To support these goals, the system collects headlines from a curated set of
 more than fifteen major news sources, including both U.S. and international
-outlets and a range of ideological perspectives.\cite{KubinTheRole2021,MartinBiasIn2017}
+outlets and a range of ideological perspectives\cite{KubinTheRole2021,MartinBiasIn2017}.
 Each source is configured via its RSS feed, which serves as a proxy for its
 ``front page'' at any given time.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{news-sources.png}
+    \caption{Newswordy comparative mode source selection interface, which lets players choose
+    curated outlet groups before starting a comparative game.}
+    \label{fig:news-sources}
+\end{figure}
 
 A Python-based scraper runs twice daily via a scheduled workflow, fetching the
 latest items from each feed.
@@ -279,6 +301,16 @@ Newswordy exposes these statistics through four main game modes:
     players explore how different outlets talk about and frame the same topic.
 \end{description}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{game-modes.png}
+    \caption{Game mode selection in Newswordy. The four modes correspond to
+    (classic) overall word frequency, (comparison) differences between source
+    groups, (association) co-occurrence around an anchor word, and (comparative
+    association) co-occurrence differences between groups.}
+    \label{fig:game-modes}
+\end{figure}
+
 All modes share a common interaction pattern: players type guesses into a text
 field, the system checks whether the guess appears on the relevant scoreboard,
 and correct guesses are revealed with their scores.
@@ -303,6 +335,13 @@ back to individual stories. Furthermore, this encourages players to explore the
 content behind the words they guess, rather than simply thinking about the words
 themselves. User accounts and profiles allow players to revisit past games, see
 historical scores, and track their engagement over time, supporting habit formation.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{profile.png}
+    \caption{User profile view showing saved games and account-level statistics.}
+    \label{fig:profile}
+\end{figure}
 
 \section{Evaluation Metrics}
 
@@ -357,7 +396,7 @@ self-reported learning, engagement intentions, and perceived usability.
 
 In a longer-term study, it would be valuable to complement interviews with
 quantitative measures, such as pre/post quizzes on current events, retention
-tests administered days later, or detailed prompts about a specific finding.
+tests administered days later, or detailed prompts about a specific finding \cite{PetriHowTo2016}.
 However, these were beyond the scope of this project.
 
 I also considered incorporating objective measures of exploration behavior,
@@ -366,7 +405,7 @@ source presets, as proxies for curiosity and critical comparison.
 Due to time constraints and the small sample size, I relied instead on
 participants' own reflections about how they used these features.
 
-\section{Results \& Discussion}
+\section{Results}
 
 The six interviews provide an initial picture of how different kinds of news
 consumers experience Newswordy.
@@ -386,7 +425,7 @@ Common motivations for change included wanting to read a wider variety of
 sources and balancing a desire to be responsible and informed with the stress
 of constant negative coverage.
 These comments align with broader research on news avoidance and the emotional
-burden of contemporary news consumption.\cite{FitzpatrickNoNews2022}
+burden of contemporary news consumption\cite{FitzpatrickNoNews2022}.
 
 \subsection{Experiences with Classic Mode}
 
@@ -432,7 +471,7 @@ social feeds sometimes emphasized different angles than mainstream outlets.
 At the same time, a few participants tended to select topics they already felt
 knowledgeable about, which limited the potential for learning new content.
 This is a known challenge in educational games: players may optimize for
-success rather than exploration.\cite{SailerTheGamification2023}
+success rather than exploration\cite{SailerTheGamification2023}.
 
 \subsection{Perceived Learning and Engagement}
 
@@ -492,10 +531,43 @@ Finally, the tendency of some participants to choose topics they already knew
 well suggests that additional scaffolding might be needed to encourage
 exploration of unfamiliar areas.
 
-Overall, the evaluation suggests that Newswordy can function as a useful
-on-ramp to news awareness and comparative media analysis, but that careful
-design choices are required to avoid merely repackaging existing habits in a
-more entertaining form.
+\section{Discussion}
+
+The results suggest that Newswordy can serve as a lightweight ``on-ramp'' to
+news awareness for less frequent readers while also offering a structured way
+for more engaged readers to compare coverage across source groups.
+Classic mode supports quick orientation to what dominated headlines in a given
+window, and the advanced modes appear to be the main driver of reflective
+conversation about framing and bias because they externalize differences as
+inspectable word distributions linked back to concrete articles.
+
+At the same time, the findings surface a central design tension in civic
+gamification: the same score-and-feedback loop that makes play compelling can
+pull attention away from interpretation.
+Participants' comments suggest that future iterations should more explicitly
+reward exploration (e.g., opening articles, switching source presets, or
+following an association thread) and provide clearer scaffolding for how to
+interpret comparative outputs without overclaiming what they mean.
+
+This evaluation is intentionally preliminary.
+Because the sample is small and relatively homogeneous, and outcomes are
+self-reported, the results should be treated as suggestive evidence about user
+experience rather than a definitive measure of learning.
+A longer-term study could pair interviews with behavioral logging and
+pre/post measures (e.g., recall, calibration about what is salient, or ability
+to articulate multiple framings), and could test whether Newswordy changes
+source diversity or reduces the friction of engaging with unfamiliar topics.
+
+Overall, the project is most compelling as an interactive interface that makes
+aggregate coverage patterns legible, contestable, and easy to trace back to
+primary sources.
+Newswordy is not meant to replace reading; it is meant to lower the barrier to
+asking better questions about what is being covered, by whom, and with what
+framing.
+By grounding every pattern in transparent provenance (the underlying headlines
+and articles), it invites users to move from ``what are the top words?'' to
+``why does this show up here, and what does it obscure?''---turning passive
+consumption into a repeatable practice of comparison and inquiry.
 
 \section{Ethical Considerations}
 
@@ -513,7 +585,7 @@ Although I aimed for a mix of U.S. and international outlets and a range of
 political orientations, the selection is still skewed toward large,
 English-language organizations.
 This can reinforce an existing hierarchy of whose perspectives count as
-``mainstream'' and whose are peripheral.\cite{HeldebrandtHowA2019}
+``mainstream'' and whose are peripheral\cite{HeldebrandtHowA2019}.
 
 Moreover, focusing on headlines means inheriting all of the biases and blind
 spots of professional newsrooms.
@@ -529,7 +601,7 @@ deeply consequential for people's lives.
 Points, streaks, and competitive comparisons can encourage players to treat
 headlines as abstract tokens rather than stories about real events.
 This tension is not unique to Newswordy; it reflects broader concerns about
-gamification in civic and political contexts.\cite{FreitasAreGames2018}
+gamification in civic and political contexts\cite{FreitasAreGames2018}.
 
 To mitigate this, the design emphasizes transparency and context.
 Every aggregate statistic is backed by a list of concrete articles that
